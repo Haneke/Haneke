@@ -77,4 +77,6 @@ typedef NS_ENUM(NSInteger, HNKScaleMode)
 
 - (id)initWithName:(NSString*)name;
 
+- (UIImage*)resizedImageFromImage:(UIImage*)image;
+
 @end

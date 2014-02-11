@@ -118,7 +118,7 @@
         NSData *originalData = entity.cacheOriginalData;
         originalImage = [UIImage imageWithData:originalData scale:[UIScreen mainScreen].scale];
     }
-    image = [self resizedImageFromImage:originalImage format:format];
+    image = [format resizedImageFromImage:originalImage];
     [self setImage:image forEntityId:entityId format:format];
     dispatch_async(_diskQueue, ^{
         [self saveImage:image entityId:entityId format:format];
@@ -174,7 +174,7 @@
                     });
                     originalImage = [UIImage imageWithData:originalData scale:[UIScreen mainScreen].scale];
                 }
-                UIImage *image = [self resizedImageFromImage:originalImage format:format];
+                UIImage *image = [format resizedImageFromImage:originalImage];
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     [self setImage:image forEntityId:entityId format:format];
                 });
@@ -239,33 +239,6 @@
 {
     NSString *path = [format.directory stringByAppendingPathComponent:entityId];
     return path;
-}
-
-- (UIImage*)resizedImageFromImage:(UIImage*)originalImage format:(HNKCacheFormat*)format
-{
-    const CGSize formatSize = format.size;
-    CGSize resizedSize;
-    switch (format.scaleMode) {
-        case HNKScaleModeAspectFill:
-            resizedSize = [originalImage hnk_aspectFillRectForSize:formatSize].size;
-            break;
-        case HNKScaleModeAspectFit:
-            resizedSize = [originalImage hnk_aspectFitRectForSize:formatSize].size;
-            break;
-        case HNKScaleModeFill:
-            resizedSize = formatSize;
-            break;
-    }
-    if (!format.allowUpscaling)
-    {
-        CGSize originalSize = originalImage.size;
-        if (resizedSize.width > originalSize.width || resizedSize.height > originalSize.height)
-        {
-            return originalImage;
-        }
-    }
-    UIImage *image = [originalImage hnk_imageByScalingToSize:resizedSize];
-    return image;
 }
 
 #pragma mark Private (memory)
@@ -417,6 +390,35 @@
     }
     return self;
 }
+
+- (UIImage*)resizedImageFromImage:(UIImage*)originalImage
+{
+    const CGSize formatSize = self.size;
+    CGSize resizedSize;
+    switch (self.scaleMode) {
+        case HNKScaleModeAspectFill:
+            resizedSize = [originalImage hnk_aspectFillRectForSize:formatSize].size;
+            break;
+        case HNKScaleModeAspectFit:
+            resizedSize = [originalImage hnk_aspectFitRectForSize:formatSize].size;
+            break;
+        case HNKScaleModeFill:
+            resizedSize = formatSize;
+            break;
+    }
+    if (!self.allowUpscaling)
+    {
+        CGSize originalSize = originalImage.size;
+        if (resizedSize.width > originalSize.width || resizedSize.height > originalSize.height)
+        {
+            return originalImage;
+        }
+    }
+    UIImage *image = [originalImage hnk_imageByScalingToSize:resizedSize];
+    return image;
+}
+
+#pragma mark Private
 
 - (NSString*)directory
 {
