@@ -75,9 +75,6 @@
 		873E230018AA90F000E7919C /* HNKAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HNKAppDelegate.h; sourceTree = "<group>"; };
 		873E230118AA90F000E7919C /* HNKAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HNKAppDelegate.m; sourceTree = "<group>"; };
 		873E230318AA90F000E7919C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		873E231118AA90F000E7919C /* HanekeDemoTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HanekeDemoTests-Info.plist"; sourceTree = "<group>"; };
-		873E231318AA90F000E7919C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		873E231518AA90F000E7919C /* HanekeDemoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HanekeDemoTests.m; sourceTree = "<group>"; };
 		873E231D18AA915300E7919C /* HNKViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKViewController.h; sourceTree = "<group>"; };
 		873E231E18AA915300E7919C /* HNKViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKViewController.m; sourceTree = "<group>"; };
 		873E232018AA93E500E7919C /* HNKItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKItem.h; sourceTree = "<group>"; };
@@ -124,7 +121,6 @@
 				873E229418AA8C7C00E7919C /* Haneke */,
 				873E22A818AA8C7C00E7919C /* HanekeTests */,
 				873E22F718AA90F000E7919C /* HanekeDemo */,
-				873E230F18AA90F000E7919C /* HanekeDemoTests */,
 				873E229118AA8C7C00E7919C /* Frameworks */,
 				873E229018AA8C7C00E7919C /* Products */,
 			);
@@ -212,24 +208,6 @@
 				873E22FA18AA90F000E7919C /* InfoPlist.strings */,
 				873E22FD18AA90F000E7919C /* main.m */,
 				873E22FF18AA90F000E7919C /* HanekeDemo-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		873E230F18AA90F000E7919C /* HanekeDemoTests */ = {
-			isa = PBXGroup;
-			children = (
-				873E231518AA90F000E7919C /* HanekeDemoTests.m */,
-				873E231018AA90F000E7919C /* Supporting Files */,
-			);
-			path = HanekeDemoTests;
-			sourceTree = "<group>";
-		};
-		873E231018AA90F000E7919C /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				873E231118AA90F000E7919C /* HanekeDemoTests-Info.plist */,
-				873E231218AA90F000E7919C /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -397,14 +375,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				873E22FB18AA90F000E7919C /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		873E231218AA90F000E7919C /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				873E231318AA90F000E7919C /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -627,6 +597,7 @@
 				873E231918AA90F000E7919C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
