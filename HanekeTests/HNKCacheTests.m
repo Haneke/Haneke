@@ -8,6 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "HNKCache.h"
+#import <OCMock/OCMock.h>
 
 @interface HNKCacheTests : XCTestCase
 
@@ -56,5 +57,39 @@
     HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"format"];
     [_cache clearFormatNamed:format.name];
 }
+
+- (void)testImageForEntity
+{
+    UIImage *image = [HNKCacheTests imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    id entity = [HNKCacheTests entityWithId:@"1" data:nil image:image];
+    HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"format"];
+    format.size = CGSizeMake(10, 10);
+    [_cache registerFormat:format];
+    
+    [_cache imageForEntity:entity formatName:format.name];
+}
+
+#pragma mark - Utils
+
++ (id)entityWithId:(NSString*)entityId data:(NSData*)data image:(UIImage*)image
+{
+    id entity = [OCMockObject mockForProtocol:@protocol(HNKCacheEntity)];
+    [[[entity stub] andReturn:entityId] cacheId];
+    [[[entity stub] andReturn:data] cacheOriginalData];
+    [[[entity stub] andReturn:image] cacheOriginalImage];
+    return entity;
+}
+
++ (UIImage*)imageWithColor:(UIColor*)color size:(CGSize)size
+{
+    UIGraphicsBeginImageContextWithOptions(size, YES, 0);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetFillColorWithColor(context, color.CGColor);
+    CGContextFillRect(context, CGRectMake(0, 0, size.width, size.height));
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
+
 
 @end

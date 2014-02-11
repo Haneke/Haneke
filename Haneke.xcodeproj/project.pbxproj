@@ -28,6 +28,7 @@
 		873E232318AA982F00E7919C /* UIImage+hnk_utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 873E22BC18AA8CDB00E7919C /* UIImage+hnk_utils.m */; };
 		873E232418AA982F00E7919C /* HNKCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 873E22B918AA8CC900E7919C /* HNKCache.m */; };
 		873E232618AA992500E7919C /* sample.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 873E232518AA992500E7919C /* sample.jpg */; };
+		873E233218AAC1A800E7919C /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E233118AAC1A800E7919C /* libOCMock.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -80,6 +81,13 @@
 		873E232018AA93E500E7919C /* HNKItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKItem.h; sourceTree = "<group>"; };
 		873E232118AA93E500E7919C /* HNKItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKItem.m; sourceTree = "<group>"; };
 		873E232518AA992500E7919C /* sample.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = sample.jpg; sourceTree = "<group>"; };
+		873E232A18AAC1A800E7919C /* NSNotificationCenter+OCMAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNotificationCenter+OCMAdditions.h"; sourceTree = "<group>"; };
+		873E232B18AAC1A800E7919C /* OCMArg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMArg.h; sourceTree = "<group>"; };
+		873E232C18AAC1A800E7919C /* OCMConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMConstraint.h; sourceTree = "<group>"; };
+		873E232D18AAC1A800E7919C /* OCMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMock.h; sourceTree = "<group>"; };
+		873E232E18AAC1A800E7919C /* OCMockObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMockObject.h; sourceTree = "<group>"; };
+		873E232F18AAC1A800E7919C /* OCMockRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMockRecorder.h; sourceTree = "<group>"; };
+		873E233118AAC1A800E7919C /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libOCMock.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +107,7 @@
 				873E22A718AA8C7C00E7919C /* libHaneke.a in Frameworks */,
 				873E22A418AA8C7C00E7919C /* UIKit.framework in Frameworks */,
 				873E22A218AA8C7C00E7919C /* Foundation.framework in Frameworks */,
+				873E233218AAC1A800E7919C /* libOCMock.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -170,6 +179,7 @@
 		873E22A818AA8C7C00E7919C /* HanekeTests */ = {
 			isa = PBXGroup;
 			children = (
+				873E232718AAC1A800E7919C /* usr */,
 				873E22A918AA8C7C00E7919C /* Supporting Files */,
 				873E22BE18AA8D9F00E7919C /* HNKCacheTests.m */,
 			);
@@ -210,6 +220,44 @@
 				873E22FF18AA90F000E7919C /* HanekeDemo-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		873E232718AAC1A800E7919C /* usr */ = {
+			isa = PBXGroup;
+			children = (
+				873E232818AAC1A800E7919C /* include */,
+				873E233018AAC1A800E7919C /* lib */,
+			);
+			path = usr;
+			sourceTree = "<group>";
+		};
+		873E232818AAC1A800E7919C /* include */ = {
+			isa = PBXGroup;
+			children = (
+				873E232918AAC1A800E7919C /* OCMock */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		873E232918AAC1A800E7919C /* OCMock */ = {
+			isa = PBXGroup;
+			children = (
+				873E232A18AAC1A800E7919C /* NSNotificationCenter+OCMAdditions.h */,
+				873E232B18AAC1A800E7919C /* OCMArg.h */,
+				873E232C18AAC1A800E7919C /* OCMConstraint.h */,
+				873E232D18AAC1A800E7919C /* OCMock.h */,
+				873E232E18AAC1A800E7919C /* OCMockObject.h */,
+				873E232F18AAC1A800E7919C /* OCMockRecorder.h */,
+			);
+			path = OCMock;
+			sourceTree = "<group>";
+		};
+		873E233018AAC1A800E7919C /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				873E233118AAC1A800E7919C /* libOCMock.a */,
+			);
+			path = lib;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -492,7 +540,22 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
+				HEADER_SEARCH_PATHS = (
+					"${SRCROOT}/${TARGET_NAME}/usr/include/**",
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+				);
 				INFOPLIST_FILE = "HanekeTests/HanekeTests-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"${SRCROOT}/${TARGET_NAME}/usr/lib",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					XCTest,
+					"-ObjC",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
@@ -511,7 +574,22 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Haneke/Haneke-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"${SRCROOT}/${TARGET_NAME}/usr/include/**",
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+				);
 				INFOPLIST_FILE = "HanekeTests/HanekeTests-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"${SRCROOT}/${TARGET_NAME}/usr/lib",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					XCTest,
+					"-ObjC",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
