@@ -6,7 +6,9 @@ Lightweight image cache for iOS.
 ##Usage
 
 ```objective-c
-[[HNKCache sharedCache] retrieveImageForEntity:item formatName:@"thumbnail" completionBlock:^(id<HNKCacheEntity> entity, NSString *formatName, UIImage *image) {
+[[HNKCache sharedCache] retrieveImageForEntity:item 
+                                    formatName:@"thumbnail" 
+                               completionBlock:^(id<HNKCacheEntity> entity, NSString *formatName, UIImage *image) {
     imageView.image = image;
 }];
 ```
@@ -19,7 +21,6 @@ format.size = CGSizeMake(100, 100);
 format.diskCapacity = 1 * 1024 * 1024; // 1 MB
 format.scaleMode = HNKScaleModeAspectFill;
 [[HNKCache sharedCache] registerFormat:format];
-}];
 ```
 
 ##License
