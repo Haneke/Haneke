@@ -23,7 +23,7 @@
     HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"thumbnail"];
     format.allowUpscaling = NO;
     format.size = CGSizeMake(100, 100);
-    format.diskCapacity = 1 * 1024 * 1024;
+    format.diskCapacity = 1 * 1024 * 1024; // 1MB
     format.scaleMode = HNKScaleModeAspectFill;
     [[HNKCache sharedCache] registerFormat:format];
 }
@@ -51,7 +51,8 @@
     cell.imageView.image = [UIImage imageNamed:@"placeholder"];
     cell.imageView.contentMode = UIViewContentModeScaleAspectFill;
     [[HNKCache sharedCache] retrieveImageForEntity:item formatName:@"thumbnail" completionBlock:^(id<HNKCacheEntity> entity, NSString *formatName, UIImage *image) {
-        if (item != entity) return; // Reused
+        NSString *currentId = cell.textLabel.text;
+        if (![currentId isEqualToString:entity.cacheId]) return; // Reused
         
         [UIView transitionWithView:cell.imageView duration:0.2 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
             cell.imageView.image = image;
