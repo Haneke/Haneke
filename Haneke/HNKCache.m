@@ -107,6 +107,7 @@
             dispatch_async(_diskQueue, ^{
                 [self updateAccessDateOfImageWithEntityId:entityId format:format];
             });
+            [self setImage:image forEntityId:entityId format:format];
             return image;
         }
     }
@@ -154,6 +155,7 @@
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     completionBlock(entity, formatName, image);
                 });
+                [self setImage:image forEntityId:entityId format:format];
                 dispatch_sync(_diskQueue, ^{
                     [self updateAccessDateOfImageWithEntityId:entityId format:format];
                 });
