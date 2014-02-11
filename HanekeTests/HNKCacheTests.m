@@ -58,18 +58,42 @@
     [_cache clearFormatNamed:format.name];
 }
 
-- (void)testImageForEntity
+- (void)testImageForEntity_Image
 {
-    UIImage *image = [HNKCacheTests imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    UIImage *image = [HNKCacheTests imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
     id entity = [HNKCacheTests entityWithId:@"1" data:nil image:image];
-    HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"format"];
-    format.size = CGSizeMake(10, 10);
-    [_cache registerFormat:format];
+    HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
     
-    [_cache imageForEntity:entity formatName:format.name];
+    UIImage *result = [_cache imageForEntity:entity formatName:format.name];
+    CGSize resultSize = result.size;
+    
+    XCTAssertNotNil(result, @"");
+    XCTAssertEqual(resultSize, format.size, @"");
+}
+
+- (void)testImageForEntity_Data
+{
+    UIImage *image = [HNKCacheTests imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
+    NSData *data = UIImagePNGRepresentation(image);
+    id entity = [HNKCacheTests entityWithId:@"1" data:data image:nil];
+    HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
+    
+    UIImage *result = [_cache imageForEntity:entity formatName:format.name];
+    CGSize resultSize = result.size;
+    
+    XCTAssertNotNil(result, @"");
+    XCTAssertEqual(resultSize, format.size, @"");
 }
 
 #pragma mark - Utils
+
+- (HNKCacheFormat*)registerFormatWithSize:(CGSize)size
+{
+    HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"format"];
+    format.size = size;
+    [_cache registerFormat:format];
+    return format;
+}
 
 + (id)entityWithId:(NSString*)entityId data:(NSData*)data image:(UIImage*)image
 {
