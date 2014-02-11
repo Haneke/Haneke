@@ -39,6 +39,7 @@
 {
     HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"format"];
     [_cache registerFormat:format];
+    XCTAssertTrue(format.diskSize == 0, @"");
 }
 
 - (void)testClearFormat_Existing
@@ -47,6 +48,7 @@
     [_cache registerFormat:format];
     
     [_cache clearFormatNamed:format.name];
+    XCTAssertTrue(format.diskSize == 0, @"");
 }
 
 - (void)testClearFormat_Inexisting
