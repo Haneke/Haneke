@@ -1,7 +1,7 @@
 Haneke
 ======
 
-A lightweight zero-config image cache for iOS apps that need to display images in sizes that differ from the original. Resizing an image in background using the cache is as simple as:
+A lightweight zero-config image cache for iOS apps that display images in various sizes. Getting or creating an appropiately sized image is as simple as:
 
 
 ```objective-c
@@ -12,9 +12,9 @@ Really.
 
 The above line takes care of:
 
-* If cached, retreiving an appropiately sized (based on the `bounds` and `contentMode` of the `UIImageView`) from the memory or disk cache. Disk access is performed in background.
-* If not cached, reading the original image from disk and creating an appropiately sized image in background.
-* Setting the image and animating the image change if appropiate.
+* If cached, retreiving an appropiately sized image (based on the `bounds` and `contentMode` of the `UIImageView`) from the memory or disk cache. Disk access is performed in background.
+* If not cached, reading the original image from disk and creating an appropiately sized image, both in background.
+* Setting the image and animating the change if appropiate.
 * Caching the resulting image.
 * If needed, evicting the least recently used images in the cache.
 
