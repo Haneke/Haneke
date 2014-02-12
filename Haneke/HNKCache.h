@@ -60,6 +60,8 @@
  */
 - (BOOL)retrieveImageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName completionBlock:(void(^)(id<HNKCacheEntity> entity, NSString *formatName, UIImage *image))completionBlock;
 
+- (BOOL)retrieveImageFromCacheWithId:(NSString*)cacheId formatName:(NSString *)formatName completionBlock:(void(^)(NSString *cacheId, NSString *formatName, UIImage *image))completionBlock;
+
 #pragma mark Removing images
 ///---------------------------------------------
 /// @name Removing images

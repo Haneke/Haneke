@@ -8,7 +8,7 @@
 
 #import "HNKViewController.h"
 #import "HNKCache.h"
-#import "HNKItem.h"
+#import "UIImageView+Haneke.h"
 
 @interface HNKViewController ()
 
@@ -16,17 +16,6 @@
 
 @implementation HNKViewController {
     NSMutableArray *_items;
-}
-
-+ (void)initialize
-{
-    HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"thumbnail"];
-    format.allowUpscaling = NO;
-    format.compressionQuality = 0.5;
-    format.size = CGSizeMake(100, 100);
-    format.diskCapacity = 1 * 1024 * 1024; // 1MB
-    format.scaleMode = HNKScaleModeAspectFill;
-    [[HNKCache sharedCache] registerFormat:format];
 }
 
 - (void)viewDidLoad
@@ -47,18 +36,12 @@
 {
     static NSString *CellIdentifier = @"Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-    HNKItem *item = _items[indexPath.row];
-    cell.textLabel.text = item.cacheId;
+    NSString *path = _items[indexPath.row];
+    cell.textLabel.text = [NSString stringWithFormat:@"%ld", (long)indexPath.row];
     cell.imageView.image = [UIImage imageNamed:@"placeholder"];
-    cell.imageView.contentMode = UIViewContentModeScaleAspectFill;
-    [[HNKCache sharedCache] retrieveImageForEntity:item formatName:@"thumbnail" completionBlock:^(id<HNKCacheEntity> entity, NSString *formatName, UIImage *image) {
-        NSString *currentId = cell.textLabel.text;
-        if (![currentId isEqualToString:entity.cacheId]) return; // Reused
-        
-        [UIView transitionWithView:cell.imageView duration:0.2 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
-            cell.imageView.image = image;
-        } completion:nil];
-    }];
+    [cell.imageView sizeToFit];
+    cell.imageView.contentMode = UIViewContentModeScaleToFill;
+    [cell.imageView hnk_setImageFromFile:path];
     return cell;
 }
 
@@ -67,10 +50,12 @@
 - (void)initializeItems
 {
     _items = [NSMutableArray array];
+    NSString *documents = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
     for (int i = 0; i < 100; i++)
     {
-        HNKItem *item = [HNKItem itemWithIndex:i];
-        [_items addObject:item];
+        NSString *fileName = [NSString stringWithFormat:@"sample%ld.jpg", (long)i];
+        NSString *path = [documents stringByAppendingPathComponent:fileName];
+        [_items addObject:path];
     }
 }
 

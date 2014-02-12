@@ -140,39 +140,15 @@
 
 - (BOOL)retrieveImageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName completionBlock:(void(^)(id<HNKCacheEntity> entity, NSString *format, UIImage *image))completionBlock
 {
-    HNKCacheFormat *format = _formats[formatName];
-    NSAssert(format, @"Unknown format %@", formatName);
-
     NSString *entityId = entity.cacheId;
-    UIImage *image = [self imageForEntityId:entityId format:format];
-    if (image)
-    {
-        completionBlock(entity, formatName, image);
-        dispatch_async(_diskQueue, ^{
-            [self updateAccessDateOfImage:image entityId:entityId format:format];
-        });
-        return YES;
-    }
-    
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSString *path = [self pathForEntityId:entityId format:format];
-        __block NSData *imageData;
-        dispatch_sync(_diskQueue, ^{
-            imageData = [NSData dataWithContentsOfFile:path];
-        });
-        UIImage *image;
-        if (imageData && (image = [UIImage imageWithData:imageData scale:[UIScreen mainScreen].scale]))
+    return [self retrieveImageFromCacheWithId:entityId formatName:formatName completionBlock:^(NSString *cacheId, NSString *formatName, UIImage *image) {
+        if (image)
         {
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                completionBlock(entity, formatName, image);
-            });
-            [self setImage:image forEntityId:entityId format:format];
-            dispatch_sync(_diskQueue, ^{
-                [self updateAccessDateOfImage:image entityId:entityId format:format];
-            });
+            completionBlock(entity, formatName, image);
+            return;
         }
-        else
-        {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            HNKCacheFormat *format = _formats[formatName];
             __block UIImage *originalImage = nil;
             dispatch_sync(dispatch_get_main_queue(), ^{
                 originalImage = entity.cacheOriginalImage;
@@ -194,6 +170,47 @@
             });
             dispatch_sync(_diskQueue, ^{
                 [self saveImage:image entityId:entityId format:format];
+            });
+        });
+    }];
+}
+
+- (BOOL)retrieveImageFromCacheWithId:(NSString*)cacheId formatName:(NSString *)formatName completionBlock:(void(^)(NSString *cacheId, NSString *formatName, UIImage *image))completionBlock
+{
+    HNKCacheFormat *format = _formats[formatName];
+    NSAssert(format, @"Unknown format %@", formatName);
+    
+    UIImage *image = [self imageForEntityId:cacheId format:format];
+    if (image)
+    {
+        completionBlock(cacheId, formatName, image);
+        dispatch_async(_diskQueue, ^{
+            [self updateAccessDateOfImage:image entityId:cacheId format:format];
+        });
+        return YES;
+    }
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSString *path = [self pathForEntityId:cacheId format:format];
+        __block NSData *imageData;
+        dispatch_sync(_diskQueue, ^{
+            imageData = [NSData dataWithContentsOfFile:path];
+        });
+        UIImage *image;
+        if (imageData && (image = [UIImage imageWithData:imageData scale:[UIScreen mainScreen].scale]))
+        {
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                completionBlock(cacheId, formatName, image);
+            });
+            [self setImage:image forEntityId:cacheId format:format];
+            dispatch_sync(_diskQueue, ^{
+                [self updateAccessDateOfImage:image entityId:cacheId format:format];
+            });
+        }
+        else
+        {
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                completionBlock(cacheId, formatName, nil);
             });
         }
     });
@@ -248,7 +265,8 @@
 
 - (NSString*)pathForEntityId:(NSString*)entityId format:(HNKCacheFormat*)format
 {
-    NSString *path = [format.directory stringByAppendingPathComponent:entityId];
+    NSString *escapedEntityId = [entityId stringByReplacingOccurrencesOfString:@"/" withString:@"-"];
+    NSString *path = [format.directory stringByAppendingPathComponent:escapedEntityId];
     return path;
 }
 
