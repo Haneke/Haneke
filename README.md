@@ -18,6 +18,14 @@ The above line takes care of:
 * Caching the resulting image.
 * If needed, evicting the least recently used images in the cache.
 
+##Features
+
+* First-level in-memory cache using `NSCache`.
+* Second-level LRU disk cache using the file system.
+* Asynchronous and synchronous image retrieval.
+* Background image resizing and file reading.
+* Automatic cache eviction on memory warnings or disk capacity reached.
+* Zero-config `UIImageView` category to use the cache, optimized for `UITableView` and `UICollectionView` cell reuse.
 
 ##Add Haneke to your project
 
