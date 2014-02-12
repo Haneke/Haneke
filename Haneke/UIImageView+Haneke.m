@@ -7,7 +7,6 @@
 //
 
 #import "UIImageView+Haneke.h"
-#import "HNKCache.h"
 #import <objc/runtime.h>
 
 @interface HNKImageViewEntity : NSObject<HNKCacheEntity>
@@ -48,7 +47,8 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
             NSData *originalData = [NSData dataWithContentsOfFile:path];
             UIImage *originalImage = [UIImage imageWithData:originalData scale:[UIScreen mainScreen].scale];
             dispatch_sync(dispatch_get_main_queue(), ^{
-                [self hnk_retrieveImageForImage:originalImage withKey:path];
+                HNKImageViewEntity *entity = [HNKImageViewEntity entityWithImage:originalImage key:path];
+                [self hnk_retrieveImageFromEntity:entity];
             });
         });
     }];
@@ -57,8 +57,14 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 - (void)hnk_setImage:(UIImage*)originalImage withKey:(NSString*)key
 {
-    self.hnk_lastCacheId = key;
-    [self hnk_retrieveImageForImage:originalImage withKey:key];
+    HNKImageViewEntity *entity = [HNKImageViewEntity entityWithImage:originalImage key:key];
+    [self hnk_setImageFromEntity:entity];
+}
+
+- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity
+{
+    self.hnk_lastCacheId = entity.cacheId;
+    [self hnk_retrieveImageFromEntity:entity];
 }
 
 #pragma mark Private
@@ -85,10 +91,9 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     return format;
 }
 
-- (void)hnk_retrieveImageForImage:(UIImage*)originalImage withKey:(NSString*)key
+- (void)hnk_retrieveImageFromEntity:(id<HNKCacheEntity>)entity
 {
     HNKCacheFormat *format = self.hnk_cacheFormat;
-    HNKImageViewEntity *entity = [HNKImageViewEntity entityWithImage:originalImage key:key];
     __block BOOL animated = NO;
     [[HNKCache sharedCache] retrieveImageForEntity:entity formatName:format.name completionBlock:^(id<HNKCacheEntity> entity, NSString *formatName, UIImage *image) {
         if (![self.hnk_lastCacheId isEqualToString:entity.cacheId]) return;

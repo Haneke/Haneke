@@ -7,11 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "HNKCache.h"
 
 @interface UIImageView (Haneke)
 
 - (void)hnk_setImageFromFile:(NSString*)path;
 
 - (void)hnk_setImage:(UIImage*)image withKey:(NSString*)key;
+
+- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity;
 
 @end
