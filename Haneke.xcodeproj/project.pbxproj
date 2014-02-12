@@ -14,7 +14,6 @@
 		873E22A718AA8C7C00E7919C /* libHaneke.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E228F18AA8C7C00E7919C /* libHaneke.a */; };
 		873E22AD18AA8C7C00E7919C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 873E22AB18AA8C7C00E7919C /* InfoPlist.strings */; };
 		873E22BA18AA8CC900E7919C /* HNKCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 873E22B918AA8CC900E7919C /* HNKCache.m */; };
-		873E22BD18AA8CDB00E7919C /* UIImage+hnk_utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 873E22BC18AA8CDB00E7919C /* UIImage+hnk_utils.m */; };
 		873E22BF18AA8D9F00E7919C /* HNKCacheTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 873E22BE18AA8D9F00E7919C /* HNKCacheTests.m */; };
 		873E22F418AA90F000E7919C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E229218AA8C7C00E7919C /* Foundation.framework */; };
 		873E22F518AA90F000E7919C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E22C618AA90B600E7919C /* CoreGraphics.framework */; };
@@ -25,7 +24,6 @@
 		873E230418AA90F000E7919C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 873E230318AA90F000E7919C /* Images.xcassets */; };
 		873E231F18AA915300E7919C /* HNKViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 873E231E18AA915300E7919C /* HNKViewController.m */; };
 		873E232218AA93E500E7919C /* HNKItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 873E232118AA93E500E7919C /* HNKItem.m */; };
-		873E232318AA982F00E7919C /* UIImage+hnk_utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 873E22BC18AA8CDB00E7919C /* UIImage+hnk_utils.m */; };
 		873E232418AA982F00E7919C /* HNKCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 873E22B918AA8CC900E7919C /* HNKCache.m */; };
 		873E232618AA992500E7919C /* sample.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 873E232518AA992500E7919C /* sample.jpg */; };
 		873E233218AAC1A800E7919C /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E233118AAC1A800E7919C /* libOCMock.a */; };
@@ -64,8 +62,6 @@
 		873E22AC18AA8C7C00E7919C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		873E22B818AA8CC900E7919C /* HNKCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKCache.h; sourceTree = "<group>"; };
 		873E22B918AA8CC900E7919C /* HNKCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKCache.m; sourceTree = "<group>"; };
-		873E22BB18AA8CDB00E7919C /* UIImage+hnk_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+hnk_utils.h"; sourceTree = "<group>"; };
-		873E22BC18AA8CDB00E7919C /* UIImage+hnk_utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+hnk_utils.m"; sourceTree = "<group>"; };
 		873E22BE18AA8D9F00E7919C /* HNKCacheTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKCacheTests.m; sourceTree = "<group>"; };
 		873E22C618AA90B600E7919C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		873E22F318AA90EF00E7919C /* HanekeDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HanekeDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -159,8 +155,6 @@
 		873E229418AA8C7C00E7919C /* Haneke */ = {
 			isa = PBXGroup;
 			children = (
-				873E22BB18AA8CDB00E7919C /* UIImage+hnk_utils.h */,
-				873E22BC18AA8CDB00E7919C /* UIImage+hnk_utils.m */,
 				873E22B818AA8CC900E7919C /* HNKCache.h */,
 				873E22B918AA8CC900E7919C /* HNKCache.m */,
 				873E229518AA8C7C00E7919C /* Supporting Files */,
@@ -375,7 +369,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				873E22BA18AA8CC900E7919C /* HNKCache.m in Sources */,
-				873E22BD18AA8CDB00E7919C /* UIImage+hnk_utils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -396,7 +389,6 @@
 				873E22FE18AA90F000E7919C /* main.m in Sources */,
 				873E231F18AA915300E7919C /* HNKViewController.m in Sources */,
 				873E232418AA982F00E7919C /* HNKCache.m in Sources */,
-				873E232318AA982F00E7919C /* UIImage+hnk_utils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
