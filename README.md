@@ -1,5 +1,6 @@
 Haneke
 ======
+[![Build Status](https://travis-ci.org/hpique/Haneke.png)](https://travis-ci.org/hpique/Haneke)
 
 A lightweight zero-config image cache for iOS apps that display images in various sizes. Getting or creating an appropiately sized image is as simple as:
 
