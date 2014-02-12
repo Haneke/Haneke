@@ -28,6 +28,7 @@
 		873E233218AAC1A800E7919C /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E233118AAC1A800E7919C /* libOCMock.a */; };
 		876E5F2018AB762600B4EAF6 /* UIImageView+Haneke.m in Sources */ = {isa = PBXBuildFile; fileRef = 876E5F1F18AB762600B4EAF6 /* UIImageView+Haneke.m */; };
 		876E5F2118AB831500B4EAF6 /* UIImageView+Haneke.m in Sources */ = {isa = PBXBuildFile; fileRef = 876E5F1F18AB762600B4EAF6 /* UIImageView+Haneke.m */; };
+		87F47BAE18AC123C00F1FB48 /* UIImageView+HanekeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F47BAD18AC123C00F1FB48 /* UIImageView+HanekeTests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +85,7 @@
 		873E233118AAC1A800E7919C /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libOCMock.a; sourceTree = "<group>"; };
 		876E5F1E18AB762600B4EAF6 /* UIImageView+Haneke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+Haneke.h"; sourceTree = "<group>"; };
 		876E5F1F18AB762600B4EAF6 /* UIImageView+Haneke.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+Haneke.m"; sourceTree = "<group>"; };
+		87F47BAD18AC123C00F1FB48 /* UIImageView+HanekeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+HanekeTests.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,6 +171,7 @@
 				873E232718AAC1A800E7919C /* usr */,
 				873E22A918AA8C7C00E7919C /* Supporting Files */,
 				873E22BE18AA8D9F00E7919C /* HNKCacheTests.m */,
+				87F47BAD18AC123C00F1FB48 /* UIImageView+HanekeTests.m */,
 			);
 			path = HanekeTests;
 			sourceTree = "<group>";
@@ -368,6 +371,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				87F47BAE18AC123C00F1FB48 /* UIImageView+HanekeTests.m in Sources */,
 				873E22BF18AA8D9F00E7919C /* HNKCacheTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
