@@ -141,53 +141,51 @@
         });
         return YES;
     }
-    else
-    {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            NSString *path = [self pathForEntityId:entityId format:format];
-            __block NSData *imageData;
-            dispatch_sync(_diskQueue, ^{
-                imageData = [NSData dataWithContentsOfFile:path];
-            });
-            UIImage *image;
-            if (imageData && (image = [UIImage imageWithData:imageData scale:[UIScreen mainScreen].scale]))
-            {
-                dispatch_sync(dispatch_get_main_queue(), ^{
-                    completionBlock(entity, formatName, image);
-                });
-                [self setImage:image forEntityId:entityId format:format];
-                dispatch_sync(_diskQueue, ^{
-                    [self updateAccessDateOfImage:image entityId:entityId format:format];
-                });
-            }
-            else
-            {
-                __block UIImage *originalImage = nil;
-                dispatch_sync(dispatch_get_main_queue(), ^{
-                    originalImage = entity.cacheOriginalImage;
-                });
-                if (!originalImage)
-                {
-                    __block NSData *originalData = nil;
-                    dispatch_sync(dispatch_get_main_queue(), ^{
-                        originalData = entity.cacheOriginalData;
-                    });
-                    originalImage = [UIImage imageWithData:originalData scale:[UIScreen mainScreen].scale];
-                }
-                UIImage *image = [format resizedImageFromImage:originalImage];
-                dispatch_sync(dispatch_get_main_queue(), ^{
-                    [self setImage:image forEntityId:entityId format:format];
-                });
-                dispatch_sync(dispatch_get_main_queue(), ^{
-                    completionBlock(entity, formatName, image);
-                });
-                dispatch_sync(_diskQueue, ^{
-                    [self saveImage:image entityId:entityId format:format];
-                });
-            }
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSString *path = [self pathForEntityId:entityId format:format];
+        __block NSData *imageData;
+        dispatch_sync(_diskQueue, ^{
+            imageData = [NSData dataWithContentsOfFile:path];
         });
-        return NO;
-    }
+        UIImage *image;
+        if (imageData && (image = [UIImage imageWithData:imageData scale:[UIScreen mainScreen].scale]))
+        {
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                completionBlock(entity, formatName, image);
+            });
+            [self setImage:image forEntityId:entityId format:format];
+            dispatch_sync(_diskQueue, ^{
+                [self updateAccessDateOfImage:image entityId:entityId format:format];
+            });
+        }
+        else
+        {
+            __block UIImage *originalImage = nil;
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                originalImage = entity.cacheOriginalImage;
+            });
+            if (!originalImage)
+            {
+                __block NSData *originalData = nil;
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    originalData = entity.cacheOriginalData;
+                });
+                originalImage = [UIImage imageWithData:originalData scale:[UIScreen mainScreen].scale];
+            }
+            UIImage *image = [format resizedImageFromImage:originalImage];
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                [self setImage:image forEntityId:entityId format:format];
+            });
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                completionBlock(entity, formatName, image);
+            });
+            dispatch_sync(_diskQueue, ^{
+                [self saveImage:image entityId:entityId format:format];
+            });
+        }
+    });
+    return NO;
 }
 
 #pragma mark Removing images
