@@ -36,6 +36,9 @@
  */
 - (void)registerFormat:(HNKCacheFormat*)format;
 
+/**
+ Dictionary of formats registered with the cache.
+ */
 @property (nonatomic, readonly) NSDictionary *formats;
 
 #pragma mark Getting images
@@ -113,10 +116,13 @@ typedef NS_ENUM(NSInteger, HNKScaleMode)
     HNKScaleModeAspectFill = UIViewContentModeScaleAspectFill
 };
 
+/**
+ Image cache format. Defines the transformation applied to images as well as cache policies such as disk capacity.
+ */
 @interface HNKCacheFormat : NSObject
 
 /**
- 
+ Allow upscalling. Images smaller than the format size will be upscaled if set to YES. NO by default.
  */
 @property (nonatomic, assign) BOOL allowUpscaling;
 /**
@@ -124,11 +130,11 @@ typedef NS_ENUM(NSInteger, HNKScaleMode)
  */
 @property (nonatomic, assign) CGFloat compressionQuality;
 /**
- The format name. Used by the cache as the directory name for the disk cache of the format.
+ Format name. Used by the cache as the directory name for the disk cache of the format.
  */
 @property (nonatomic, readonly) NSString *name;
 /**
- Format image size. Images will be scaled to fit or fill this size based on the scaleMode.
+ Format image size. Images will be scaled to fit or fill this size based on scaleMode.
  */
 @property (nonatomic, assign) CGSize size;
 /**
