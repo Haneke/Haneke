@@ -89,7 +89,7 @@
     if (image)
     {
         dispatch_async(_diskQueue, ^{
-            [self updateAccessDateOfImageWithEntityId:entityId format:format];
+            [self updateAccessDateOfImage:image entityId:entityId format:format];
         });
         return image;
     }
@@ -105,7 +105,7 @@
         if (image)
         {
             dispatch_async(_diskQueue, ^{
-                [self updateAccessDateOfImageWithEntityId:entityId format:format];
+                [self updateAccessDateOfImage:image entityId:entityId format:format];
             });
             [self setImage:image forEntityId:entityId format:format];
             return image;
@@ -136,8 +136,8 @@
     if (image)
     {
         completionBlock(entity, formatName, image);
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [self updateAccessDateOfImageWithEntityId:entityId format:format];
+        dispatch_async(_diskQueue, ^{
+            [self updateAccessDateOfImage:image entityId:entityId format:format];
         });
         return YES;
     }
@@ -157,7 +157,7 @@
                 });
                 [self setImage:image forEntityId:entityId format:format];
                 dispatch_sync(_diskQueue, ^{
-                    [self updateAccessDateOfImageWithEntityId:entityId format:format];
+                    [self updateAccessDateOfImage:image entityId:entityId format:format];
                 });
             }
             else
@@ -352,7 +352,7 @@
     [self controlDiskCapacityOfFormat:format];
 }
 
-- (void)updateAccessDateOfImageWithEntityId:(NSString*)entityId format:(HNKCacheFormat*)format
+- (void)updateAccessDateOfImage:(UIImage*)image entityId:(NSString*)entityId format:(HNKCacheFormat*)format
 {
     NSString *path = [self pathForEntityId:entityId format:format];
     NSDate *now = [NSDate date];
@@ -364,6 +364,10 @@
         if ([fileManager fileExistsAtPath:path isDirectory:nil])
         {
             NSLog(@"Set attributes failed with error %@", [error localizedDescription]);
+        }
+        else
+        {
+            [self saveImage:image entityId:entityId format:format];
         }
     }
 }
