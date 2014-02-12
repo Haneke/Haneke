@@ -27,11 +27,14 @@
     NSString *documents = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
     for (NSUInteger i = 0; i < 100; i++)
     {
-        UIImage *image = [self imageWithIndex:i];
-        NSData *data = UIImageJPEGRepresentation(image, 1);
-        NSString *fileName = [NSString stringWithFormat:@"sample%ld.jpg", (long)i];
-        NSString *path = [documents stringByAppendingPathComponent:fileName];
-        [data writeToFile:path atomically:YES];
+        @autoreleasepool {
+            NSLog(@"Creating image %ld of %d", (long)i, 100);
+            UIImage *image = [self imageWithIndex:i];
+            NSData *data = UIImageJPEGRepresentation(image, 1);
+            NSString *fileName = [NSString stringWithFormat:@"sample%ld.jpg", (long)i];
+            NSString *path = [documents stringByAppendingPathComponent:fileName];
+            [data writeToFile:path atomically:YES];
+        }
     }
 }
 
