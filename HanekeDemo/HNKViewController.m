@@ -9,7 +9,7 @@
 #import "HNKViewController.h"
 #import "UIImageView+Haneke.h"
 
-#define HNK_USE_CUSTOM_FORMAT 1
+#define HNK_USE_CUSTOM_FORMAT 0
 
 @implementation HNKViewController {
     NSMutableArray *_items;
