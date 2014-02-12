@@ -8,7 +8,7 @@ A lightweight zero-config image cache for iOS apps that display images in variou
 [imageView hnk_setImageFromPath:path];
 ```
 
-Really. 
+_Really._
 
 The above line takes care of:
 
@@ -18,6 +18,20 @@ The above line takes care of:
 * Caching the resulting image.
 * If needed, evicting the least recently used images in the cache.
 
+
+##Add Haneke to your project
+
+1. Add the [Haneke](https://github.com/hpique/Haneke/tree/master/Haneke) folder to your project.
+2. Profit!
+
+
+##Requirements
+
+Haneke requires iOS 7.0 or above and ARC. 
+
+##Roadmap
+
+Haneke is in initial development and its public API should not be considered stable.
 
 ##License
 
