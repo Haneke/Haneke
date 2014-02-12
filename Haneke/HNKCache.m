@@ -338,7 +338,7 @@
 {
     if (format.diskCapacity == 0) return;
     
-    NSData *resizedImageData = UIImageJPEGRepresentation(image, 0.75);
+    NSData *resizedImageData = UIImageJPEGRepresentation(image, format.compressionQuality);
     NSString *path = [self pathForEntityId:entityId format:format];
     NSError *error;
     if (![resizedImageData writeToFile:path options:kNilOptions error:&error])
@@ -389,6 +389,7 @@
     if (self)
     {
         _name = name;
+        _compressionQuality = 1;
     }
     return self;
 }

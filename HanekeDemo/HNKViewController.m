@@ -22,6 +22,7 @@
 {
     HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"thumbnail"];
     format.allowUpscaling = NO;
+    format.compressionQuality = 0.5;
     format.size = CGSizeMake(100, 100);
     format.diskCapacity = 1 * 1024 * 1024; // 1MB
     format.scaleMode = HNKScaleModeAspectFill;
