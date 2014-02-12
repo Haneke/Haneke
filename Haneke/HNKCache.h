@@ -60,6 +60,13 @@
  */
 - (BOOL)retrieveImageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName completionBlock:(void(^)(id<HNKCacheEntity> entity, NSString *formatName, UIImage *image))completionBlock;
 
+/**
+ Retrieves an image from the cache. If the image exists in the memory cache, the completion block will be executed synchronously. If the image exists in the disk cache, the completion block will be executed asynchronously.
+ @param cacheId Image identifier in the cache.
+ @param formatName Name of the format in which the image is desired. The format must have been previously registered with the cache.
+ @param completionBlock The block to be called with the requested image. Always called from the main queue. Will be called synchronously if the image exists in the memory cache, or asynchronously if the image exists in the disk cache.
+ @return YES if image exists in the memory cache (and thus, the completion block was called synchronously), NO otherwise.
+ */
 - (BOOL)retrieveImageFromCacheWithId:(NSString*)cacheId formatName:(NSString *)formatName completionBlock:(void(^)(NSString *cacheId, NSString *formatName, UIImage *image))completionBlock;
 
 #pragma mark Removing images
@@ -108,20 +115,38 @@ typedef NS_ENUM(NSInteger, HNKScaleMode)
 
 @interface HNKCacheFormat : NSObject
 
+/**
+ 
+ */
 @property (nonatomic, assign) BOOL allowUpscaling;
 /**
  The quality of the resulting JPEG image, expressed as a value from 0.0 to 1.0. The value 0.0 represents the maximum compression (or lowest quality) while the value 1.0 represents the least compression (or best quality). 1.0 by default.
  */
 @property (nonatomic, assign) CGFloat compressionQuality;
+/**
+ The format name. Used by the cache as the directory name for the disk cache of the format.
+ */
 @property (nonatomic, readonly) NSString *name;
+/**
+ Format image size. Images will be scaled to fit or fill this size based on the scaleMode.
+ */
 @property (nonatomic, assign) CGSize size;
+/**
+ Format scale mode. Determines if images will fit or fill the format size, and if the aspect ratio will be mantained or not. HNKScaleModeFill by default.
+ */
 @property (nonatomic, assign) HNKScaleMode scaleMode;
 /**
- The disk cache capacity for the format. If not set the default value is zero and the format will not have a disk cache.
+ The disk cache capacity for the format. If 0 the cache will only use memory. 0 by default.
  */
 @property (nonatomic, assign) unsigned long long diskCapacity;
+/**
+ Current size in bytes of the disk cache used by the format.
+ */
 @property (nonatomic, readonly) unsigned long long diskSize;
 
+/** Initializes a format with the given name.
+ @param name Name of the format.
+ */
 - (id)initWithName:(NSString*)name;
 
 /**
