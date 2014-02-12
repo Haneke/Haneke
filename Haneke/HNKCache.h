@@ -36,6 +36,8 @@
  */
 - (void)registerFormat:(HNKCacheFormat*)format;
 
+@property (nonatomic, readonly) NSDictionary *formats;
+
 #pragma mark Getting images
 ///---------------------------------------------
 /// @name Getting images

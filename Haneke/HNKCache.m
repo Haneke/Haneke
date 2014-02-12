@@ -84,6 +84,11 @@
     });
 }
 
+- (NSDictionary*)formats
+{
+    return _formats.copy;
+}
+
 #pragma mark Getting images
 
 - (UIImage*)imageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName
@@ -231,7 +236,8 @@
         [cache removeObjectForKey:entityId];
     }];
     dispatch_async(_diskQueue, ^{
-        [_formats enumerateKeysAndObjectsUsingBlock:^(id key, HNKCacheFormat *format, BOOL *stop) {
+        NSDictionary *formats = _formats.copy;
+        [formats enumerateKeysAndObjectsUsingBlock:^(id key, HNKCacheFormat *format, BOOL *stop) {
             NSString *path = [self pathForEntityId:entityId format:format];
             [self removeFileAtPath:path format:format];
         }];
