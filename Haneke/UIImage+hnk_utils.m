@@ -10,46 +10,42 @@
 
 @implementation UIImage (hnk_utils)
 
-- (CGRect)hnk_aspectFillRectForSize:(CGSize)size
+- (CGSize)hnk_aspectFillSizeForSize:(CGSize)size
 {
     CGFloat targetAspect = size.width / size.height;
     CGFloat sourceAspect = self.size.width / self.size.height;
-    CGRect rect = CGRectZero;
+    CGSize result = CGSizeZero;
     
     if (targetAspect > sourceAspect)
     {
-        rect.size.height = size.height;
-        rect.size.width = rect.size.height * sourceAspect;
-        rect.origin.x = (size.width - rect.size.width) * 0.5;
+        result.height = size.height;
+        result.width = result.height * sourceAspect;
     }
     else
     {
-        rect.size.height = size.height;
-        rect.size.width = rect.size.height * sourceAspect;
-        rect.origin.x = (size.width - rect.size.width) * 0.5;
+        result.height = size.height;
+        result.width = result.height * sourceAspect;
     }
-    return CGRectIntegral(rect);
+    return CGSizeMake(ceil(result.width), ceil(result.height));
 }
 
-- (CGRect)hnk_aspectFitRectForSize:(CGSize)size
+- (CGSize)hnk_aspectFitSizeForSize:(CGSize)size
 {
     CGFloat targetAspect = size.width / size.height;
     CGFloat sourceAspect = self.size.width / self.size.height;
-    CGRect rect = CGRectZero;
+    CGSize result = CGSizeZero;
     
     if (targetAspect > sourceAspect)
     {
-        rect.size.height = size.height;
-        rect.size.width = rect.size.height * sourceAspect;
-        rect.origin.x = (size.width - rect.size.width) * 0.5;
+        result.height = size.height;
+        result.width = result.height * sourceAspect;
     }
     else
     {
-        rect.size.width = size.width;
-        rect.size.height = rect.size.width / sourceAspect;
-        rect.origin.y = (size.height - rect.size.height) * 0.5;
+        result.width = size.width;
+        result.height = result.width / sourceAspect;
     }
-    return CGRectIntegral(rect);
+    return CGSizeMake(ceil(result.width), ceil(result.height));
 }
 
 - (UIImage *)hnk_imageByScalingToSize:(CGSize)newSize

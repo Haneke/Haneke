@@ -10,9 +10,9 @@
 
 @interface UIImage (hnk_utils)
 
-- (CGRect)hnk_aspectFillRectForSize:(CGSize)size;
+- (CGSize)hnk_aspectFillSizeForSize:(CGSize)size;
 
-- (CGRect)hnk_aspectFitRectForSize:(CGSize)size;
+- (CGSize)hnk_aspectFitSizeForSize:(CGSize)size;
 
 - (UIImage *)hnk_imageByScalingToSize:(CGSize)newSize;
 

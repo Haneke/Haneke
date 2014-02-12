@@ -399,10 +399,10 @@
     CGSize resizedSize;
     switch (self.scaleMode) {
         case HNKScaleModeAspectFill:
-            resizedSize = [originalImage hnk_aspectFillRectForSize:formatSize].size;
+            resizedSize = [originalImage hnk_aspectFillSizeForSize:formatSize];
             break;
         case HNKScaleModeAspectFit:
-            resizedSize = [originalImage hnk_aspectFitRectForSize:formatSize].size;
+            resizedSize = [originalImage hnk_aspectFitSizeForSize:formatSize];
             break;
         case HNKScaleModeFill:
             resizedSize = formatSize;
