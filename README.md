@@ -1,27 +1,23 @@
 Haneke
 ======
 
-Lightweight image cache for iOS.
+A lightweight zero-config image cache for iOS apps that need to display images in sizes that differ from the original. Resizing an image in background using the cache is as simple as:
 
-##Usage
-
-```objective-c
-[[HNKCache sharedCache] retrieveImageForEntity:item 
-                                    formatName:@"thumbnail" 
-                               completionBlock:^(id<HNKCacheEntity> entity, NSString *formatName, UIImage *image) {
-    imageView.image = image;
-}];
-```
-
-##Registering image formats
 
 ```objective-c
-HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"thumbnail"];
-format.size = CGSizeMake(100, 100);
-format.diskCapacity = 1 * 1024 * 1024; // 1 MB
-format.scaleMode = HNKScaleModeAspectFill;
-[[HNKCache sharedCache] registerFormat:format];
+[imageView hnk_setImageFromPath:path];
 ```
+
+Really. 
+
+The above line takes care of:
+
+* If cached, retreiving an appropiately sized (based on the `bounds` and `contentMode` of the `UIImageView`) from the memory or disk cache. Disk access is performed in background.
+* If not cached, reading the original image from disk and creating an appropiately sized image in background.
+* Setting the image and animating the image change if appropiate.
+* Caching the resulting image.
+* If needed, evicting the least recently used images in the cache.
+
 
 ##License
 
