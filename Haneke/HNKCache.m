@@ -76,6 +76,10 @@
 
 - (void)registerFormat:(HNKCacheFormat *)format
 {
+    if (_formats[format.name])
+    {
+        [self clearFormatNamed:format.name];
+    }
     _formats[format.name] = format;
     format.cache = self;
     dispatch_async(_diskQueue, ^{

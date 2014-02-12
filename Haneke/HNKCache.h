@@ -30,7 +30,7 @@
 + (HNKCache*)sharedCache;
 
 /**
- Registers a format in the cache. The cache will automatically update the diskSize of the format as images are added.
+ Registers a format in the cache. The cache will automatically update the diskSize of the format as images are added. If a format with the same name already exists in the cache, it will be cleared first.
  @param The format to be registered in the cache.
  @discussion A format can only be registered in one cache.
  */
