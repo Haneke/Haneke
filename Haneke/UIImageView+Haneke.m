@@ -119,7 +119,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 - (void)hnk_setImage:(UIImage*)image animated:(BOOL)animated
 {
-    const NSTimeInterval duration = animated ? 0.2 : 0;
+    const NSTimeInterval duration = animated ? 0.1 : 0;
     [UIView transitionWithView:self duration:duration options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
         self.image = image;
     } completion:nil];
