@@ -55,7 +55,6 @@
 /* Begin PBXFileReference section */
 		873E228F18AA8C7C00E7919C /* libHaneke.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHaneke.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		873E229218AA8C7C00E7919C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		873E229618AA8C7C00E7919C /* Haneke-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Haneke-Prefix.pch"; sourceTree = "<group>"; };
 		873E229F18AA8C7C00E7919C /* HanekeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HanekeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		873E22A018AA8C7C00E7919C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		873E22A318AA8C7C00E7919C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -158,19 +157,10 @@
 			children = (
 				873E22B818AA8CC900E7919C /* HNKCache.h */,
 				873E22B918AA8CC900E7919C /* HNKCache.m */,
-				873E229518AA8C7C00E7919C /* Supporting Files */,
 				876E5F1E18AB762600B4EAF6 /* UIImageView+Haneke.h */,
 				876E5F1F18AB762600B4EAF6 /* UIImageView+Haneke.m */,
 			);
 			path = Haneke;
-			sourceTree = "<group>";
-		};
-		873E229518AA8C7C00E7919C /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				873E229618AA8C7C00E7919C /* Haneke-Prefix.pch */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		873E22A818AA8C7C00E7919C /* HanekeTests */ = {
@@ -499,7 +489,7 @@
 			buildSettings = {
 				DSTROOT = /tmp/Haneke.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Haneke/Haneke-Prefix.pch";
+				GCC_PREFIX_HEADER = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -511,7 +501,7 @@
 			buildSettings = {
 				DSTROOT = /tmp/Haneke.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Haneke/Haneke-Prefix.pch";
+				GCC_PREFIX_HEADER = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -529,7 +519,7 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Haneke/Haneke-Prefix.pch";
+				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -567,7 +557,7 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Haneke/Haneke-Prefix.pch";
+				GCC_PREFIX_HEADER = "";
 				HEADER_SEARCH_PATHS = (
 					"${SRCROOT}/${TARGET_NAME}/usr/include/**",
 					"$(inherited)",
