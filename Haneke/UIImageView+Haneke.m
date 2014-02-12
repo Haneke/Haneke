@@ -67,17 +67,29 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     [self hnk_retrieveImageFromEntity:entity];
 }
 
-#pragma mark Private
+- (void)setHnk_cacheFormat:(HNKCacheFormat *)hnk_cacheFormat
+{
+    HNKCache *cache = [HNKCache sharedCache];
+    if (cache.formats[hnk_cacheFormat.name] != hnk_cacheFormat)
+    {
+        [[HNKCache sharedCache] registerFormat:hnk_cacheFormat];
+    }
+    objc_setAssociatedObject(self, @selector(hnk_cacheFormat), hnk_cacheFormat, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    self.contentMode = hnk_cacheFormat.scaleMode;
+}
 
 - (HNKCacheFormat*)hnk_cacheFormat
 {
+    HNKCacheFormat *format = (HNKCacheFormat *)objc_getAssociatedObject(self, @selector(hnk_cacheFormat));
+    if (format) return format;
+
     CGSize viewSize = self.bounds.size;
     NSAssert(viewSize.width > 0 && viewSize.height > 0, @"%s: UImageView size is zero. Set its frame, call sizeToFit or force layout first.", __PRETTY_FUNCTION__);
     HNKScaleMode scaleMode = self.hnk_scaleMode;
     NSString *scaleModeName = NSStringFromHNKScaleMode(scaleMode);
     NSString *name = [NSString stringWithFormat:@"auto-%ldx%ld-%@", (long)viewSize.width, (long)viewSize.height, scaleModeName];
     HNKCache *cache = [HNKCache sharedCache];
-    HNKCacheFormat *format = cache.formats[name];
+    format = cache.formats[name];
     if (!format)
     {
         format = [[HNKCacheFormat alloc] initWithName:name];
@@ -90,6 +102,8 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     }
     return format;
 }
+
+#pragma mark Private
 
 - (void)hnk_retrieveImageFromEntity:(id<HNKCacheEntity>)entity
 {

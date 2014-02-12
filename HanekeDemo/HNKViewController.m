@@ -7,15 +7,13 @@
 //
 
 #import "HNKViewController.h"
-#import "HNKCache.h"
 #import "UIImageView+Haneke.h"
 
-@interface HNKViewController ()
-
-@end
+#define HNK_USE_CUSTOM_FORMAT 1
 
 @implementation HNKViewController {
     NSMutableArray *_items;
+    HNKCacheFormat *_customFormat;
 }
 
 - (void)viewDidLoad
@@ -23,6 +21,12 @@
     [super viewDidLoad];
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Cell"];
     [self initializeItems];
+    _customFormat = [[HNKCacheFormat alloc] initWithName:@"thumbnail"];
+    _customFormat.diskCapacity = 1 * 1024 * 1024;
+    _customFormat.compressionQuality = 0.5;
+    _customFormat.size = CGSizeMake(100, 100);
+    _customFormat.scaleMode = HNKScaleModeAspectFill;
+    [[HNKCache sharedCache] registerFormat:_customFormat];
 }
 
 #pragma mark - Table view data source
@@ -39,8 +43,15 @@
     NSString *path = _items[indexPath.row];
     cell.textLabel.text = [NSString stringWithFormat:@"%ld", (long)indexPath.row];
     cell.imageView.image = [UIImage imageNamed:@"placeholder"];
-    [cell.imageView sizeToFit];
-    cell.imageView.contentMode = UIViewContentModeScaleToFill;
+    if (HNK_USE_CUSTOM_FORMAT)
+    {
+        cell.imageView.hnk_cacheFormat = _customFormat;
+    }
+    else
+    { // Resize image based on the `bounds` and `contentMode` of the `UIImageView`, using a default configuration
+        cell.imageView.contentMode = UIViewContentModeScaleToFill;
+        [cell.imageView sizeToFit];
+    }
     [cell.imageView hnk_setImageFromFile:path];
     return cell;
 }

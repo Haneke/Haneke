@@ -17,4 +17,6 @@
 
 - (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity;
 
+@property (nonatomic, strong) HNKCacheFormat *hnk_cacheFormat;
+
 @end
