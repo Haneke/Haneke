@@ -8,6 +8,12 @@
 
 #import "HNKCache.h"
 
+#ifdef DEBUG
+#define HanekeLog(...) NSLog(@"HANEKE: %@", [NSString stringWithFormat:__VA_ARGS__]);
+#else
+#define HanekeLog(...)
+#endif
+
 @interface UIImage (hnk_utils)
 
 - (CGSize)hnk_aspectFillSizeForSize:(CGSize)size;
@@ -115,11 +121,13 @@
     UIImage *image = [self imageForKey:key format:format];
     if (image)
     {
+        HanekeLog(@"Memory cache hit: %@/%@", formatName, key.lastPathComponent);
         dispatch_async(format.diskQueue, ^{
             [self updateAccessDateOfImage:image key:key format:format];
         });
         return image;
     }
+    HanekeLog(@"Memory cache miss: %@/%@", formatName, key.lastPathComponent);
 
     NSString *path = [self pathForKey:key format:format];
     __block NSData *imageData;
@@ -131,6 +139,7 @@
         image = [UIImage imageWithData:imageData scale:[UIScreen mainScreen].scale]; // Do not use imageWithContentsOfFile: as it doesn't consider scale
         if (image)
         {
+            HanekeLog(@"Disk cache hit: %@/%@", formatName, key.lastPathComponent);
             dispatch_async(format.diskQueue, ^{
                 [self updateAccessDateOfImage:image key:key format:format];
             });
@@ -138,6 +147,7 @@
             return image;
         }
     }
+    HanekeLog(@"Disk cache miss: %@/%@", formatName, key.lastPathComponent);
 
     UIImage *originalImage = entity.cacheOriginalImage;
     if (!originalImage)
@@ -199,12 +209,14 @@
     UIImage *image = [self imageForKey:key format:format];
     if (image)
     {
+        HanekeLog(@"Memory cache hit: %@/%@", formatName, key.lastPathComponent);
         completionBlock(key, formatName, image);
         dispatch_async(format.diskQueue, ^{
             [self updateAccessDateOfImage:image key:key format:format];
         });
         return YES;
     }
+    HanekeLog(@"Memory cache miss: %@/%@", formatName, key.lastPathComponent);
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSString *path = [self pathForKey:key format:format];
@@ -215,6 +227,7 @@
         UIImage *image;
         if (imageData && (image = [UIImage imageWithData:imageData scale:[UIScreen mainScreen].scale]))
         {
+            HanekeLog(@"Disk cache hit: %@/%@", formatName, key.lastPathComponent);
             dispatch_sync(dispatch_get_main_queue(), ^{
                 completionBlock(key, formatName, image);
             });
@@ -225,6 +238,7 @@
         }
         else
         {
+            HanekeLog(@"Disk cache miss: %@/%@", formatName, key.lastPathComponent);
             dispatch_sync(dispatch_get_main_queue(), ^{
                 completionBlock(key, formatName, nil);
             });
@@ -292,9 +306,16 @@
 
 #pragma mark Private (utils)
 
+- (NSString*)keyFromPath:(NSString*)path
+{
+    NSString *escapedKey = path.lastPathComponent;
+    NSString *key = CFBridgingRelease(CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault, (CFStringRef)escapedKey, CFSTR(""), kCFStringEncodingUTF8));
+    return key;
+}
+
 - (NSString*)pathForKey:(NSString*)key format:(HNKCacheFormat*)format
 {
-    NSString *escapedKey = [key stringByReplacingOccurrencesOfString:@"/" withString:@"-"];
+    NSString *escapedKey = CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,(CFStringRef)key, NULL, CFSTR("/:"), kCFStringEncodingUTF8));
     NSString *path = [format.directory stringByAppendingPathComponent:escapedKey];
     return path;
 }
@@ -316,7 +337,14 @@
         cache = [[NSCache alloc] init];
         _memoryCaches[formatName] = cache;
     }
-    [cache setObject:image forKey:key];
+    if (image)
+    {
+        [cache setObject:image forKey:key];
+    }
+    else
+    {
+        [cache removeObjectForKey:image];
+    }
 }
 
 #pragma mark Private (disk)
@@ -384,8 +412,10 @@
             return;
         }
         NSString *path = url.path;
+        NSLog(@"%@", path);
         UIImage *image = [UIImage imageWithContentsOfFile:path];
-        NSString *key = [path lastPathComponent];
+        if (!image) return;
+        NSString *key = [self keyFromPath:path];
         dispatch_sync(dispatch_get_main_queue(), ^{
             [self setImage:image forKey:key format:format];
         });
@@ -394,6 +424,11 @@
 
 - (void)removeFileAtPath:(NSString*)path format:(HNKCacheFormat*)format
 {
+    NSString *key = [self keyFromPath:path];
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        // Remove the image from memory cache to prevent leaving uninitialized images poiting to deleted files.
+        [self setImage:nil forKey:key format:format];
+    });
     NSError *error;
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSDictionary *attributes = [fileManager attributesOfItemAtPath:path error:&error];
