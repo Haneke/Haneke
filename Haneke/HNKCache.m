@@ -16,6 +16,12 @@
 
 @end
 
+@interface NSFileManager (hnk_utils)
+
+- (void)hnk_enumerateContentsOfDirectoryAtPath:(NSString*)path orderedByProperty:(NSString*)property ascending:(BOOL)ascending usingBlock:(void(^)(NSURL *url, NSUInteger idx, BOOL *stop))block;
+
+@end
+
 @interface HNKCacheFormat()
 
 @property (nonatomic, assign) unsigned long long diskSize;
@@ -336,23 +342,7 @@
     if (format.diskSize <= format.diskCapacity) return;
     
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSError *error;
-    NSURL *directoryURL = [NSURL fileURLWithPath:format.directory];
-    
-    NSArray *contents = [fileManager contentsOfDirectoryAtURL:directoryURL includingPropertiesForKeys:@[NSURLContentModificationDateKey] options:kNilOptions error:&error];
-    if (!contents)
-    {
-        NSLog(@"Failed to list directory with error %@", error);
-        return;
-    }
-    contents = [contents sortedArrayUsingComparator:^NSComparisonResult(NSURL *url1, NSURL *url2) {
-        NSDate *date1;
-        [url1 getResourceValue:&date1 forKey:NSURLContentModificationDateKey error:nil];
-        NSDate *date2;
-        [url2 getResourceValue:&date2 forKey:NSURLContentModificationDateKey error:nil] ;
-        return [date1 compare:date2];
-    }];
-    [contents enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
+    [fileManager hnk_enumerateContentsOfDirectoryAtPath:format.directory orderedByProperty:NSURLContentModificationDateKey ascending:YES usingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
         NSString *path = url.path;
         [self removeFileAtPath:path format:format];
         if (format.diskSize <= format.diskCapacity)
@@ -538,6 +528,31 @@
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return newImage;
+}
+
+@end
+
+@implementation NSFileManager(hnk_utils)
+
+- (void)hnk_enumerateContentsOfDirectoryAtPath:(NSString*)path orderedByProperty:(NSString*)property ascending:(BOOL)ascending usingBlock:(void(^)(NSURL *url, NSUInteger idx, BOOL *stop))block
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSURL *directoryURL = [NSURL fileURLWithPath:path];
+    NSError *error;
+    NSArray *contents = [fileManager contentsOfDirectoryAtURL:directoryURL includingPropertiesForKeys:@[property] options:kNilOptions error:&error];
+    if (!contents)
+    {
+        NSLog(@"Failed to list directory with error %@", error);
+        return;
+    }
+    contents = [contents sortedArrayUsingComparator:^NSComparisonResult(NSURL *url1, NSURL *url2) {
+        id value1;
+        [url1 getResourceValue:&value1 forKey:property error:nil];
+        id value2;
+        [url2 getResourceValue:&value2 forKey:property error:nil] ;
+        return ascending ? [value1 compare:value2] : [value2 compare:value1];
+    }];
+    [contents enumerateObjectsUsingBlock:block];
 }
 
 @end
