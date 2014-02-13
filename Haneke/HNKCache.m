@@ -562,40 +562,29 @@
 
 - (CGSize)hnk_aspectFillSizeForSize:(CGSize)size
 {
-    CGFloat targetAspect = size.width / size.height;
-    CGFloat sourceAspect = self.size.width / self.size.height;
-    CGSize result = CGSizeZero;
-    
-    if (targetAspect > sourceAspect)
-    {
-        result.height = size.height;
-        result.width = result.height * sourceAspect;
-    }
-    else
-    {
-        result.height = size.height;
-        result.width = result.height * sourceAspect;
-    }
-    return CGSizeMake(ceil(result.width), ceil(result.height));
+    const CGFloat scaleWidth = size.width / self.size.width;
+    const CGFloat scaleHeight = size.height / self.size.height;
+    const CGFloat scale = MAX(scaleWidth, scaleHeight);
+    CGSize resultSize;
+    resultSize.width = self.size.width * scale;
+    resultSize.height = self.size.height * scale;
+    return CGSizeMake(ceil(resultSize.width), ceil(resultSize.height));
 }
 
 - (CGSize)hnk_aspectFitSizeForSize:(CGSize)size
 {
-    CGFloat targetAspect = size.width / size.height;
-    CGFloat sourceAspect = self.size.width / self.size.height;
-    CGSize result = CGSizeZero;
-    
+    const CGFloat targetAspect = size.width / size.height;
+    const CGFloat sourceAspect = self.size.width / self.size.height;
+    CGSize resultSize = size;
     if (targetAspect > sourceAspect)
     {
-        result.height = size.height;
-        result.width = result.height * sourceAspect;
+        resultSize.width = size.height * sourceAspect;
     }
     else
     {
-        result.width = size.width;
-        result.height = result.width / sourceAspect;
+        resultSize.height = size.width / sourceAspect;
     }
-    return CGSizeMake(ceil(result.width), ceil(result.height));
+    return CGSizeMake(ceil(resultSize.width), ceil(resultSize.height));
 }
 
 - (UIImage *)hnk_imageByScalingToSize:(CGSize)newSize
