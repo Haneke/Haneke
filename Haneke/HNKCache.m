@@ -265,6 +265,7 @@
 - (void)clearFormatNamed:(NSString*)formatName
 {
     HNKCacheFormat *format = _formats[formatName];
+    if (!format) return;
     NSCache *cache = [_memoryCaches objectForKey:formatName];
     [cache removeAllObjects];
     NSString *directory = format.directory;
