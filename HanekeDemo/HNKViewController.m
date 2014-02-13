@@ -20,12 +20,12 @@
 + (void)initialize
 {
     HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"thumbnail"];
-    format.compressionQuality = 0.5;
-    format.allowUpscaling = YES; // Default NO
-    format.diskCapacity = 0.5 * 1024 * 1024;
-    format.preloadPolicy = HNKPreloadPolicyLastSession; // Default HNKPreloadPolicyNone
-    format.scaleMode = HNKScaleModeAspectFill;
-    format.size = CGSizeMake(100, 100);
+    format.compressionQuality = 0.5; // UIImageView category default: 0.75, -[HNKCacheFormat initWithName:] default: 1.
+    format.allowUpscaling = YES; // UIImageView category default: YES, -[HNKCacheFormat initWithName:] default: NO.
+    format.diskCapacity = 0.5 * 1024 * 1024; // UIImageView category default: 10 * 1024 * 1024 (10MB), -[HNKCacheFormat initWithName:] default: 0 (no disk cache).
+    format.preloadPolicy = HNKPreloadPolicyLastSession; // Default: HNKPreloadPolicyNone.
+    format.scaleMode = HNKScaleModeAspectFill; // UIImageView category default: -[UIImageView contentMode], -[HNKCacheFormat initWithName:] default: HNKScaleModeFill.
+    format.size = CGSizeMake(100, 100); // // UIImageView category default: -[UIImageView bounds].size, -[HNKCacheFormat initWithName:] default: CGSizeZero.
     [[HNKCache sharedCache] registerFormat:format];
 }
 
