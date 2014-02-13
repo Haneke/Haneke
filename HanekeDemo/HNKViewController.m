@@ -50,14 +50,14 @@
 
 - (NSInteger)collectionView:(UICollectionView *)view numberOfItemsInSection:(NSInteger)section
 {
-    return MIN(_items.count, 1);
+    return _items.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)cv cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
     HNKDemoCollectionViewCell *cell = [cv dequeueReusableCellWithReuseIdentifier:CellIdentifier forIndexPath:indexPath];
-    NSString *path = _items[12];
+    NSString *path = _items[indexPath.row];
     if (HNK_USE_CUSTOM_FORMAT)
     {
         cell.imageView.hnk_cacheFormat = [HNKCache sharedCache].formats[@"thumbnail"];
