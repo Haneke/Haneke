@@ -27,6 +27,7 @@
 @property (nonatomic, assign) unsigned long long diskSize;
 @property (nonatomic, weak) HNKCache *cache;
 @property (nonatomic, readonly) NSString *directory;
+@property (nonatomic, strong) dispatch_queue_t diskQueue;
 
 @end
 
@@ -41,7 +42,6 @@
     NSMutableDictionary *_memoryCaches;
     NSMutableDictionary *_formats;
     NSString *_rootDirectory;
-    dispatch_queue_t _diskQueue;
 }
 
 #pragma mark Initializing the cache
@@ -58,7 +58,6 @@
         static NSString *cachePathComponent = @"com.hpique.haneke";
         NSString *path = [cachesDirectory stringByAppendingPathComponent:cachePathComponent];
         _rootDirectory = [path stringByAppendingPathComponent:name];
-        _diskQueue = dispatch_queue_create("com.hpique.haneke.disk", NULL);
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveMemoryWarning:) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
     }
@@ -82,13 +81,16 @@
 
 - (void)registerFormat:(HNKCacheFormat *)format
 {
-    if (_formats[format.name])
+    NSString *formatName = format.name;
+    if (_formats[formatName])
     {
-        [self clearFormatNamed:format.name];
+        [self clearFormatNamed:formatName];
     }
-    _formats[format.name] = format;
+    _formats[formatName] = format;
     format.cache = self;
-    dispatch_async(_diskQueue, ^{
+    NSString *queueName = [NSString stringWithFormat:@"com.hpique.haneke.disk.%@", formatName];
+    format.diskQueue = dispatch_queue_create(queueName.UTF8String, NULL);
+    dispatch_async(format.diskQueue, ^{
         [self calculateDiskSizeOfFormat:format];
         [self controlDiskCapacityOfFormat:format];
     });
@@ -110,7 +112,7 @@
     UIImage *image = [self imageForKey:key format:format];
     if (image)
     {
-        dispatch_async(_diskQueue, ^{
+        dispatch_async(format.diskQueue, ^{
             [self updateAccessDateOfImage:image key:key format:format];
         });
         return image;
@@ -118,7 +120,7 @@
 
     NSString *path = [self pathForKey:key format:format];
     __block NSData *imageData;
-    dispatch_sync(_diskQueue, ^{
+    dispatch_sync(format.diskQueue, ^{
         imageData = [NSData dataWithContentsOfFile:path];
     });
     if (imageData)
@@ -126,7 +128,7 @@
         image = [UIImage imageWithData:imageData scale:[UIScreen mainScreen].scale]; // Do not use imageWithContentsOfFile: as it doesn't consider scale
         if (image)
         {
-            dispatch_async(_diskQueue, ^{
+            dispatch_async(format.diskQueue, ^{
                 [self updateAccessDateOfImage:image key:key format:format];
             });
             [self setImage:image forKey:key format:format];
@@ -142,7 +144,7 @@
     }
     image = [format resizedImageFromImage:originalImage];
     [self setImage:image forKey:key format:format];
-    dispatch_async(_diskQueue, ^{
+    dispatch_async(format.diskQueue, ^{
         [self saveImage:image key:key format:format];
     });
     return image;
@@ -178,7 +180,7 @@
             dispatch_sync(dispatch_get_main_queue(), ^{
                 completionBlock(entity, formatName, image);
             });
-            dispatch_sync(_diskQueue, ^{
+            dispatch_sync(format.diskQueue, ^{
                 [self saveImage:image key:key format:format];
             });
         });
@@ -194,7 +196,7 @@
     if (image)
     {
         completionBlock(key, formatName, image);
-        dispatch_async(_diskQueue, ^{
+        dispatch_async(format.diskQueue, ^{
             [self updateAccessDateOfImage:image key:key format:format];
         });
         return YES;
@@ -203,7 +205,7 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSString *path = [self pathForKey:key format:format];
         __block NSData *imageData;
-        dispatch_sync(_diskQueue, ^{
+        dispatch_sync(format.diskQueue, ^{
             imageData = [NSData dataWithContentsOfFile:path];
         });
         UIImage *image;
@@ -213,7 +215,7 @@
                 completionBlock(key, formatName, image);
             });
             [self setImage:image forKey:key format:format];
-            dispatch_sync(_diskQueue, ^{
+            dispatch_sync(format.diskQueue, ^{
                 [self updateAccessDateOfImage:image key:key format:format];
             });
         }
@@ -235,7 +237,7 @@
     NSAssert(format, @"Unknown format %@", formatName);
     
     [self setImage:image forKey:key format:format];
-    dispatch_sync(_diskQueue, ^{
+    dispatch_sync(format.diskQueue, ^{
         [self saveImage:image key:key format:format];
     });
 }
@@ -248,7 +250,7 @@
     NSCache *cache = [_memoryCaches objectForKey:formatName];
     [cache removeAllObjects];
     NSString *directory = format.directory;
-    dispatch_async(_diskQueue, ^{
+    dispatch_async(format.diskQueue, ^{
         NSError *error;
         if ([[NSFileManager defaultManager] removeItemAtPath:directory error:&error])
         {
@@ -275,13 +277,13 @@
     [_memoryCaches enumerateKeysAndObjectsUsingBlock:^(id key, NSCache *cache, BOOL *stop) {
         [cache removeObjectForKey:cacheKey];
     }];
-    dispatch_async(_diskQueue, ^{
-        NSDictionary *formats = _formats.copy;
-        [formats enumerateKeysAndObjectsUsingBlock:^(id key, HNKCacheFormat *format, BOOL *stop) {
+    NSDictionary *formats = _formats.copy;
+    [formats enumerateKeysAndObjectsUsingBlock:^(id key, HNKCacheFormat *format, BOOL *stop) {
+        dispatch_async(format.diskQueue, ^{
             NSString *path = [self pathForKey:cacheKey format:format];
             [self removeFileAtPath:path format:format];
-        }];
-    });
+        });
+    }];
 }
 
 #pragma mark Private (utils)
