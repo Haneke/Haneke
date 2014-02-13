@@ -221,7 +221,7 @@
     return NO;
 }
 
-#pragma mark - Setting images
+#pragma mark Setting images
 
 - (void)setImage:(UIImage*)image forKey:(NSString*)key formatName:(NSString*)formatName
 {
@@ -297,13 +297,14 @@
 
 - (void)setImage:(UIImage*)image forKey:(NSString*)key format:(HNKCacheFormat*)format
 {
-    NSCache *cache = _memoryCaches[format.name];
+    NSString *formatName = format.name;
+    NSCache *cache = _memoryCaches[formatName];
     if (!cache)
     {
         cache = [[NSCache alloc] init];
-        _memoryCaches[key] = cache;
+        _memoryCaches[formatName] = cache;
     }
-    return [cache setObject:image forKey:key];
+    [cache setObject:image forKey:key];
 }
 
 #pragma mark Private (disk)
