@@ -2,36 +2,54 @@ Haneke
 ======
 [![Build Status](https://travis-ci.org/hpique/Haneke.png)](https://travis-ci.org/hpique/Haneke)
 
-A lightweight zero-config image cache for iOS apps that display images in various sizes. Getting or creating an appropiately sized image is as simple as:
+###### A lightweight zero-config image cache for iOS. 
+
+Haneke resizes images and caches the result on memory and disk. Everything is done in background, allowing for fast, responsive scrolling. Asking Haneke to produce and cache an appropiately sized image for an `UIImageView` is as simple as:
 
 
 ```objective-c
-[imageView hnk_setImageFromPath:path];
+[imageView hnk_setImageFromFile:path];
 ```
 
 _Really._
 
-The above line takes care of:
-
-* If cached, retreiving an appropiately sized image (based on the `bounds` and `contentMode` of the `UIImageView`) from the memory or disk cache. Disk access is performed in background.
-* If not cached, reading the original image from disk and creating an appropiately sized image, both in background.
-* Setting the image and animating the change if appropiate.
-* Caching the resulting image.
-* If needed, evicting the least recently used images in the cache.
-
 ##Features
 
-* First-level in-memory cache using `NSCache`.
+* First-level memory cache using `NSCache`.
 * Second-level LRU disk cache using the file system.
 * Asynchronous and synchronous image retrieval.
 * Background image resizing and file reading.
+* Thread-safe.
 * Automatic cache eviction on memory warnings or disk capacity reached.
+* Preloading images from the disk cache into memory on startup.
 * Zero-config `UIImageView` category to use the cache, optimized for `UITableView` and `UICollectionView` cell reuse.
 
 ##Add Haneke to your project
 
 1. Add the [Haneke](https://github.com/hpique/Haneke/tree/master/Haneke) folder to your project.
 2. Profit!
+
+##UIImageView category
+
+Haneke provides convenience methods for `UIImageView` with optimizations for `UITableView` and `UICollectionView` cell reuse. Images will be resized appropiately and cached.
+
+```
+// Setting an image from disk
+[imageView hnk_setImageFromFile:path];
+
+// Setting an image manually. Requires you to provide a key.
+[imageView hnk_setImage:image withKey:key];
+```
+
+The above lines takes care of:
+
+* If cached, retreiving an appropiately sized image (based on the `bounds` and `contentMode` of the `UIImageView`) from the memory or disk cache. Disk access is performed in background.
+* If not cached, reading the original image from disk/memory and producing an appropiately sized image, both in background.
+* Setting the image and animating the change if appropiate.
+* Or doing nothing if the `UIImageView` was reused before finishing retreiving the image.
+* Caching the resulting image.
+* If needed, evicting the least recently used images in the cache.
+
 
 
 ##Requirements
