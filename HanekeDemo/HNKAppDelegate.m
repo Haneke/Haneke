@@ -15,8 +15,7 @@
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
-    HNKViewController *vc = [HNKViewController new];
-    self.window.rootViewController = vc;
+    self.window.rootViewController = [HNKViewController viewController];
     [self.window makeKeyAndVisible];
     return YES;
 }

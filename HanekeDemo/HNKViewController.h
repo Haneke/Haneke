@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface HNKViewController : UITableViewController
+@interface HNKViewController : UICollectionViewController
+
++ (HNKViewController*)viewController;
 
 @end

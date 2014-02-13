@@ -29,6 +29,8 @@
 		876E5F2018AB762600B4EAF6 /* UIImageView+Haneke.m in Sources */ = {isa = PBXBuildFile; fileRef = 876E5F1F18AB762600B4EAF6 /* UIImageView+Haneke.m */; };
 		876E5F2118AB831500B4EAF6 /* UIImageView+Haneke.m in Sources */ = {isa = PBXBuildFile; fileRef = 876E5F1F18AB762600B4EAF6 /* UIImageView+Haneke.m */; };
 		87F47BAE18AC123C00F1FB48 /* UIImageView+HanekeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F47BAD18AC123C00F1FB48 /* UIImageView+HanekeTests.m */; };
+		87F47BB618AD436700F1FB48 /* UIImage+HanekeDemo.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F47BB518AD436700F1FB48 /* UIImage+HanekeDemo.m */; };
+		87F47BB918AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F47BB818AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,6 +88,10 @@
 		876E5F1E18AB762600B4EAF6 /* UIImageView+Haneke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+Haneke.h"; sourceTree = "<group>"; };
 		876E5F1F18AB762600B4EAF6 /* UIImageView+Haneke.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+Haneke.m"; sourceTree = "<group>"; };
 		87F47BAD18AC123C00F1FB48 /* UIImageView+HanekeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+HanekeTests.m"; sourceTree = "<group>"; };
+		87F47BB418AD436700F1FB48 /* UIImage+HanekeDemo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+HanekeDemo.h"; sourceTree = "<group>"; };
+		87F47BB518AD436700F1FB48 /* UIImage+HanekeDemo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+HanekeDemo.m"; sourceTree = "<group>"; };
+		87F47BB718AD4D0400F1FB48 /* HNKDemoCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKDemoCollectionViewCell.h; sourceTree = "<group>"; };
+		87F47BB818AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKDemoCollectionViewCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -188,13 +194,17 @@
 		873E22F718AA90F000E7919C /* HanekeDemo */ = {
 			isa = PBXGroup;
 			children = (
-				873E232518AA992500E7919C /* sample.jpg */,
 				873E230018AA90F000E7919C /* HNKAppDelegate.h */,
 				873E230118AA90F000E7919C /* HNKAppDelegate.m */,
+				87F47BB718AD4D0400F1FB48 /* HNKDemoCollectionViewCell.h */,
+				87F47BB818AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m */,
 				873E231D18AA915300E7919C /* HNKViewController.h */,
 				873E231E18AA915300E7919C /* HNKViewController.m */,
 				873E230318AA90F000E7919C /* Images.xcassets */,
+				873E232518AA992500E7919C /* sample.jpg */,
 				873E22F818AA90F000E7919C /* Supporting Files */,
+				87F47BB418AD436700F1FB48 /* UIImage+HanekeDemo.h */,
+				87F47BB518AD436700F1FB48 /* UIImage+HanekeDemo.m */,
 			);
 			path = HanekeDemo;
 			sourceTree = "<group>";
@@ -381,7 +391,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				873E230218AA90F000E7919C /* HNKAppDelegate.m in Sources */,
+				87F47BB918AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m in Sources */,
 				876E5F2118AB831500B4EAF6 /* UIImageView+Haneke.m in Sources */,
+				87F47BB618AD436700F1FB48 /* UIImage+HanekeDemo.m in Sources */,
 				873E22FE18AA90F000E7919C /* main.m in Sources */,
 				873E231F18AA915300E7919C /* HNKViewController.m in Sources */,
 				873E232418AA982F00E7919C /* HNKCache.m in Sources */,
