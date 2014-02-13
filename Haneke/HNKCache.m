@@ -28,6 +28,7 @@
 @property (nonatomic, weak) HNKCache *cache;
 @property (nonatomic, readonly) NSString *directory;
 @property (nonatomic, strong) dispatch_queue_t diskQueue;
+@property (nonatomic, assign) NSUInteger requestCount;
 
 @end
 
@@ -93,6 +94,7 @@
     dispatch_async(format.diskQueue, ^{
         [self calculateDiskSizeOfFormat:format];
         [self controlDiskCapacityOfFormat:format];
+        [self preloadImageOfFormat:format];
     });
 }
 
@@ -107,6 +109,7 @@
 {
     HNKCacheFormat *format = _formats[formatName];
     NSAssert(format, @"Unknown format %@", formatName);
+    format.requestCount++;
     
     NSString *key = entity.cacheKey;
     UIImage *image = [self imageForKey:key format:format];
@@ -191,6 +194,7 @@
 {
     HNKCacheFormat *format = _formats[formatName];
     NSAssert(format, @"Unknown format %@", formatName);
+    format.requestCount++;
     
     UIImage *image = [self imageForKey:key format:format];
     if (image)
@@ -351,6 +355,40 @@
         {
             *stop = YES;
         }
+    }];
+}
+
+- (void)preloadImageOfFormat:(HNKCacheFormat*)format
+{
+    HNKPreloadPolicy preloadPolicy = format.preloadPolicy;
+    if (preloadPolicy == HNKPreloadPolicyNone) return;
+    
+    NSString *directory = format.directory;
+    __block NSDate *maxDate = preloadPolicy == HNKPreloadPolicyAll ? [NSDate distantPast] : nil;
+    [[NSFileManager defaultManager] hnk_enumerateContentsOfDirectoryAtPath:directory orderedByProperty:NSURLContentModificationDateKey ascending:NO usingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
+        if (format.requestCount > 0)
+        {
+            *stop = YES;
+            return;
+        }
+        NSDate *urlDate;
+        [url getResourceValue:&urlDate forKey:NSURLContentModificationDateKey error:nil];
+        if (!maxDate)
+        {
+            static const NSTimeInterval hourInterval = 3600;
+            maxDate = [urlDate dateByAddingTimeInterval:-hourInterval];
+        }
+        if ([urlDate earlierDate:maxDate] == urlDate)
+        {
+            *stop = YES;
+            return;
+        }
+        NSString *path = url.path;
+        UIImage *image = [UIImage imageWithContentsOfFile:path];
+        NSString *key = [path lastPathComponent];
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [self setImage:image forKey:key format:format];
+        });
     }];
 }
 

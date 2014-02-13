@@ -26,6 +26,7 @@
     _customFormat.compressionQuality = 0.5;
     _customFormat.size = CGSizeMake(100, 100);
     _customFormat.scaleMode = HNKScaleModeAspectFill;
+    _customFormat.preloadPolicy = HNKPreloadPolicyLastSession;
     [[HNKCache sharedCache] registerFormat:_customFormat];
 }
 

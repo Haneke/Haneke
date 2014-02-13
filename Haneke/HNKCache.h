@@ -30,8 +30,9 @@
 + (HNKCache*)sharedCache;
 
 /**
- Registers a format in the cache. The cache will automatically update the diskSize of the format as images are added. If a format with the same name already exists in the cache, it will be cleared first.
+ Registers a format in the cache. Haneke will automatically update the diskSize of the format as images are added. If a format with the same name already exists in the cache, it will be cleared first.
  @param The format to be registered in the cache.
+ @discussion If the format preload policy allows it, Haneke will add some or all images cached on disk to the memory cache while there is no user activity.
  @discussion A format can only be registered in one cache.
  */
 - (void)registerFormat:(HNKCacheFormat*)format;
@@ -131,6 +132,13 @@ typedef NS_ENUM(NSInteger, HNKScaleMode)
     HNKScaleModeAspectFill = UIViewContentModeScaleAspectFill
 };
 
+typedef NS_ENUM(NSInteger, HNKPreloadPolicy)
+{
+    HNKPreloadPolicyNone,
+    HNKPreloadPolicyLastSession,
+    HNKPreloadPolicyAll
+};
+
 /**
  Image cache format. Defines the transformation applied to images as well as cache policies such as disk capacity.
  */
@@ -140,30 +148,41 @@ typedef NS_ENUM(NSInteger, HNKScaleMode)
  Allow upscalling. Images smaller than the format size will be upscaled if set to YES. NO by default.
  */
 @property (nonatomic, assign) BOOL allowUpscaling;
+
 /**
  The quality of the resulting JPEG image, expressed as a value from 0.0 to 1.0. The value 0.0 represents the maximum compression (or lowest quality) while the value 1.0 represents the least compression (or best quality). 1.0 by default.
  */
 @property (nonatomic, assign) CGFloat compressionQuality;
+
 /**
  Format name. Used by the cache as the directory name for the disk cache of the format.
  */
 @property (nonatomic, readonly) NSString *name;
+
 /**
  Format image size. Images will be scaled to fit or fill this size based on scaleMode.
  */
 @property (nonatomic, assign) CGSize size;
+
 /**
  Format scale mode. Determines if images will fit or fill the format size, and if the aspect ratio will be mantained or not. HNKScaleModeFill by default.
  */
 @property (nonatomic, assign) HNKScaleMode scaleMode;
+
 /**
- The disk cache capacity for the format. If 0 the cache will only use memory. 0 by default.
+ The disk cache capacity for the format. If 0 Haneke will only use memory cache. 0 by default.
  */
 @property (nonatomic, assign) unsigned long long diskCapacity;
+
 /**
  Current size in bytes of the disk cache used by the format.
  */
 @property (nonatomic, readonly) unsigned long long diskSize;
+
+/**
+ Preload policy. If set, Haneke will add some or all images cached on disk to the memory cache. HNKPreloadPolicyNone by default.
+ */
+@property (nonatomic, assign) HNKPreloadPolicy preloadPolicy;
 
 /** Initializes a format with the given name.
  @param name Name of the format.
