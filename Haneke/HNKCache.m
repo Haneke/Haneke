@@ -221,6 +221,19 @@
     return NO;
 }
 
+#pragma mark - Setting images
+
+- (void)setImage:(UIImage*)image forKey:(NSString*)key formatName:(NSString*)formatName
+{
+    HNKCacheFormat *format = _formats[formatName];
+    NSAssert(format, @"Unknown format %@", formatName);
+    
+    [self setImage:image forKey:key format:format];
+    dispatch_sync(_diskQueue, ^{
+        [self saveImage:image key:key format:format];
+    });
+}
+
 #pragma mark Removing images
 
 - (void)clearFormatNamed:(NSString*)formatName
@@ -371,16 +384,23 @@
 {
     if (format.diskCapacity == 0) return;
     
-    NSData *resizedImageData = UIImageJPEGRepresentation(image, format.compressionQuality);
     NSString *path = [self pathForKey:key format:format];
-    NSError *error;
-    if (![resizedImageData writeToFile:path options:kNilOptions error:&error])
+    if (image)
     {
-        NSLog(@"Failed to write to file %@", error);
+        NSData *imageData = UIImageJPEGRepresentation(image, format.compressionQuality);
+        NSError *error;
+        if (![imageData writeToFile:path options:kNilOptions error:&error])
+        {
+            NSLog(@"Failed to write to file %@", error);
+        }
+        NSUInteger byteCount = imageData.length;
+        format.diskSize += byteCount;
+        [self controlDiskCapacityOfFormat:format];
     }
-    NSUInteger byteCount = resizedImageData.length;
-    format.diskSize += byteCount;
-    [self controlDiskCapacityOfFormat:format];
+    else
+    {
+        [self removeFileAtPath:path format:format];
+    }
 }
 
 - (void)updateAccessDateOfImage:(UIImage*)image key:(NSString*)key format:(HNKCacheFormat*)format

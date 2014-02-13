@@ -72,6 +72,21 @@
  */
 - (BOOL)retrieveImageForKey:(NSString*)key formatName:(NSString *)formatName completionBlock:(void(^)(NSString *key, NSString *formatName, UIImage *image))completionBlock;
 
+#pragma mark Setting images
+///---------------------------------------------
+/// @name Setting images
+///---------------------------------------------
+
+/**
+ Sets the image of the given key for the given format. The image is added to the memory cache and the disk cache if the format allows it.
+ @param image Image to add to the cache. Can be nil, in which case the current image associated to the given key and format will be removed.
+ @param key Image cache key.
+ @param formatName Name of the format of the given image.
+ @discussion You can use this method to pre-populate the cache, invalidate a specific image or to add resized images obtained elsewhere (e.g., a web service that generates thumbnails). In other cases, it's best to let the cache create the resized images.
+ @warning The image size should match the format. This method won't validate this.
+ */
+- (void)setImage:(UIImage*)image forKey:(NSString*)key formatName:(NSString*)formatName;
+
 #pragma mark Removing images
 ///---------------------------------------------
 /// @name Removing images
