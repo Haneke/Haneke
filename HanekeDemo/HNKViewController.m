@@ -20,11 +20,12 @@
 + (void)initialize
 {
     HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"thumbnail"];
-    format.diskCapacity = 0.1 * 1024 * 1024;
     format.compressionQuality = 0.5;
-    format.size = CGSizeMake(100, 100);
+    format.allowUpscaling = YES; // Default NO
+    format.diskCapacity = 0.5 * 1024 * 1024;
+    format.preloadPolicy = HNKPreloadPolicyLastSession; // Default HNKPreloadPolicyNone
     format.scaleMode = HNKScaleModeAspectFill;
-    format.preloadPolicy = HNKPreloadPolicyLastSession;
+    format.size = CGSizeMake(100, 100);
     [[HNKCache sharedCache] registerFormat:format];
 }
 
