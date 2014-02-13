@@ -413,8 +413,9 @@
             return;
         }
         NSString *path = url.path;
-        NSLog(@"%@", path);
-        UIImage *image = [UIImage imageWithContentsOfFile:path];
+        NSData *data = [NSData dataWithContentsOfFile:path];
+        if (!data) return;
+        UIImage *image = [UIImage imageWithData:data scale:[UIScreen mainScreen].scale];
         if (!image) return;
         NSString *key = [self keyFromPath:path];
         dispatch_sync(dispatch_get_main_queue(), ^{
