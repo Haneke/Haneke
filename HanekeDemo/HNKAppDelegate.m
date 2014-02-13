@@ -28,7 +28,7 @@
     for (NSUInteger i = 0; i < 100; i++)
     {
         @autoreleasepool {
-            NSLog(@"Creating image %ld of %d", (long)i, 100);
+            NSLog(@"Creating image %ld of %d", (long)i + 1, 100);
             UIImage *image = [self imageWithIndex:i];
             NSData *data = UIImageJPEGRepresentation(image, 1);
             NSString *fileName = [NSString stringWithFormat:@"sample%ld.jpg", (long)i];
