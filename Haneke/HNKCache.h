@@ -65,12 +65,12 @@
 
 /**
  Retrieves an image from the cache. If the image exists in the memory cache, the completion block will be executed synchronously. If the image exists in the disk cache, the completion block will be executed asynchronously.
- @param cacheId Image identifier in the cache.
+ @param key Image cache key.
  @param formatName Name of the format in which the image is desired. The format must have been previously registered with the cache.
  @param completionBlock The block to be called with the requested image. Always called from the main queue. Will be called synchronously if the image exists in the memory cache, or asynchronously if the image exists in the disk cache.
  @return YES if image exists in the memory cache (and thus, the completion block was called synchronously), NO otherwise.
  */
-- (BOOL)retrieveImageFromCacheWithId:(NSString*)cacheId formatName:(NSString *)formatName completionBlock:(void(^)(NSString *cacheId, NSString *formatName, UIImage *image))completionBlock;
+- (BOOL)retrieveImageForKey:(NSString*)key formatName:(NSString *)formatName completionBlock:(void(^)(NSString *key, NSString *formatName, UIImage *image))completionBlock;
 
 #pragma mark Removing images
 ///---------------------------------------------
@@ -93,10 +93,10 @@
 @protocol HNKCacheEntity <NSObject>
 
 /** 
- Return an identifier for the original image associated with the entity.
- @discussion If two different entities have the same image, they should return the same cache id for better performance.
+ Return a key for the original image associated with the entity.
+ @discussion If two different entities have the same image, they should return the same key for better performance.
  */
-@property (nonatomic, readonly) NSString *cacheId;
+@property (nonatomic, readonly) NSString *cacheKey;
 /**
  Return the original image associated with the entity, or nil to use cacheOriginalData instead.
  */

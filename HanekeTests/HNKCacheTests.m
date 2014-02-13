@@ -61,7 +61,7 @@
 - (void)testImageForEntity_Image
 {
     UIImage *image = [HNKCacheTests imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
-    id entity = [HNKCacheTests entityWithId:@"1" data:nil image:image];
+    id entity = [HNKCacheTests entityWithKey:@"1" data:nil image:image];
     HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
     
     UIImage *result = [_cache imageForEntity:entity formatName:format.name];
@@ -75,7 +75,7 @@
 {
     UIImage *image = [HNKCacheTests imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
     NSData *data = UIImagePNGRepresentation(image);
-    id entity = [HNKCacheTests entityWithId:@"1" data:data image:nil];
+    id entity = [HNKCacheTests entityWithKey:@"1" data:data image:nil];
     HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
     
     UIImage *result = [_cache imageForEntity:entity formatName:format.name];
@@ -95,10 +95,10 @@
     return format;
 }
 
-+ (id)entityWithId:(NSString*)entityId data:(NSData*)data image:(UIImage*)image
++ (id)entityWithKey:(NSString*)key data:(NSData*)data image:(UIImage*)image
 {
     id entity = [OCMockObject mockForProtocol:@protocol(HNKCacheEntity)];
-    [[[entity stub] andReturn:entityId] cacheId];
+    [[[entity stub] andReturn:key] cacheKey];
     [[[entity stub] andReturn:data] cacheOriginalData];
     [[[entity stub] andReturn:image] cacheOriginalImage];
     return entity;

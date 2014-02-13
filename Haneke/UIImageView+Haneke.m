@@ -31,11 +31,11 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 - (void)hnk_setImageFromFile:(NSString*)path
 {
-    self.hnk_lastCacheId = path;
+    self.hnk_lastCacheKey = path;
     HNKCacheFormat *format = self.hnk_cacheFormat;
     __block BOOL animated = NO;
-    [[HNKCache sharedCache] retrieveImageFromCacheWithId:path formatName:format.name completionBlock:^(NSString *cacheId, NSString *formatName, UIImage *image) {
-        if (![self.hnk_lastCacheId isEqualToString:cacheId]) return;
+    [[HNKCache sharedCache] retrieveImageForKey:path formatName:format.name completionBlock:^(NSString *key, NSString *formatName, UIImage *image) {
+        if (![self.hnk_lastCacheKey isEqualToString:key]) return;
         
         if (image)
         {
@@ -63,7 +63,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 - (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity
 {
-    self.hnk_lastCacheId = entity.cacheId;
+    self.hnk_lastCacheKey = entity.cacheKey;
     [self hnk_retrieveImageFromEntity:entity];
 }
 
@@ -110,7 +110,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     HNKCacheFormat *format = self.hnk_cacheFormat;
     __block BOOL animated = NO;
     [[HNKCache sharedCache] retrieveImageForEntity:entity formatName:format.name completionBlock:^(id<HNKCacheEntity> entity, NSString *formatName, UIImage *image) {
-        if (![self.hnk_lastCacheId isEqualToString:entity.cacheId]) return;
+        if (![self.hnk_lastCacheKey isEqualToString:entity.cacheKey]) return;
         
         [self hnk_setImage:image animated:animated];
     }];
@@ -148,14 +148,14 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     }
 }
 
-- (NSString*)hnk_lastCacheId
+- (NSString*)hnk_lastCacheKey
 {
-    return (NSString *)objc_getAssociatedObject(self, @selector(hnk_lastCacheId));
+    return (NSString *)objc_getAssociatedObject(self, @selector(hnk_lastCacheKey));
 }
 
-- (void)setHnk_lastCacheId:(NSString*)cacheId
+- (void)setHnk_lastCacheKey:(NSString*)cacheKey
 {
-    objc_setAssociatedObject(self, @selector(hnk_lastCacheId), cacheId, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, @selector(hnk_lastCacheKey), cacheKey, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 @end
@@ -173,7 +173,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     return entity;
 }
 
-- (NSString*)cacheId
+- (NSString*)cacheKey
 {
     return _key;
 }

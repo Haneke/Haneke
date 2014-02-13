@@ -100,17 +100,17 @@
     HNKCacheFormat *format = _formats[formatName];
     NSAssert(format, @"Unknown format %@", formatName);
     
-    NSString *entityId = entity.cacheId;
-    UIImage *image = [self imageForEntityId:entityId format:format];
+    NSString *key = entity.cacheKey;
+    UIImage *image = [self imageForKey:key format:format];
     if (image)
     {
         dispatch_async(_diskQueue, ^{
-            [self updateAccessDateOfImage:image entityId:entityId format:format];
+            [self updateAccessDateOfImage:image key:key format:format];
         });
         return image;
     }
 
-    NSString *path = [self pathForEntityId:entityId format:format];
+    NSString *path = [self pathForKey:key format:format];
     __block NSData *imageData;
     dispatch_sync(_diskQueue, ^{
         imageData = [NSData dataWithContentsOfFile:path];
@@ -121,9 +121,9 @@
         if (image)
         {
             dispatch_async(_diskQueue, ^{
-                [self updateAccessDateOfImage:image entityId:entityId format:format];
+                [self updateAccessDateOfImage:image key:key format:format];
             });
-            [self setImage:image forEntityId:entityId format:format];
+            [self setImage:image forKey:key format:format];
             return image;
         }
     }
@@ -135,17 +135,17 @@
         originalImage = [UIImage imageWithData:originalData scale:[UIScreen mainScreen].scale];
     }
     image = [format resizedImageFromImage:originalImage];
-    [self setImage:image forEntityId:entityId format:format];
+    [self setImage:image forKey:key format:format];
     dispatch_async(_diskQueue, ^{
-        [self saveImage:image entityId:entityId format:format];
+        [self saveImage:image key:key format:format];
     });
     return image;
 }
 
 - (BOOL)retrieveImageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName completionBlock:(void(^)(id<HNKCacheEntity> entity, NSString *format, UIImage *image))completionBlock
 {
-    NSString *entityId = entity.cacheId;
-    return [self retrieveImageFromCacheWithId:entityId formatName:formatName completionBlock:^(NSString *cacheId, NSString *formatName, UIImage *image) {
+    NSString *key = entity.cacheKey;
+    return [self retrieveImageForKey:key formatName:formatName completionBlock:^(NSString *key, NSString *formatName, UIImage *image) {
         if (image)
         {
             completionBlock(entity, formatName, image);
@@ -167,35 +167,35 @@
             }
             UIImage *image = [format resizedImageFromImage:originalImage];
             dispatch_sync(dispatch_get_main_queue(), ^{
-                [self setImage:image forEntityId:entityId format:format];
+                [self setImage:image forKey:key format:format];
             });
             dispatch_sync(dispatch_get_main_queue(), ^{
                 completionBlock(entity, formatName, image);
             });
             dispatch_sync(_diskQueue, ^{
-                [self saveImage:image entityId:entityId format:format];
+                [self saveImage:image key:key format:format];
             });
         });
     }];
 }
 
-- (BOOL)retrieveImageFromCacheWithId:(NSString*)cacheId formatName:(NSString *)formatName completionBlock:(void(^)(NSString *cacheId, NSString *formatName, UIImage *image))completionBlock
+- (BOOL)retrieveImageForKey:(NSString*)key formatName:(NSString *)formatName completionBlock:(void(^)(NSString *key, NSString *formatName, UIImage *image))completionBlock
 {
     HNKCacheFormat *format = _formats[formatName];
     NSAssert(format, @"Unknown format %@", formatName);
     
-    UIImage *image = [self imageForEntityId:cacheId format:format];
+    UIImage *image = [self imageForKey:key format:format];
     if (image)
     {
-        completionBlock(cacheId, formatName, image);
+        completionBlock(key, formatName, image);
         dispatch_async(_diskQueue, ^{
-            [self updateAccessDateOfImage:image entityId:cacheId format:format];
+            [self updateAccessDateOfImage:image key:key format:format];
         });
         return YES;
     }
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSString *path = [self pathForEntityId:cacheId format:format];
+        NSString *path = [self pathForKey:key format:format];
         __block NSData *imageData;
         dispatch_sync(_diskQueue, ^{
             imageData = [NSData dataWithContentsOfFile:path];
@@ -204,17 +204,17 @@
         if (imageData && (image = [UIImage imageWithData:imageData scale:[UIScreen mainScreen].scale]))
         {
             dispatch_sync(dispatch_get_main_queue(), ^{
-                completionBlock(cacheId, formatName, image);
+                completionBlock(key, formatName, image);
             });
-            [self setImage:image forEntityId:cacheId format:format];
+            [self setImage:image forKey:key format:format];
             dispatch_sync(_diskQueue, ^{
-                [self updateAccessDateOfImage:image entityId:cacheId format:format];
+                [self updateAccessDateOfImage:image key:key format:format];
             });
         }
         else
         {
             dispatch_sync(dispatch_get_main_queue(), ^{
-                completionBlock(cacheId, formatName, nil);
+                completionBlock(key, formatName, nil);
             });
         }
     });
@@ -252,14 +252,14 @@
 
 - (void)removeImagesOfEntity:(id<HNKCacheEntity>)entity
 {
-    NSString *entityId = entity.cacheId;
+    NSString *cacheKey = entity.cacheKey;
     [_memoryCaches enumerateKeysAndObjectsUsingBlock:^(id key, NSCache *cache, BOOL *stop) {
-        [cache removeObjectForKey:entityId];
+        [cache removeObjectForKey:cacheKey];
     }];
     dispatch_async(_diskQueue, ^{
         NSDictionary *formats = _formats.copy;
         [formats enumerateKeysAndObjectsUsingBlock:^(id key, HNKCacheFormat *format, BOOL *stop) {
-            NSString *path = [self pathForEntityId:entityId format:format];
+            NSString *path = [self pathForKey:cacheKey format:format];
             [self removeFileAtPath:path format:format];
         }];
     });
@@ -267,32 +267,30 @@
 
 #pragma mark Private (utils)
 
-- (NSString*)pathForEntityId:(NSString*)entityId format:(HNKCacheFormat*)format
+- (NSString*)pathForKey:(NSString*)key format:(HNKCacheFormat*)format
 {
-    NSString *escapedEntityId = [entityId stringByReplacingOccurrencesOfString:@"/" withString:@"-"];
-    NSString *path = [format.directory stringByAppendingPathComponent:escapedEntityId];
+    NSString *escapedKey = [key stringByReplacingOccurrencesOfString:@"/" withString:@"-"];
+    NSString *path = [format.directory stringByAppendingPathComponent:escapedKey];
     return path;
 }
 
 #pragma mark Private (memory)
 
-- (UIImage*)imageForEntityId:(NSString*)entityId format:(HNKCacheFormat*)format
+- (UIImage*)imageForKey:(NSString*)key format:(HNKCacheFormat*)format
 {
-    NSString *key = format.name;
-    NSCache *cache = [_memoryCaches objectForKey:key];
-    return [cache objectForKey:entityId];
+    NSCache *cache = _memoryCaches[format.name];
+    return [cache objectForKey:key];
 }
 
-- (void)setImage:(UIImage*)image forEntityId:(NSString*)entityId format:(HNKCacheFormat*)format
+- (void)setImage:(UIImage*)image forKey:(NSString*)key format:(HNKCacheFormat*)format
 {
-    NSString *key = format.name;
-    NSCache *cache = _memoryCaches[key];
+    NSCache *cache = _memoryCaches[format.name];
     if (!cache)
     {
         cache = [[NSCache alloc] init];
         _memoryCaches[key] = cache;
     }
-    return [cache setObject:image forKey:entityId];
+    return [cache setObject:image forKey:key];
 }
 
 #pragma mark Private (disk)
@@ -369,12 +367,12 @@
     }
 }
 
-- (void)saveImage:(UIImage*)image entityId:(NSString*)entityId format:(HNKCacheFormat*)format
+- (void)saveImage:(UIImage*)image key:(NSString*)key format:(HNKCacheFormat*)format
 {
     if (format.diskCapacity == 0) return;
     
     NSData *resizedImageData = UIImageJPEGRepresentation(image, format.compressionQuality);
-    NSString *path = [self pathForEntityId:entityId format:format];
+    NSString *path = [self pathForKey:key format:format];
     NSError *error;
     if (![resizedImageData writeToFile:path options:kNilOptions error:&error])
     {
@@ -385,9 +383,9 @@
     [self controlDiskCapacityOfFormat:format];
 }
 
-- (void)updateAccessDateOfImage:(UIImage*)image entityId:(NSString*)entityId format:(HNKCacheFormat*)format
+- (void)updateAccessDateOfImage:(UIImage*)image key:(NSString*)key format:(HNKCacheFormat*)format
 {
-    NSString *path = [self pathForEntityId:entityId format:format];
+    NSString *path = [self pathForKey:key format:format];
     NSDate *now = [NSDate date];
     NSDictionary* attributes = @{NSFileModificationDate : now};
     NSError *error;
@@ -400,7 +398,7 @@
         }
         else
         {
-            [self saveImage:image entityId:entityId format:format];
+            [self saveImage:image key:key format:format];
         }
     }
 }
