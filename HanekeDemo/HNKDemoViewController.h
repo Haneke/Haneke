@@ -1,5 +1,5 @@
 //
-//  HNKViewController.h
+//  HNKDemoViewController.h
 //  Haneke
 //
 //  Created by Hermes on 11/02/14.
@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface HNKViewController : UICollectionViewController
+@interface HNKDemoViewController : UICollectionViewController
 
-+ (HNKViewController*)viewController;
++ (HNKDemoViewController*)viewController;
 
 @end

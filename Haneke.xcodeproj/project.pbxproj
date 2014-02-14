@@ -20,9 +20,9 @@
 		873E22F618AA90F000E7919C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E22A318AA8C7C00E7919C /* UIKit.framework */; };
 		873E22FC18AA90F000E7919C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 873E22FA18AA90F000E7919C /* InfoPlist.strings */; };
 		873E22FE18AA90F000E7919C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 873E22FD18AA90F000E7919C /* main.m */; };
-		873E230218AA90F000E7919C /* HNKAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 873E230118AA90F000E7919C /* HNKAppDelegate.m */; };
+		873E230218AA90F000E7919C /* HNKDemoAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 873E230118AA90F000E7919C /* HNKDemoAppDelegate.m */; };
 		873E230418AA90F000E7919C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 873E230318AA90F000E7919C /* Images.xcassets */; };
-		873E231F18AA915300E7919C /* HNKViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 873E231E18AA915300E7919C /* HNKViewController.m */; };
+		873E231F18AA915300E7919C /* HNKDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 873E231E18AA915300E7919C /* HNKDemoViewController.m */; };
 		873E232418AA982F00E7919C /* HNKCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 873E22B918AA8CC900E7919C /* HNKCache.m */; };
 		873E232618AA992500E7919C /* sample.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 873E232518AA992500E7919C /* sample.jpg */; };
 		873E233218AAC1A800E7919C /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E233118AAC1A800E7919C /* libOCMock.a */; };
@@ -72,11 +72,11 @@
 		873E22FB18AA90F000E7919C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		873E22FD18AA90F000E7919C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		873E22FF18AA90F000E7919C /* HanekeDemo-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HanekeDemo-Prefix.pch"; sourceTree = "<group>"; };
-		873E230018AA90F000E7919C /* HNKAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HNKAppDelegate.h; sourceTree = "<group>"; };
-		873E230118AA90F000E7919C /* HNKAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HNKAppDelegate.m; sourceTree = "<group>"; };
+		873E230018AA90F000E7919C /* HNKDemoAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HNKDemoAppDelegate.h; sourceTree = "<group>"; };
+		873E230118AA90F000E7919C /* HNKDemoAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HNKDemoAppDelegate.m; sourceTree = "<group>"; };
 		873E230318AA90F000E7919C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		873E231D18AA915300E7919C /* HNKViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKViewController.h; sourceTree = "<group>"; };
-		873E231E18AA915300E7919C /* HNKViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKViewController.m; sourceTree = "<group>"; };
+		873E231D18AA915300E7919C /* HNKDemoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKDemoViewController.h; sourceTree = "<group>"; };
+		873E231E18AA915300E7919C /* HNKDemoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKDemoViewController.m; sourceTree = "<group>"; };
 		873E232518AA992500E7919C /* sample.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = sample.jpg; sourceTree = "<group>"; };
 		873E232A18AAC1A800E7919C /* NSNotificationCenter+OCMAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNotificationCenter+OCMAdditions.h"; sourceTree = "<group>"; };
 		873E232B18AAC1A800E7919C /* OCMArg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMArg.h; sourceTree = "<group>"; };
@@ -194,12 +194,12 @@
 		873E22F718AA90F000E7919C /* HanekeDemo */ = {
 			isa = PBXGroup;
 			children = (
-				873E230018AA90F000E7919C /* HNKAppDelegate.h */,
-				873E230118AA90F000E7919C /* HNKAppDelegate.m */,
+				873E230018AA90F000E7919C /* HNKDemoAppDelegate.h */,
+				873E230118AA90F000E7919C /* HNKDemoAppDelegate.m */,
 				87F47BB718AD4D0400F1FB48 /* HNKDemoCollectionViewCell.h */,
 				87F47BB818AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m */,
-				873E231D18AA915300E7919C /* HNKViewController.h */,
-				873E231E18AA915300E7919C /* HNKViewController.m */,
+				873E231D18AA915300E7919C /* HNKDemoViewController.h */,
+				873E231E18AA915300E7919C /* HNKDemoViewController.m */,
 				873E230318AA90F000E7919C /* Images.xcassets */,
 				873E232518AA992500E7919C /* sample.jpg */,
 				873E22F818AA90F000E7919C /* Supporting Files */,
@@ -390,12 +390,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				873E230218AA90F000E7919C /* HNKAppDelegate.m in Sources */,
+				873E230218AA90F000E7919C /* HNKDemoAppDelegate.m in Sources */,
 				87F47BB918AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m in Sources */,
 				876E5F2118AB831500B4EAF6 /* UIImageView+Haneke.m in Sources */,
 				87F47BB618AD436700F1FB48 /* UIImage+HanekeDemo.m in Sources */,
 				873E22FE18AA90F000E7919C /* main.m in Sources */,
-				873E231F18AA915300E7919C /* HNKViewController.m in Sources */,
+				873E231F18AA915300E7919C /* HNKDemoViewController.m in Sources */,
 				873E232418AA982F00E7919C /* HNKCache.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

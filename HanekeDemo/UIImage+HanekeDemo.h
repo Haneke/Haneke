@@ -10,8 +10,10 @@
 
 @interface UIImage (HanekeDemo)
 
-- (UIImage*)imageByCroppingRect:(CGRect)rect;
+- (UIImage*)demo_imageByCroppingRect:(CGRect)rect;
 
-- (UIImage*)imageByDrawingText:(NSString*)text;
+- (UIImage*)demo_imageByDrawingColoredText:(NSString*)text;
+
++ (UIImage*)demo_randomImageWithIndex:(NSUInteger)index;
 
 @end

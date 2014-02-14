@@ -24,4 +24,9 @@
     return self;
 }
 
+- (void)prepareForReuse
+{
+    self.imageView.image = nil;
+}
+
 @end

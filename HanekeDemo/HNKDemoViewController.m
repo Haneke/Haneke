@@ -1,31 +1,44 @@
 //
-//  HNKViewController.m
+//  HNKDemoViewController.m
 //  Haneke
 //
 //  Created by Hermes on 11/02/14.
 //  Copyright (c) 2014 Hermes Pique. All rights reserved.
 //
 
-#import "HNKViewController.h"
+#import "HNKDemoViewController.h"
 #import "UIImageView+Haneke.h"
 #import "HNKDemoCollectionViewCell.h"
 #import "UIImage+HanekeDemo.h" // To create random images
 
 #define HNK_USE_CUSTOM_FORMAT 0
 
-@implementation HNKViewController {
+@implementation HNKDemoViewController {
     NSArray *_items;
 }
 
 + (void)initialize
 {
     HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"thumbnail"];
-    format.compressionQuality = 0.5; // UIImageView category default: 0.75, -[HNKCacheFormat initWithName:] default: 1.
-    format.allowUpscaling = YES; // UIImageView category default: YES, -[HNKCacheFormat initWithName:] default: NO.
-    format.diskCapacity = 0.5 * 1024 * 1024; // UIImageView category default: 10 * 1024 * 1024 (10MB), -[HNKCacheFormat initWithName:] default: 0 (no disk cache).
-    format.preloadPolicy = HNKPreloadPolicyLastSession; // Default: HNKPreloadPolicyNone.
-    format.scaleMode = HNKScaleModeAspectFill; // UIImageView category default: -[UIImageView contentMode], -[HNKCacheFormat initWithName:] default: HNKScaleModeFill.
-    format.size = CGSizeMake(100, 100); // // UIImageView category default: -[UIImageView bounds].size, -[HNKCacheFormat initWithName:] default: CGSizeZero.
+    
+    format.compressionQuality = 0.5;
+    // UIImageView category default: 0.75, -[HNKCacheFormat initWithName:] default: 1.
+    
+    format.allowUpscaling = YES;
+    // UIImageView category default: YES, -[HNKCacheFormat initWithName:] default: NO.
+    
+    format.diskCapacity = 0.5 * 1024 * 1024;
+    // UIImageView category default: 10 * 1024 * 1024 (10MB), -[HNKCacheFormat initWithName:] default: 0 (no disk cache).
+    
+    format.preloadPolicy = HNKPreloadPolicyLastSession;
+    // Default: HNKPreloadPolicyNone.
+    
+    format.scaleMode = HNKScaleModeAspectFill;
+    // UIImageView category default: -[UIImageView contentMode], -[HNKCacheFormat initWithName:] default: HNKScaleModeFill.
+    
+    format.size = CGSizeMake(100, 100);
+    // // UIImageView category default: -[UIImageView bounds].size, -[HNKCacheFormat initWithName:] default: CGSizeZero.
+    
     [[HNKCache sharedCache] registerFormat:format];
 }
 
@@ -39,11 +52,11 @@
 
 #pragma mark - Public
 
-+ (HNKViewController*)viewController
++ (HNKDemoViewController*)viewController
 {
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
     layout.itemSize = CGSizeMake(100, 100);
-    HNKViewController *viewController = [[HNKViewController alloc] initWithCollectionViewLayout:layout];
+    HNKDemoViewController *viewController = [[HNKDemoViewController alloc] initWithCollectionViewLayout:layout];
     return viewController;
 }
 
@@ -84,7 +97,7 @@
                 if (![[NSFileManager defaultManager] fileExistsAtPath:path])
                 {
                     NSLog(@"Creating image %ld of %d", (long)i + 1, 100);
-                    UIImage *image = [self imageWithIndex:i];
+                    UIImage *image = [UIImage demo_randomImageWithIndex:i];
                     NSData *data = UIImageJPEGRepresentation(image, 1);
                     [data writeToFile:path atomically:YES];
                 }
@@ -96,21 +109,6 @@
             [self.collectionView reloadData];
         });
     });
-}
-
-- (UIImage*)imageWithIndex:(NSUInteger)index
-{
-    // Photo by Paul Sableman, taken from http://www.flickr.com/photos/pasa/8636568094
-    UIImage *sample = [UIImage imageNamed:@"sample.jpg"];
-    NSString *indexString = [NSString stringWithFormat:@"%ld", (long)index + 1];
-
-    CGFloat width = arc4random_uniform(sample.size.width - 100) + 1 + 100;
-    CGFloat height = arc4random_uniform(sample.size.height - 100) + 1 + 100;
-    CGFloat x = arc4random_uniform(sample.size.width - width + 1);
-    CGFloat y = arc4random_uniform(sample.size.height - height + 1);
-    CGRect cropRect = CGRectMake(x, y, width, height);
-    UIImage *cropped = [sample imageByCroppingRect:cropRect];
-    return [cropped imageByDrawingText:indexString];
 }
 
 
