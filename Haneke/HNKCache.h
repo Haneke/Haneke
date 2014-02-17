@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#define HANEKE_DEBUG 0
+
 @protocol HNKCacheEntity;
 @class HNKCacheFormat;
 

@@ -8,7 +8,7 @@
 
 #import "HNKCache.h"
 
-#ifdef DEBUG
+#if HANEKE_DEBUG
 #define HanekeLog(...) NSLog(@"HANEKE: %@", [NSString stringWithFormat:__VA_ARGS__]);
 #else
 #define HanekeLog(...)
