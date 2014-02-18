@@ -60,7 +60,7 @@
     {
         _memoryCaches = [NSMutableDictionary dictionary];
         _formats = [NSMutableDictionary dictionary];
-
+        
         NSString *cachesDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
         static NSString *cachePathComponent = @"com.hpique.haneke";
         NSString *path = [cachesDirectory stringByAppendingPathComponent:cachePathComponent];
@@ -128,7 +128,7 @@
         return image;
     }
     HanekeLog(@"Memory cache miss: %@/%@", formatName, key.lastPathComponent);
-
+    
     NSString *path = [self pathForKey:key format:format];
     __block NSData *imageData;
     dispatch_sync(format.diskQueue, ^{
@@ -148,7 +148,7 @@
         }
     }
     HanekeLog(@"Disk cache miss: %@/%@", formatName, key.lastPathComponent);
-
+    
     UIImage *originalImage = entity.cacheOriginalImage;
     if (!originalImage)
     {
@@ -255,7 +255,7 @@
     NSAssert(format, @"Unknown format %@", formatName);
     
     [self setImage:image forKey:key format:format];
-    dispatch_sync(format.diskQueue, ^{
+    dispatch_async(format.diskQueue, ^{
         [self saveImage:image key:key format:format];
     });
 }
@@ -418,9 +418,7 @@
         UIImage *image = [UIImage imageWithData:data scale:[UIScreen mainScreen].scale];
         if (!image) return;
         NSString *key = [self keyFromPath:path];
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            [self setImage:image forKey:key format:format];
-        });
+        [self setImage:image forKey:key format:format];
     }];
 }
 
