@@ -86,7 +86,24 @@
     XCTAssertEqual(resultSize, format.size, @"");
 }
 
-#pragma mark - Utils
+#pragma mark Notifications
+
+- (void)testNotification_UIApplicationDidReceiveMemoryWarningNotification
+{
+    HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(2, 2)];
+    static NSString *key = @"test";
+    [_cache setImage:image forKey:key formatName:format.name];
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:image];
+    UIImage *cachedImage = [_cache imageForEntity:entity formatName:format.name];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidReceiveMemoryWarningNotification object:nil];
+
+    UIImage *result = [_cache imageForEntity:entity formatName:format.name];
+    XCTAssertNotEqualObjects(result, cachedImage, @"");
+}
+
+#pragma mark  Utils
 
 - (HNKCacheFormat*)registerFormatWithSize:(CGSize)size
 {
