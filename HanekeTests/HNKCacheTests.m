@@ -86,6 +86,26 @@
     XCTAssertEqual(resultSize, format.size, @"");
 }
 
+#pragma mark Removing images
+
+- (void)testRemoveImagesFromEntity_NoImagesNoFormats
+{
+    static NSString *key = @"test";
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:nil];
+    [_cache removeImagesOfEntity:entity];
+}
+
+- (void)testRemoveImagesFromEntity_Images
+{
+    HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(2, 2)];
+    static NSString *key = @"test";
+    [_cache setImage:image forKey:key formatName:format.name];
+    
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:nil];
+    [_cache removeImagesOfEntity:entity];
+}
+
 #pragma mark Notifications
 
 - (void)testNotification_UIApplicationDidReceiveMemoryWarningNotification
