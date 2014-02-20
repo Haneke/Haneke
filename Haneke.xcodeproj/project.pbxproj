@@ -28,6 +28,8 @@
 		873E233218AAC1A800E7919C /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E233118AAC1A800E7919C /* libOCMock.a */; };
 		876E5F2018AB762600B4EAF6 /* UIImageView+Haneke.m in Sources */ = {isa = PBXBuildFile; fileRef = 876E5F1F18AB762600B4EAF6 /* UIImageView+Haneke.m */; };
 		876E5F2118AB831500B4EAF6 /* UIImageView+Haneke.m in Sources */ = {isa = PBXBuildFile; fileRef = 876E5F1F18AB762600B4EAF6 /* UIImageView+Haneke.m */; };
+		87A6907E18B678C700F97E13 /* GTMCodeCoverageTestsXC.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A6907C18B678C700F97E13 /* GTMCodeCoverageTestsXC.m */; };
+		87A6907F18B67B4A00F97E13 /* GTMCodeCoverageApp.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A6907B18B678C700F97E13 /* GTMCodeCoverageApp.m */; };
 		87F47BAE18AC123C00F1FB48 /* UIImageView+HanekeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F47BAD18AC123C00F1FB48 /* UIImageView+HanekeTests.m */; };
 		87F47BB618AD436700F1FB48 /* UIImage+HanekeDemo.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F47BB518AD436700F1FB48 /* UIImage+HanekeDemo.m */; };
 		87F47BB918AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F47BB818AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m */; };
@@ -87,6 +89,9 @@
 		873E233118AAC1A800E7919C /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libOCMock.a; sourceTree = "<group>"; };
 		876E5F1E18AB762600B4EAF6 /* UIImageView+Haneke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+Haneke.h"; sourceTree = "<group>"; };
 		876E5F1F18AB762600B4EAF6 /* UIImageView+Haneke.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+Haneke.m"; sourceTree = "<group>"; };
+		87A6907A18B678C700F97E13 /* GTMCodeCoverageApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMCodeCoverageApp.h; sourceTree = "<group>"; };
+		87A6907B18B678C700F97E13 /* GTMCodeCoverageApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMCodeCoverageApp.m; sourceTree = "<group>"; };
+		87A6907C18B678C700F97E13 /* GTMCodeCoverageTestsXC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMCodeCoverageTestsXC.m; sourceTree = "<group>"; };
 		87F47BAD18AC123C00F1FB48 /* UIImageView+HanekeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+HanekeTests.m"; sourceTree = "<group>"; };
 		87F47BB418AD436700F1FB48 /* UIImage+HanekeDemo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+HanekeDemo.h"; sourceTree = "<group>"; };
 		87F47BB518AD436700F1FB48 /* UIImage+HanekeDemo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+HanekeDemo.m"; sourceTree = "<group>"; };
@@ -174,6 +179,7 @@
 		873E22A818AA8C7C00E7919C /* HanekeTests */ = {
 			isa = PBXGroup;
 			children = (
+				87A6907918B678A000F97E13 /* Code Coverage iOS 7 Workaround */,
 				873E232718AAC1A800E7919C /* usr */,
 				873E22A918AA8C7C00E7919C /* Supporting Files */,
 				873E22BE18AA8D9F00E7919C /* HNKCacheTests.m */,
@@ -256,6 +262,16 @@
 				873E233118AAC1A800E7919C /* libOCMock.a */,
 			);
 			path = lib;
+			sourceTree = "<group>";
+		};
+		87A6907918B678A000F97E13 /* Code Coverage iOS 7 Workaround */ = {
+			isa = PBXGroup;
+			children = (
+				87A6907A18B678C700F97E13 /* GTMCodeCoverageApp.h */,
+				87A6907B18B678C700F97E13 /* GTMCodeCoverageApp.m */,
+				87A6907C18B678C700F97E13 /* GTMCodeCoverageTestsXC.m */,
+			);
+			name = "Code Coverage iOS 7 Workaround";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -374,6 +390,7 @@
 			files = (
 				876E5F2018AB762600B4EAF6 /* UIImageView+Haneke.m in Sources */,
 				873E22BA18AA8CC900E7919C /* HNKCache.m in Sources */,
+				87A6907F18B67B4A00F97E13 /* GTMCodeCoverageApp.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -381,6 +398,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				87A6907E18B678C700F97E13 /* GTMCodeCoverageTestsXC.m in Sources */,
 				87F47BAE18AC123C00F1FB48 /* UIImageView+HanekeTests.m in Sources */,
 				873E22BF18AA8D9F00E7919C /* HNKCacheTests.m in Sources */,
 			);
@@ -504,8 +522,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/Haneke.dst;
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					"GTM_USING_XCTEST=1",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -534,11 +559,14 @@
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
+				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
+					"GTM_IS_COVERAGE_BUILD=1",
 				);
 				HEADER_SEARCH_PATHS = (
 					"${SRCROOT}/${TARGET_NAME}/usr/include/**",
@@ -572,6 +600,8 @@
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
+				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
 				HEADER_SEARCH_PATHS = (
@@ -612,6 +642,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
+					GTM_IS_COVERAGE_BUILD,
 				);
 				INFOPLIST_FILE = "HanekeDemo/HanekeDemo-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
