@@ -35,6 +35,27 @@
     XCTAssertEqual(result.size, _imageView.bounds.size, @"");
 }
 
+- (void)testCacheFormat_UIViewContentModeScaleAspectFit
+{
+    _imageView.contentMode = UIViewContentModeScaleAspectFit;
+    HNKCacheFormat *result = _imageView.hnk_cacheFormat;
+    XCTAssertEqual(result.scaleMode, HNKScaleModeAspectFit, @"");
+}
+
+- (void)testCacheFormat_UIViewContentModeScaleAspectFill
+{
+    _imageView.contentMode = UIViewContentModeScaleAspectFill;
+    HNKCacheFormat *result = _imageView.hnk_cacheFormat;
+    XCTAssertEqual(result.scaleMode, HNKScaleModeAspectFill, @"");
+}
+
+- (void)testCacheFormat_AnotherUIViewContentMode
+{
+    _imageView.contentMode = UIViewContentModeCenter;
+    HNKCacheFormat *result = _imageView.hnk_cacheFormat;
+    XCTAssertEqual(result.scaleMode, HNKScaleModeFill, @"");
+}
+
 - (void)testSetCacheFormat_Nil
 {
     _imageView.hnk_cacheFormat = nil;
