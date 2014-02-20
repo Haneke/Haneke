@@ -8,6 +8,8 @@
 
 #import <XCTest/XCTest.h>
 #import "UIImageView+Haneke.h"
+#import "UIImage+HanekeTestUtils.h"
+#import "HNKCache+HanekeTestUtils.h"
 
 @interface UIImageView_HanekeTests : XCTestCase
 
@@ -57,6 +59,34 @@
     
     HNKCacheFormat *result = _imageView.hnk_cacheFormat;
     XCTAssertEqualObjects(result, format, @"");
+}
+
+- (void)testSetImageWithKey
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    [_imageView hnk_setImage:image withKey:@"test"];
+}
+
+- (void)testSetImageFromFile
+{
+    NSString *directory = NSHomeDirectory();
+    NSString *path = [directory stringByAppendingPathComponent:@"HanekeTests"];
+    path = [directory stringByAppendingPathComponent:@"fixtures"];
+    [[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
+    path = [directory stringByAppendingPathComponent:@"image.png"];
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    [UIImagePNGRepresentation(image) writeToFile:path atomically:YES];
+
+    [_imageView hnk_setImageFromFile:path];
+    
+    [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
+}
+
+- (void)testSetImageFromEntity
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:@"test" data:nil image:image];
+    [_imageView hnk_setImageFromEntity:entity];
 }
 
 @end

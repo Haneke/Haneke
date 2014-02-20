@@ -8,7 +8,8 @@
 
 #import <XCTest/XCTest.h>
 #import "HNKCache.h"
-#import <OCMock/OCMock.h>
+#import "UIImage+HanekeTestUtils.h"
+#import "HNKCache+HanekeTestUtils.h"
 
 @interface HNKCacheTests : XCTestCase
 
@@ -60,8 +61,8 @@
 
 - (void)testImageForEntity_Image
 {
-    UIImage *image = [HNKCacheTests imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
-    id entity = [HNKCacheTests entityWithKey:@"1" data:nil image:image];
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
+    id entity = [HNKCache entityWithKey:@"1" data:nil image:image];
     HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
     
     UIImage *result = [_cache imageForEntity:entity formatName:format.name];
@@ -73,9 +74,9 @@
 
 - (void)testImageForEntity_Data
 {
-    UIImage *image = [HNKCacheTests imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
     NSData *data = UIImagePNGRepresentation(image);
-    id entity = [HNKCacheTests entityWithKey:@"1" data:data image:nil];
+    id entity = [HNKCache entityWithKey:@"1" data:data image:nil];
     HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
     
     UIImage *result = [_cache imageForEntity:entity formatName:format.name];
@@ -93,26 +94,6 @@
     format.size = size;
     [_cache registerFormat:format];
     return format;
-}
-
-+ (id)entityWithKey:(NSString*)key data:(NSData*)data image:(UIImage*)image
-{
-    id entity = [OCMockObject mockForProtocol:@protocol(HNKCacheEntity)];
-    [[[entity stub] andReturn:key] cacheKey];
-    [[[entity stub] andReturn:data] cacheOriginalData];
-    [[[entity stub] andReturn:image] cacheOriginalImage];
-    return entity;
-}
-
-+ (UIImage*)imageWithColor:(UIColor*)color size:(CGSize)size
-{
-    UIGraphicsBeginImageContextWithOptions(size, YES, 0);
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSetFillColorWithColor(context, color.CGColor);
-    CGContextFillRect(context, CGRectMake(0, 0, size.width, size.height));
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return image;
 }
 
 
