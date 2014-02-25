@@ -118,7 +118,7 @@
     format.requestCount++;
     
     NSString *key = entity.cacheKey;
-    UIImage *image = [self imageForKey:key format:format];
+    UIImage *image = [self memoryImageForKey:key format:format];
     if (image)
     {
         HanekeLog(@"Memory cache hit: %@/%@", formatName, key.lastPathComponent);
@@ -143,7 +143,7 @@
             dispatch_async(format.diskQueue, ^{
                 [self updateAccessDateOfImage:image key:key format:format];
             });
-            [self setImage:image forKey:key format:format];
+            [self setMemoryImage:image forKey:key format:format];
             return image;
         }
     }
@@ -156,7 +156,7 @@
         originalImage = [UIImage imageWithData:originalData scale:[UIScreen mainScreen].scale];
     }
     image = [format resizedImageFromImage:originalImage];
-    [self setImage:image forKey:key format:format];
+    [self setMemoryImage:image forKey:key format:format];
     dispatch_async(format.diskQueue, ^{
         [self saveImage:image key:key format:format];
     });
@@ -188,7 +188,7 @@
             }
             UIImage *image = [format resizedImageFromImage:originalImage];
             dispatch_sync(dispatch_get_main_queue(), ^{
-                [self setImage:image forKey:key format:format];
+                [self setMemoryImage:image forKey:key format:format];
                 completionBlock(entity, formatName, image);
             });
             dispatch_sync(format.diskQueue, ^{
@@ -204,7 +204,7 @@
     NSAssert(format, @"Unknown format %@", formatName);
     format.requestCount++;
     
-    UIImage *image = [self imageForKey:key format:format];
+    UIImage *image = [self memoryImageForKey:key format:format];
     if (image)
     {
         HanekeLog(@"Memory cache hit: %@/%@", formatName, key.lastPathComponent);
@@ -227,7 +227,7 @@
         {
             HanekeLog(@"Disk cache hit: %@/%@", formatName, key.lastPathComponent);
             dispatch_sync(dispatch_get_main_queue(), ^{
-                [self setImage:image forKey:key format:format];
+                [self setMemoryImage:image forKey:key format:format];
                 completionBlock(key, formatName, image);
             });
             dispatch_sync(format.diskQueue, ^{
@@ -252,7 +252,7 @@
     HNKCacheFormat *format = _formats[formatName];
     NSAssert(format, @"Unknown format %@", formatName);
     
-    [self setImage:image forKey:key format:format];
+    [self setMemoryImage:image forKey:key format:format];
     dispatch_async(format.diskQueue, ^{
         [self saveImage:image key:key format:format];
     });
@@ -321,13 +321,13 @@
 
 #pragma mark Private (memory)
 
-- (UIImage*)imageForKey:(NSString*)key format:(HNKCacheFormat*)format
+- (UIImage*)memoryImageForKey:(NSString*)key format:(HNKCacheFormat*)format
 {
     NSCache *cache = _memoryCaches[format.name];
     return [cache objectForKey:key];
 }
 
-- (void)setImage:(UIImage*)image forKey:(NSString*)key format:(HNKCacheFormat*)format
+- (void)setMemoryImage:(UIImage*)image forKey:(NSString*)key format:(HNKCacheFormat*)format
 {
     NSString *formatName = format.name;
     NSCache *cache = _memoryCaches[formatName];
@@ -417,7 +417,7 @@
         if (!image) return;
         NSString *key = [self keyFromPath:path];
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self setImage:image forKey:key format:format];
+            [self setMemoryImage:image forKey:key format:format];
         });
     }];
 }
@@ -427,7 +427,7 @@
     NSString *key = [self keyFromPath:path];
     dispatch_sync(dispatch_get_main_queue(), ^{
         // Remove the image from memory cache to prevent leaving uninitialized images poiting to deleted files.
-        [self setImage:nil forKey:key format:format];
+        [self setMemoryImage:nil forKey:key format:format];
     });
     NSError *error;
     NSFileManager *fileManager = [NSFileManager defaultManager];
