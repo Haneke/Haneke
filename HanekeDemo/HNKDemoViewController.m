@@ -85,10 +85,11 @@
 - (void)initializeItems
 {
     _items = [NSArray array];
+    static NSUInteger ImageCount = 100;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSString *documents = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
         NSMutableArray *items = [NSMutableArray array];
-        for (NSUInteger i = 0; i < 100; i++)
+        for (NSUInteger i = 0; i < ImageCount; i++)
         {
             @autoreleasepool {
                 NSString *fileName = [NSString stringWithFormat:@"sample%ld.jpg", (long)i];
@@ -96,7 +97,7 @@
                 
                 if (![[NSFileManager defaultManager] fileExistsAtPath:path])
                 {
-                    NSLog(@"Creating image %ld of %d", (long)i + 1, 100);
+                    NSLog(@"Creating image %ld of %d", (long)i + 1, ImageCount);
                     UIImage *image = [UIImage demo_randomImageWithIndex:i];
                     NSData *data = UIImageJPEGRepresentation(image, 1);
                     [data writeToFile:path atomically:YES];
