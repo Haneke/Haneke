@@ -35,7 +35,11 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     HNKCacheFormat *format = self.hnk_cacheFormat;
     __block BOOL animated = NO;
     [[HNKCache sharedCache] retrieveImageForKey:path formatName:format.name completionBlock:^(NSString *key, NSString *formatName, UIImage *image) {
-        if (![self.hnk_lastCacheKey isEqualToString:key]) return;
+        if (![self.hnk_lastCacheKey isEqualToString:key])
+        {
+            HanekeLog(@"Cancelled request due to view reuse: %@/%@", formatName, key.lastPathComponent);
+            return;
+        }
         
         if (image)
         {
@@ -44,9 +48,35 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
         }
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            if (![self.hnk_lastCacheKey isEqualToString:key])
+            {
+                HanekeLog(@"Cancelled request due to view reuse: %@/%@", formatName, key.lastPathComponent);
+                return;
+            }
+            
             NSData *originalData = [NSData dataWithContentsOfFile:path];
+
+            if (![self.hnk_lastCacheKey isEqualToString:key])
+            {
+                HanekeLog(@"Cancelled request due to view reuse: %@/%@", formatName, key.lastPathComponent);
+                return;
+            }
+            
             UIImage *originalImage = [UIImage imageWithData:originalData scale:[UIScreen mainScreen].scale];
+
+            if (![self.hnk_lastCacheKey isEqualToString:key])
+            {
+                HanekeLog(@"Cancelled request due to view reuse: %@/%@", formatName, key.lastPathComponent);
+                return;
+            }
+            
             dispatch_sync(dispatch_get_main_queue(), ^{
+                if (![self.hnk_lastCacheKey isEqualToString:key])
+                {
+                    HanekeLog(@"Cancelled request due to view reuse: %@/%@", formatName, key.lastPathComponent);
+                    return;
+                }
+                
                 HNKImageViewEntity *entity = [HNKImageViewEntity entityWithImage:originalImage key:path];
                 [self hnk_retrieveImageFromEntity:entity];
             });
@@ -110,7 +140,11 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     HNKCacheFormat *format = self.hnk_cacheFormat;
     __block BOOL animated = NO;
     [[HNKCache sharedCache] retrieveImageForEntity:entity formatName:format.name completionBlock:^(id<HNKCacheEntity> entity, NSString *formatName, UIImage *image) {
-        if (![self.hnk_lastCacheKey isEqualToString:entity.cacheKey]) return;
+        if (![self.hnk_lastCacheKey isEqualToString:entity.cacheKey])
+        {
+            HanekeLog(@"Cancelled request due to view reuse: %@/%@", formatName, entity.cacheKey.lastPathComponent);
+            return;
+        }
         
         [self hnk_setImage:image animated:animated];
     }];
