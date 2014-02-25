@@ -189,8 +189,6 @@
             UIImage *image = [format resizedImageFromImage:originalImage];
             dispatch_sync(dispatch_get_main_queue(), ^{
                 [self setImage:image forKey:key format:format];
-            });
-            dispatch_sync(dispatch_get_main_queue(), ^{
                 completionBlock(entity, formatName, image);
             });
             dispatch_sync(format.diskQueue, ^{
@@ -229,9 +227,9 @@
         {
             HanekeLog(@"Disk cache hit: %@/%@", formatName, key.lastPathComponent);
             dispatch_sync(dispatch_get_main_queue(), ^{
+                [self setImage:image forKey:key format:format];
                 completionBlock(key, formatName, image);
             });
-            [self setImage:image forKey:key format:format];
             dispatch_sync(format.diskQueue, ^{
                 [self updateAccessDateOfImage:image key:key format:format];
             });
@@ -418,7 +416,9 @@
         UIImage *image = [UIImage imageWithData:data scale:[UIScreen mainScreen].scale];
         if (!image) return;
         NSString *key = [self keyFromPath:path];
-        [self setImage:image forKey:key format:format];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self setImage:image forKey:key format:format];
+        });
     }];
 }
 
