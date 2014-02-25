@@ -664,6 +664,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 					GTM_IS_COVERAGE_BUILD,
+					"HANEKE_DEBUG=1",
 				);
 				INFOPLIST_FILE = "HanekeDemo/HanekeDemo-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
