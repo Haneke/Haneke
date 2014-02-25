@@ -2,9 +2,9 @@ Haneke
 ======
 [![Build Status](https://travis-ci.org/hpique/Haneke.png)](https://travis-ci.org/hpique/Haneke)
 
-###### A lightweight zero-config image cache for iOS. 
+A lightweight zero-config image cache for iOS. 
 
-Haneke resizes images and caches the result on memory and disk. Everything is done in background, allowing for fast, responsive scrolling. Asking Haneke to produce and cache an appropiately sized image for an `UIImageView` is as simple as:
+Haneke resizes images and caches the result on memory and disk. Everything is done in background, allowing for fast, responsive scrolling. Asking Haneke to produce, cache and display an appropiately sized image is as simple as:
 
 
 ```objective-c
