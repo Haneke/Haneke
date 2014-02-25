@@ -11,6 +11,12 @@
 @protocol HNKCacheEntity;
 @class HNKCacheFormat;
 
+#if HANEKE_DEBUG
+#define HanekeLog(...) NSLog(@"HANEKE: %@", [NSString stringWithFormat:__VA_ARGS__]);
+#else
+#define HanekeLog(...)
+#endif
+
 @interface HNKCache : NSObject
 
 #pragma mark Initializing the cache

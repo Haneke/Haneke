@@ -8,12 +8,6 @@
 
 #import "HNKCache.h"
 
-#if HANEKE_DEBUG
-#define HanekeLog(...) NSLog(@"HANEKE: %@", [NSString stringWithFormat:__VA_ARGS__]);
-#else
-#define HanekeLog(...)
-#endif
-
 @interface UIImage (hnk_utils)
 
 - (CGSize)hnk_aspectFillSizeForSize:(CGSize)size;
