@@ -1,5 +1,7 @@
 Haneke
 ======
+<img src="https://raw.github.com/hpique/Haneke/master/screenshot.png" width="75%" "alt="Screenshot" />
+
 [![Build Status](https://travis-ci.org/hpique/Haneke.png)](https://travis-ci.org/hpique/Haneke)
 
 A lightweight zero-config image cache for iOS. 
@@ -33,7 +35,7 @@ _Really._
 
 Haneke provides convenience methods for `UIImageView` with optimizations for `UITableView` and `UICollectionView` cell reuse. Images will be resized appropiately and cached.
 
-```
+```objective-c
 // Setting an image from disk
 [imageView hnk_setImageFromFile:path];
 
