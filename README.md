@@ -10,7 +10,7 @@ Haneke resizes images and caches the result on memory and disk. Everything is do
 
 
 ```objective-c
-[imageView hnk_setImageFromFile:path];
+[imageView hnk_setImageFromURL:url];
 ```
 
 _Really._
@@ -36,23 +36,24 @@ _Really._
 Haneke provides convenience methods for `UIImageView` with optimizations for `UITableView` and `UICollectionView` cell reuse. Images will be resized appropiately and cached.
 
 ```objective-c
-// Setting an image from disk
+// Setting a remote image
+[imageView hnk_setImageFromURL:url];
+
+// Setting a local image
 [imageView hnk_setImageFromFile:path];
 
 // Setting an image manually. Requires you to provide a key.
 [imageView hnk_setImage:image withKey:key];
 ```
 
-The above lines takes care of:
+The above lines take care of:
 
-* If cached, retreiving an appropiately sized image (based on the `bounds` and `contentMode` of the `UIImageView`) from the memory or disk cache. Disk access is performed in background.
-* If not cached, reading the original image from disk/memory and producing an appropiately sized image, both in background.
-* Setting the image and animating the change if appropiate.
-* Or doing nothing if the `UIImageView` was reused before finishing retreiving the image.
-* Caching the resulting image.
-* If needed, evicting the least recently used images in the cache.
-
-
+1. If cached, retreiving an appropiately sized image (based on the `bounds` and `contentMode` of the `UIImageView`) from the memory or disk cache. Disk access is performed in background.
+2. If not cached, loading the original image from web/disk/memory and producing an appropiately sized image, both in background. Remote images will be retrieved from the shared `NSURLCache` if available.
+3. Setting the image and animating the change if appropiate.
+4. Or doing nothing if the `UIImageView` was reused during any of the above steps.
+5. Caching the resulting image.
+6. If needed, evicting the least recently used images in the cache.
 
 ##Requirements
 
