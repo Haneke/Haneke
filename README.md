@@ -6,7 +6,7 @@ Haneke
 
 A lightweight zero-config image cache for iOS. 
 
-Haneke resizes images and caches the result on memory and disk. Everything is done in background, allowing for fast, responsive scrolling. Asking Haneke to produce, cache and display an appropiately sized image is as simple as:
+Haneke resizes images and caches the result on memory and disk. Everything is done in background, allowing for fast, responsive scrolling. Asking Haneke to load, resize, cache and display an appropiately sized image is as simple as:
 
 
 ```objective-c
