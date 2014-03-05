@@ -24,6 +24,8 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
             return @"aspectfill";
         case HNKScaleModeAspectFit:
             return @"aspectfit";
+        default:
+            return nil;
     }
 }
 
