@@ -13,6 +13,8 @@
 
 - (void)hnk_setImageFromFile:(NSString*)path;
 
+- (void)hnk_setImageFromURL:(NSURL*)url;
+
 - (void)hnk_setImage:(UIImage*)image withKey:(NSString*)key;
 
 - (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity;

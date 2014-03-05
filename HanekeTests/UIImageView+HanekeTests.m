@@ -110,4 +110,24 @@
     [_imageView hnk_setImageFromEntity:entity];
 }
 
+- (void)testSetImageFromURL
+{
+    NSURL *url = [NSURL URLWithString:@"http://imgs.xkcd.com/comics/election.png"];
+    [_imageView hnk_setImageFromURL:url];
+}
+
+- (void)testSetImageFromURL_Existing
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    NSString *key = @"http://imgs.xkcd.com/comics/election.png";
+    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
+    NSURL *url = [NSURL URLWithString:key];
+    
+    [_imageView hnk_setImageFromURL:url];
+    
+    UIImage *result = _imageView.image;
+    XCTAssertEqualObjects(image, result, @"");
+}
+
 @end

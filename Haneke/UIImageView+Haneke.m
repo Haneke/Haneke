@@ -65,6 +65,44 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     animated = YES;
 }
 
+- (void)hnk_setImageFromURL:(NSURL*)url
+{
+    [self.hnk_URLSessionDataTask cancel];
+    NSString *absoluteString = url.absoluteString;
+    self.hnk_lastCacheKey = absoluteString;
+    HNKCacheFormat *format = self.hnk_cacheFormat;
+    __block BOOL animated = NO;
+    [[HNKCache sharedCache] retrieveImageForKey:absoluteString formatName:format.name completionBlock:^(NSString *key, NSString *formatName, UIImage *image) {
+        if ([self hnk_shouldCancelRequestForKey:key formatName:formatName]) return;
+        
+        if (image)
+        {
+            [self hnk_setImage:image animated:animated];
+            return;
+        }
+
+        NSURLSession *session = [NSURLSession sharedSession];
+        NSURLSessionDataTask *task = [session dataTaskWithURL:url completionHandler:^(NSData *originalData, NSURLResponse *response, NSError *error)
+        {
+            if (!originalData)
+            {
+                HanekeLog(@"Request %@ failed with error %@", absoluteString, error);
+                return;
+            }
+            if ([self hnk_shouldCancelRequestForKey:key formatName:formatName]) return;
+            
+            UIImage *originalImage = [UIImage imageWithData:originalData scale:[UIScreen mainScreen].scale];
+            
+            HNKImageViewEntity *entity = [HNKImageViewEntity entityWithImage:originalImage key:absoluteString];
+            [self hnk_retrieveImageFromEntity:entity];
+            self.hnk_URLSessionDataTask = nil;
+        }];
+        self.hnk_URLSessionDataTask = task;
+        [task resume];
+    }];
+    animated = YES;
+}
+
 - (void)hnk_setImage:(UIImage*)originalImage withKey:(NSString*)key
 {
     HNKImageViewEntity *entity = [HNKImageViewEntity entityWithImage:originalImage key:key];
@@ -166,6 +204,8 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     return YES;
 }
 
+#pragma mark Properties (Private)
+
 - (NSString*)hnk_lastCacheKey
 {
     return (NSString *)objc_getAssociatedObject(self, @selector(hnk_lastCacheKey));
@@ -174,6 +214,16 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 - (void)setHnk_lastCacheKey:(NSString*)cacheKey
 {
     objc_setAssociatedObject(self, @selector(hnk_lastCacheKey), cacheKey, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (NSURLSessionDataTask*)hnk_URLSessionDataTask
+{
+    return (NSURLSessionDataTask *)objc_getAssociatedObject(self, @selector(hnk_URLSessionDataTask));
+}
+
+- (void)setHnk_URLSessionDataTask:(NSURLSessionDataTask*)URLSessionDataTask
+{
+    objc_setAssociatedObject(self, @selector(hnk_URLSessionDataTask), URLSessionDataTask, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 @end
