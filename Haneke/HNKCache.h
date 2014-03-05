@@ -111,7 +111,8 @@
 
 @end
 
-/** Represents an object that is associated with an image. Used by the cache to assign identifiers to images and obtain the original data or image needed to create resized images. **/
+/** Represents an object that is associated with an image. Used by the cache to assign identifiers to images and obtain the original data or image needed to create resized images. 
+ **/
 @protocol HNKCacheEntity <NSObject>
 
 /** 
@@ -119,12 +120,16 @@
  @discussion If two different entities have the same image, they should return the same key for better performance.
  */
 @property (nonatomic, readonly) NSString *cacheKey;
+
+@optional
+
 /**
- Return the original image associated with the entity, or nil to use cacheOriginalData instead.
+ Return the original image associated with the entity, or nil to use cacheOriginalData instead. The cache will always call this method in the main queue.
+ @warning If the entity doesn't implement this method it must implement `cacheOriginalData`.
  */
 @property (nonatomic, readonly) UIImage *cacheOriginalImage;
 /**
- Return the original data associated with the entity, or nil to use cacheOriginalImage instead.
+ Return the original data associated with the entity. The cache will always call this method in the main queue.
  */
 @property (nonatomic, readonly) NSData *cacheOriginalData;
 

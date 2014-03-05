@@ -217,9 +217,4 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     return _image;
 }
 
-- (NSData*)cacheOriginalData
-{
-    return nil;
-}
-
 @end

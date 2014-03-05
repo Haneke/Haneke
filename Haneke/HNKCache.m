@@ -143,10 +143,15 @@
     }
     HanekeLog(@"Disk cache miss: %@/%@", formatName, key.lastPathComponent);
     
-    UIImage *originalImage = entity.cacheOriginalImage;
+    UIImage *originalImage = [entity respondsToSelector:@selector(cacheOriginalImage)] ? entity.cacheOriginalImage : nil;
     if (!originalImage)
     {
-        NSData *originalData = entity.cacheOriginalData;
+        NSData *originalData = [entity respondsToSelector:@selector(cacheOriginalData)] ? entity.cacheOriginalData : nil;
+        if (!originalData)
+        {
+            HanekeLog(@"Unable to fetch original image of entity %@", key.lastPathComponent);
+            return nil;
+        }
         originalImage = [UIImage imageWithData:originalData scale:[UIScreen mainScreen].scale];
     }
     image = [format resizedImageFromImage:originalImage];
@@ -170,14 +175,19 @@
             HNKCacheFormat *format = _formats[formatName];
             __block UIImage *originalImage = nil;
             dispatch_sync(dispatch_get_main_queue(), ^{
-                originalImage = entity.cacheOriginalImage;
+                originalImage = [entity respondsToSelector:@selector(cacheOriginalImage)] ? entity.cacheOriginalImage : nil;
             });
             if (!originalImage)
             {
                 __block NSData *originalData = nil;
                 dispatch_sync(dispatch_get_main_queue(), ^{
-                    originalData = entity.cacheOriginalData;
+                    originalData = [entity respondsToSelector:@selector(cacheOriginalData)] ? entity.cacheOriginalData : nil;
                 });
+                if (!originalData)
+                {
+                    HanekeLog(@"Unable to fetch original image of entity %@", key.lastPathComponent);
+                    return;
+                }
                 originalImage = [UIImage imageWithData:originalData scale:[UIScreen mainScreen].scale];
             }
             UIImage *image = [format resizedImageFromImage:originalImage];

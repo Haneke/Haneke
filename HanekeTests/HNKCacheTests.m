@@ -10,8 +10,25 @@
 #import "HNKCache.h"
 #import "UIImage+HanekeTestUtils.h"
 #import "HNKCache+HanekeTestUtils.h"
+#import <OCMock/OCMock.h>
 
 @interface HNKCacheTests : XCTestCase
+
+@end
+
+@interface HNKTestCacheEntity : NSObject<HNKCacheEntity>
+
+@end
+
+@interface HNKTestCacheEntityImplementingCacheOriginalImage : HNKTestCacheEntity
+
+@end
+
+@interface HNKTestCacheEntityImplementingCacheOriginalData : HNKTestCacheEntity
+
+@end
+
+@interface HNKTestCacheEntityImplementingNone : HNKTestCacheEntity
 
 @end
 
@@ -70,6 +87,40 @@
     
     XCTAssertNotNil(result, @"");
     XCTAssertEqual(resultSize, format.size, @"");
+}
+
+- (void)testImageForEntity_ImplementingCacheOriginalImage
+{
+    id<HNKCacheEntity> entity = [HNKTestCacheEntityImplementingCacheOriginalImage new];
+    HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
+
+    UIImage *result = [_cache imageForEntity:entity formatName:format.name];
+    CGSize resultSize = result.size;
+    
+    XCTAssertNotNil(result, @"");
+    XCTAssertEqual(resultSize, format.size, @"");
+}
+
+- (void)testImageForEntity_ImplementingCacheOriginalData
+{
+    id<HNKCacheEntity> entity = [HNKTestCacheEntityImplementingCacheOriginalData new];
+    HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
+
+    UIImage *result = [_cache imageForEntity:entity formatName:format.name];
+    CGSize resultSize = result.size;
+    
+    XCTAssertNotNil(result, @"");
+    XCTAssertEqual(resultSize, format.size, @"");
+}
+
+- (void)testImageForEntity_ImplementingNone
+{
+    id entity = [HNKTestCacheEntityImplementingNone new];
+    HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
+
+    UIImage *result = [_cache imageForEntity:entity formatName:format.name];
+    
+    XCTAssertNil(result, @"");
 }
 
 - (void)testImageForEntity_Data
@@ -133,5 +184,35 @@
     return format;
 }
 
+@end
+
+@implementation HNKTestCacheEntity
+
+- (NSString*)cacheKey { return @"1"; };
+
+@end
+
+@implementation HNKTestCacheEntityImplementingCacheOriginalImage
+
+- (UIImage*)cacheOriginalImage
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
+    return image;
+}
+
+@end
+
+@implementation HNKTestCacheEntityImplementingCacheOriginalData
+
+- (NSData*)cacheOriginalData
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
+    NSData *data = UIImagePNGRepresentation(image);
+    return data;
+}
+
+@end
+
+@implementation HNKTestCacheEntityImplementingNone
 
 @end
