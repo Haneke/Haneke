@@ -103,11 +103,38 @@
     [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
 }
 
+- (void)testSetImageFromFile_Existing
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    NSString *key = [self fixturePathWithName:@"image.png"];
+    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
+    
+    [_imageView hnk_setImageFromFile:key];
+    
+    UIImage *result = _imageView.image;
+    XCTAssertEqualObjects(image, result, @"");
+}
+
 - (void)testSetImageFromEntity
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     id<HNKCacheEntity> entity = [HNKCache entityWithKey:@"test" data:nil image:image];
     [_imageView hnk_setImageFromEntity:entity];
+}
+
+- (void)testSetImageFromEntity_Existing
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    NSString *key = @"test";
+    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:image];
+    
+    [_imageView hnk_setImageFromEntity:entity];
+    
+    UIImage *result = _imageView.image;
+    XCTAssertEqualObjects(image, result, @"");
 }
 
 - (void)testSetImageFromURL
@@ -128,6 +155,18 @@
     
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(image, result, @"");
+}
+
+#pragma mark Utils
+
+- (NSString*)fixturePathWithName:(NSString*)name
+{
+    NSString *directory = NSHomeDirectory();
+    NSString *path = [directory stringByAppendingPathComponent:@"HanekeTests"];
+    path = [directory stringByAppendingPathComponent:@"fixtures"];
+    [[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
+    path = [directory stringByAppendingPathComponent:name];
+    return path;
 }
 
 @end
