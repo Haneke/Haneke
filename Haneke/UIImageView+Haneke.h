@@ -13,7 +13,11 @@
 
 - (void)hnk_setImageFromFile:(NSString*)path;
 
+- (void)hnk_setImageFromFile:(NSString*)path failure:(void (^)(NSError *error))failureBlock;
+
 - (void)hnk_setImageFromURL:(NSURL*)url;
+
+- (void)hnk_setImageFromURL:(NSURL*)url failure:(void (^)(NSError *error))failureBlock;
 
 - (void)hnk_setImage:(UIImage*)image withKey:(NSString*)key;
 
@@ -22,3 +26,8 @@
 @property (nonatomic, strong) HNKCacheFormat *hnk_cacheFormat;
 
 @end
+
+enum
+{
+    HNKErrorImageFromURLMissingData = -400,
+};
