@@ -10,6 +10,16 @@
 
 NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
+#define hnk_dispatch_sync_main_queue_if_needed(block)\
+    if ([NSThread isMainThread])\
+    {\
+        block();\
+    }\
+    else\
+    {\
+        dispatch_sync(dispatch_get_main_queue(), block);\
+    }
+
 @interface UIImage (hnk_utils)
 
 - (CGSize)hnk_aspectFillSizeForSize:(CGSize)size;
@@ -343,13 +353,13 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 - (UIImage*)imageFromEntity:(id<HNKCacheEntity>)entity error:(NSError*__autoreleasing *)errorPtr
 {
     __block UIImage *image = nil;
-    dispatch_sync(dispatch_get_main_queue(), ^{
+    hnk_dispatch_sync_main_queue_if_needed(^{
         image = [entity respondsToSelector:@selector(cacheOriginalImage)] ? entity.cacheOriginalImage : nil;
     });
     if (!image)
     {
         __block NSData *data = nil;
-        dispatch_sync(dispatch_get_main_queue(), ^{
+        hnk_dispatch_sync_main_queue_if_needed(^{
             data = [entity respondsToSelector:@selector(cacheOriginalData)] ? entity.cacheOriginalData : nil;
         });
         if (!data)
@@ -358,7 +368,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
             NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Invalid entity %@: Must return non-nil object in either cacheOriginalImage or cacheOriginalData", @""), key.lastPathComponent];
             HanekeLog(@"%@", errorDescription);
             NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
-            *errorPtr = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorEntityIncompleteImplementation userInfo:userInfo];
+            *errorPtr = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorEntityMustReturnImageOrData userInfo:userInfo];
             return nil;
         }
         image = [UIImage imageWithData:data scale:[UIScreen mainScreen].scale];

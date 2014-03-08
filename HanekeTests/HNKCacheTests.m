@@ -81,11 +81,13 @@
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
     id entity = [HNKCache entityWithKey:@"1" data:nil image:image];
     HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
+    NSError *error = nil;
     
-    UIImage *result = [_cache imageForEntity:entity formatName:format.name];
+    UIImage *result = [_cache imageForEntity:entity formatName:format.name error:&error];
     CGSize resultSize = result.size;
     
     XCTAssertNotNil(result, @"");
+    XCTAssertNil(error, @"");
     XCTAssertEqual(resultSize, format.size, @"");
 }
 
@@ -93,11 +95,13 @@
 {
     id<HNKCacheEntity> entity = [HNKTestCacheEntityImplementingCacheOriginalImage new];
     HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
+    NSError *error = nil;
 
-    UIImage *result = [_cache imageForEntity:entity formatName:format.name];
+    UIImage *result = [_cache imageForEntity:entity formatName:format.name error:&error];
     CGSize resultSize = result.size;
     
     XCTAssertNotNil(result, @"");
+    XCTAssertNil(error, @"");
     XCTAssertEqual(resultSize, format.size, @"");
 }
 
@@ -105,11 +109,13 @@
 {
     id<HNKCacheEntity> entity = [HNKTestCacheEntityImplementingCacheOriginalData new];
     HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
+    NSError *error = nil;
 
-    UIImage *result = [_cache imageForEntity:entity formatName:format.name];
+    UIImage *result = [_cache imageForEntity:entity formatName:format.name error:&error];
     CGSize resultSize = result.size;
     
     XCTAssertNotNil(result, @"");
+    XCTAssertNil(error, @"");
     XCTAssertEqual(resultSize, format.size, @"");
 }
 
@@ -117,10 +123,15 @@
 {
     id entity = [HNKTestCacheEntityImplementingNone new];
     HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
+    NSError *error = nil;
 
-    UIImage *result = [_cache imageForEntity:entity formatName:format.name];
+    UIImage *result = [_cache imageForEntity:entity formatName:format.name error:&error];
     
     XCTAssertNil(result, @"");
+    XCTAssertNotNil(error, @"");
+    XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
+    XCTAssertEqual(error.code, HNKErrorEntityMustReturnImageOrData, @"");
+    XCTAssertNotNil(error.userInfo[NSLocalizedDescriptionKey], @"");
 }
 
 - (void)testImageForEntity_Data
@@ -129,12 +140,30 @@
     NSData *data = UIImagePNGRepresentation(image);
     id entity = [HNKCache entityWithKey:@"1" data:data image:nil];
     HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
-    
-    UIImage *result = [_cache imageForEntity:entity formatName:format.name];
+    NSError *error = nil;
+
+    UIImage *result = [_cache imageForEntity:entity formatName:format.name error:&error];
     CGSize resultSize = result.size;
     
     XCTAssertNotNil(result, @"");
+    XCTAssertNil(error, @"");
     XCTAssertEqual(resultSize, format.size, @"");
+}
+
+- (void)testImageForEntity_InvalidData
+{
+    NSData *data = [NSData data];
+    id entity = [HNKCache entityWithKey:@"1" data:data image:nil];
+    HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
+    NSError *error = nil;
+    
+    UIImage *result = [_cache imageForEntity:entity formatName:format.name error:&error];
+    
+    XCTAssertNil(result, @"");
+    XCTAssertNotNil(error, @"");
+    XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
+    XCTAssertEqual(error.code, HNKErrorEntityCannotReadImageFromData, @"");
+    XCTAssertNotNil(error.userInfo[NSLocalizedDescriptionKey], @"");
 }
 
 #pragma mark Removing images
@@ -166,11 +195,11 @@
     static NSString *key = @"test";
     [_cache setImage:image forKey:key formatName:format.name];
     id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:image];
-    UIImage *cachedImage = [_cache imageForEntity:entity formatName:format.name];
+    UIImage *cachedImage = [_cache imageForEntity:entity formatName:format.name error:nil];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidReceiveMemoryWarningNotification object:nil];
 
-    UIImage *result = [_cache imageForEntity:entity formatName:format.name];
+    UIImage *result = [_cache imageForEntity:entity formatName:format.name error:nil];
     XCTAssertNotEqualObjects(result, cachedImage, @"");
 }
 

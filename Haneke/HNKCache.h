@@ -218,7 +218,7 @@ extern NSString *const HNKErrorDomain;
 
 enum
 {
-    HNKErrorEntityIncompleteImplementation = -200,
+    HNKErrorEntityMustReturnImageOrData = -200,
     HNKErrorEntityCannotReadImageFromData = -201,
 
     HNKErrorDiskCacheMiss = -300,
