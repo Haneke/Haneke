@@ -8,6 +8,8 @@
 
 #import "HNKCache.h"
 
+NSString *const HNKErrorDomain = @"com.hpique.haneke";
+
 @interface UIImage (hnk_utils)
 
 - (CGSize)hnk_aspectFillSizeForSize:(CGSize)size;
@@ -105,7 +107,7 @@
 
 #pragma mark Getting images
 
-- (UIImage*)imageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName
+- (UIImage*)imageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName error:(NSError *__autoreleasing *)errorPtr
 {
     HNKCacheFormat *format = _formats[formatName];
     NSAssert(format, @"Unknown format %@", formatName);
@@ -143,17 +145,9 @@
     }
     HanekeLog(@"Disk cache miss: %@/%@", formatName, key.lastPathComponent);
     
-    UIImage *originalImage = [entity respondsToSelector:@selector(cacheOriginalImage)] ? entity.cacheOriginalImage : nil;
-    if (!originalImage)
-    {
-        NSData *originalData = [entity respondsToSelector:@selector(cacheOriginalData)] ? entity.cacheOriginalData : nil;
-        if (!originalData)
-        {
-            HanekeLog(@"Unable to fetch original image of entity %@", key.lastPathComponent);
-            return nil;
-        }
-        originalImage = [UIImage imageWithData:originalData scale:[UIScreen mainScreen].scale];
-    }
+    UIImage *originalImage = [self imageFromEntity:entity error:errorPtr];
+    if (!originalImage) return nil;
+    
     image = [format resizedImageFromImage:originalImage];
     [self setMemoryImage:image forKey:key format:format];
     dispatch_async(format.diskQueue, ^{
@@ -162,38 +156,31 @@
     return image;
 }
 
-- (BOOL)retrieveImageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName completionBlock:(void(^)(id<HNKCacheEntity> entity, NSString *format, UIImage *image))completionBlock
+- (BOOL)retrieveImageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName completionBlock:(void(^)(id<HNKCacheEntity> entity, NSString *format, UIImage *image, NSError *error))completionBlock
 {
     NSString *key = entity.cacheKey;
-    return [self retrieveImageForKey:key formatName:formatName completionBlock:^(NSString *key, NSString *formatName, UIImage *image) {
+    return [self retrieveImageForKey:key formatName:formatName completionBlock:^(NSString *key, NSString *formatName, UIImage *image, NSError *error) {
         if (image)
         {
-            completionBlock(entity, formatName, image);
+            completionBlock(entity, formatName, image, error);
             return;
         }
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             HNKCacheFormat *format = _formats[formatName];
-            __block UIImage *originalImage = nil;
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                originalImage = [entity respondsToSelector:@selector(cacheOriginalImage)] ? entity.cacheOriginalImage : nil;
-            });
+
+            NSError *error = nil;
+            UIImage *originalImage = [self imageFromEntity:entity error:&error];
             if (!originalImage)
             {
-                __block NSData *originalData = nil;
                 dispatch_sync(dispatch_get_main_queue(), ^{
-                    originalData = [entity respondsToSelector:@selector(cacheOriginalData)] ? entity.cacheOriginalData : nil;
+                    completionBlock(entity, formatName, nil, error);
                 });
-                if (!originalData)
-                {
-                    HanekeLog(@"Unable to fetch original image of entity %@", key.lastPathComponent);
-                    return;
-                }
-                originalImage = [UIImage imageWithData:originalData scale:[UIScreen mainScreen].scale];
+                return;
             }
             UIImage *image = [format resizedImageFromImage:originalImage];
             dispatch_sync(dispatch_get_main_queue(), ^{
                 [self setMemoryImage:image forKey:key format:format];
-                completionBlock(entity, formatName, image);
+                completionBlock(entity, formatName, image, error);
             });
             dispatch_sync(format.diskQueue, ^{
                 [self saveImage:image key:key format:format];
@@ -202,7 +189,7 @@
     }];
 }
 
-- (BOOL)retrieveImageForKey:(NSString*)key formatName:(NSString *)formatName completionBlock:(void(^)(NSString *key, NSString *formatName, UIImage *image))completionBlock
+- (BOOL)retrieveImageForKey:(NSString*)key formatName:(NSString *)formatName completionBlock:(void(^)(NSString *key, NSString *formatName, UIImage *image, NSError *error))completionBlock
 {
     HNKCacheFormat *format = _formats[formatName];
     NSAssert(format, @"Unknown format %@", formatName);
@@ -212,7 +199,7 @@
     if (image)
     {
         HanekeLog(@"Memory cache hit: %@/%@", formatName, key.lastPathComponent);
-        completionBlock(key, formatName, image);
+        completionBlock(key, formatName, image, nil);
         dispatch_async(format.diskQueue, ^{
             [self updateAccessDateOfImage:image key:key format:format];
         });
@@ -223,27 +210,57 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSString *path = [self pathForKey:key format:format];
         __block NSData *imageData;
+        __block NSError *error = nil;
         dispatch_sync(format.diskQueue, ^{
-            imageData = [NSData dataWithContentsOfFile:path];
+            imageData = [NSData dataWithContentsOfFile:path options:kNilOptions error:&error];
         });
-        UIImage *image;
-        if (imageData && (image = [UIImage imageWithData:imageData scale:[UIScreen mainScreen].scale]))
+        if (imageData)
         {
             HanekeLog(@"Disk cache hit: %@/%@", formatName, key.lastPathComponent);
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                [self setMemoryImage:image forKey:key format:format];
-                completionBlock(key, formatName, image);
-            });
-            dispatch_sync(format.diskQueue, ^{
-                [self updateAccessDateOfImage:image key:key format:format];
-            });
+            UIImage *image = [UIImage imageWithData:imageData scale:[UIScreen mainScreen].scale];
+            if (image)
+            {
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    [self setMemoryImage:image forKey:key format:format];
+                    completionBlock(key, formatName, image, nil);
+                });
+                dispatch_sync(format.diskQueue, ^{
+                    [self updateAccessDateOfImage:image key:key format:format];
+                });
+            }
+            else
+            {
+                NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Disk cache: Cannot read image from data at path %@", @""), path];
+                HanekeLog(@"%@", errorDescription);
+                NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription , NSFilePathErrorKey : path};
+                NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorDiskCacheCannotReadImageFromData userInfo:userInfo];
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    completionBlock(key, formatName, nil, error);
+                });
+            }
         }
         else
         {
-            HanekeLog(@"Disk cache miss: %@/%@", formatName, key.lastPathComponent);
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                completionBlock(key, formatName, nil);
-            });
+            if (error.code == NSFileReadNoSuchFileError)
+            {
+                HanekeLog(@"Disk cache miss: %@/%@", formatName, key.lastPathComponent);
+                NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Disk cache: Miss at path %@", @""), path];
+                NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription , NSFilePathErrorKey : path};
+                NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorDiskCacheMiss userInfo:userInfo];
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    completionBlock(key, formatName, nil, error);
+                });
+            }
+            else
+            {
+                NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Disk cache: Cannot read from file at path %@", @""), path];
+                HanekeLog(@"%@", errorDescription);
+                NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription , NSFilePathErrorKey : path, NSUnderlyingErrorKey : error};
+                NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorDiskCacheCannotReadFromFile userInfo:userInfo];
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    completionBlock(key, formatName, nil, error);
+                });
+            }
         }
     });
     return NO;
@@ -321,6 +338,41 @@
     NSString *escapedKey = CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,(CFStringRef)key, NULL, CFSTR("/:"), kCFStringEncodingUTF8));
     NSString *path = [format.directory stringByAppendingPathComponent:escapedKey];
     return path;
+}
+
+- (UIImage*)imageFromEntity:(id<HNKCacheEntity>)entity error:(NSError*__autoreleasing *)errorPtr
+{
+    __block UIImage *image = nil;
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        image = [entity respondsToSelector:@selector(cacheOriginalImage)] ? entity.cacheOriginalImage : nil;
+    });
+    if (!image)
+    {
+        __block NSData *data = nil;
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            data = [entity respondsToSelector:@selector(cacheOriginalData)] ? entity.cacheOriginalData : nil;
+        });
+        if (!data)
+        {
+            NSString *key = entity.cacheKey;
+            NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Invalid entity %@: Must return non-nil object in either cacheOriginalImage or cacheOriginalData", @""), key.lastPathComponent];
+            HanekeLog(@"%@", errorDescription);
+            NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
+            *errorPtr = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorEntityIncompleteImplementation userInfo:userInfo];
+            return nil;
+        }
+        image = [UIImage imageWithData:data scale:[UIScreen mainScreen].scale];
+        if (!image)
+        {
+            NSString *key = entity.cacheKey;
+            NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Invalid entity %@: Cannot read image from data", @""), key.lastPathComponent];
+            HanekeLog(@"%@", errorDescription);
+            NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
+            *errorPtr = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorEntityCannotReadImageFromData userInfo:userInfo];
+            return nil;
+        }
+    }
+    return image;
 }
 
 #pragma mark Private (memory)

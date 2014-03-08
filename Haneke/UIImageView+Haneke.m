@@ -35,7 +35,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     self.hnk_lastCacheKey = path;
     HNKCacheFormat *format = self.hnk_cacheFormat;
     __block BOOL animated = NO;
-    [[HNKCache sharedCache] retrieveImageForKey:path formatName:format.name completionBlock:^(NSString *key, NSString *formatName, UIImage *image) {
+    [[HNKCache sharedCache] retrieveImageForKey:path formatName:format.name completionBlock:^(NSString *key, NSString *formatName, UIImage *image, NSError *error) {
         if ([self hnk_shouldCancelRequestForKey:key formatName:formatName]) return;
         
         if (image)
@@ -73,7 +73,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     self.hnk_lastCacheKey = absoluteString;
     HNKCacheFormat *format = self.hnk_cacheFormat;
     __block BOOL animated = NO;
-    [[HNKCache sharedCache] retrieveImageForKey:absoluteString formatName:format.name completionBlock:^(NSString *key, NSString *formatName, UIImage *image) {
+    [[HNKCache sharedCache] retrieveImageForKey:absoluteString formatName:format.name completionBlock:^(NSString *key, NSString *formatName, UIImage *image, NSError *error) {
         if ([self hnk_shouldCancelRequestForKey:key formatName:formatName]) return;
         
         if (image)
@@ -174,7 +174,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 {
     HNKCacheFormat *format = self.hnk_cacheFormat;
     __block BOOL animated = NO;
-    [[HNKCache sharedCache] retrieveImageForEntity:entity formatName:format.name completionBlock:^(id<HNKCacheEntity> entity, NSString *formatName, UIImage *image) {
+    [[HNKCache sharedCache] retrieveImageForEntity:entity formatName:format.name completionBlock:^(id<HNKCacheEntity> entity, NSString *formatName, UIImage *image, NSError *error) {
         if ([self hnk_shouldCancelRequestForKey:entity.cacheKey formatName:formatName]) return;
         
         [self hnk_setImage:image animated:animated];
