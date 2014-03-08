@@ -166,6 +166,65 @@
     XCTAssertNotNil(error.userInfo[NSLocalizedDescriptionKey], @"");
 }
 
+- (void)testRetrieveImageForEntity_Sync
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:@"1" data:nil image:image];
+    HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
+    NSString *formatName = format.name;
+    [_cache setImage:image forKey:entity.cacheKey formatName:formatName];
+
+    BOOL result = [_cache retrieveImageForEntity:entity formatName:formatName completionBlock:^(id<HNKCacheEntity> resultEntity, NSString *resultFormatName, UIImage *resultImage, NSError *error) {
+        XCTAssertEqualObjects(resultEntity, entity, @"");
+        XCTAssertEqualObjects(resultFormatName, formatName, @"");
+        XCTAssertEqualObjects(resultImage, image, @"");
+        XCTAssertNil(error);
+    }];
+    
+    XCTAssertTrue(result, @"");
+}
+
+- (void)testRetrieveImageForEntity_Async
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:@"1" data:nil image:image];
+    HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
+    NSString *formatName = format.name;
+    
+    BOOL result = [_cache retrieveImageForEntity:entity formatName:formatName completionBlock:^(id<HNKCacheEntity> resultEntity, NSString *resultFormatName, UIImage *resultImage, NSError *error) {}];
+    
+    XCTAssertFalse(result, @"");
+}
+
+- (void)testRetrieveImageForKey_Sync
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
+    HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
+    NSString *formatName = format.name;
+    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    [_cache setImage:image forKey:key formatName:formatName];
+    
+    BOOL result = [_cache retrieveImageForKey:key formatName:formatName completionBlock:^(NSString *resultKey, NSString *resultFormatName, UIImage *resultImage, NSError *error) {
+        XCTAssertEqualObjects(resultKey, key, @"");
+        XCTAssertEqualObjects(resultFormatName, formatName, @"");
+        XCTAssertEqualObjects(resultImage, image, @"");
+        XCTAssertNil(error);
+    }];
+    
+    XCTAssertTrue(result, @"");
+}
+
+- (void)testRetrieveImageForKey_Async
+{
+    HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
+    NSString *formatName = format.name;
+    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    
+    BOOL result = [_cache retrieveImageForKey:key formatName:formatName completionBlock:^(NSString *resultKey, NSString *resultFormatName, UIImage *resultImage, NSError *error) {}];
+    
+    XCTAssertFalse(result, @"");
+}
+
 #pragma mark Removing images
 
 - (void)testRemoveImagesFromEntity_NoImagesNoFormats
