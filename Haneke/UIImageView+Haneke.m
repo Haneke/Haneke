@@ -83,18 +83,34 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
         }
 
         NSURLSession *session = [NSURLSession sharedSession];
-        NSURLSessionDataTask *task = [session dataTaskWithURL:url completionHandler:^(NSData *originalData, NSURLResponse *response, NSError *error)
+        NSURLSessionDataTask *task = [session dataTaskWithURL:url completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
         {
-            if (!originalData)
+            if ([self hnk_shouldCancelRequestForKey:key formatName:formatName]) return;
+            
+            if (error)
             {
                 HanekeLog(@"Request %@ failed with error %@", absoluteString, error);
                 return;
             }
-            if ([self hnk_shouldCancelRequestForKey:key formatName:formatName]) return;
+            const long long expectedContentLength = response.expectedContentLength;
+            if (expectedContentLength > -1)
+            {
+                const NSUInteger dataLength = data.length;
+                if (dataLength < expectedContentLength)
+                {
+                    HanekeLog(@"Request %@ received %ld out of %ld bytes", absoluteString, (long)dataLength, (long)expectedContentLength);
+                    return;
+                }
+            }
             
-            UIImage *originalImage = [UIImage imageWithData:originalData scale:[UIScreen mainScreen].scale];
+            UIImage *image = [UIImage imageWithData:data scale:[UIScreen mainScreen].scale];
+            if (!image)
+            {
+                HanekeLog(@"Request %@ received invalid image data", absoluteString);
+                return;
+            }
             
-            HNKImageViewEntity *entity = [HNKImageViewEntity entityWithImage:originalImage key:absoluteString];
+            HNKImageViewEntity *entity = [HNKImageViewEntity entityWithImage:image key:absoluteString];
             [self hnk_retrieveImageFromEntity:entity];
             self.hnk_URLSessionDataTask = nil;
         }];
