@@ -24,6 +24,12 @@
     _imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
 }
 
+- (void)tearDown
+{
+    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    [[HNKCache sharedCache] clearFormatNamed:format.name];
+}
+
 - (void)testCacheFormat_Default
 {
     HNKCacheFormat *result = _imageView.hnk_cacheFormat;
@@ -88,22 +94,34 @@
     [_imageView hnk_setImage:image withKey:@"test"];
 }
 
-- (void)testSetImageFromFile
+- (void)testSetImageFromFile_MemoryCacheMiss
 {
-    NSString *directory = NSHomeDirectory();
-    NSString *path = [directory stringByAppendingPathComponent:@"HanekeTests"];
-    path = [directory stringByAppendingPathComponent:@"fixtures"];
-    [[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
-    path = [directory stringByAppendingPathComponent:@"image.png"];
+    NSString *path = [self fixturePathWithName:@"image.png"];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     [UIImagePNGRepresentation(image) writeToFile:path atomically:YES];
 
     [_imageView hnk_setImageFromFile:path];
+    XCTAssertNil(_imageView.image, @"");
     
     [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
 }
 
-- (void)testSetImageFromFile_Existing
+- (void)testSetImageFromFile_MemoryCacheMiss_ImageSet
+{
+    NSString *path = [self fixturePathWithName:@"image.png"];
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
+    [UIImagePNGRepresentation(image) writeToFile:path atomically:YES];
+    UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    _imageView.image = previousImage;
+    
+    [_imageView hnk_setImageFromFile:path];
+
+    XCTAssertEqualObjects(_imageView.image, previousImage, @"");
+    
+    [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
+}
+
+- (void)testSetImageFromFile_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = [self fixturePathWithName:@"image.png"];
@@ -114,6 +132,79 @@
     
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(image, result, @"");
+}
+
+- (void)testSetImageFromFilePlaceholderImage_MemoryCacheHit
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
+    UIImage *placeholderImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    NSString *key = [self fixturePathWithName:@"image.png"];
+    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
+    
+    [_imageView hnk_setImageFromFile:key placeholderImage:placeholderImage];
+    
+    UIImage *result = _imageView.image;
+    XCTAssertEqualObjects(result, image, @"");
+}
+
+- (void)testSetImageFromFilePlaceholderImage_MemoryCacheMiss
+{
+    UIImage *placeholderImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    NSString *key = [self fixturePathWithName:@"image.png"];
+
+    [_imageView hnk_setImageFromFile:key placeholderImage:placeholderImage];
+    
+    UIImage *result = _imageView.image;
+    XCTAssertEqualObjects(result, placeholderImage, @"");
+}
+
+- (void)testSetImageFromFilePlaceholderImage_NilPlaceholder_MemoryCacheMiss_ImageSet
+{
+    UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    _imageView.image = previousImage;
+    NSString *key = [self fixturePathWithName:@"image.png"];
+    
+    [_imageView hnk_setImageFromFile:key placeholderImage:nil];
+    
+    UIImage *result = _imageView.image;
+    XCTAssertEqualObjects(result, previousImage, @"");
+}
+
+- (void)testSetImageFromFileFailure_MemoryCacheHit
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
+    NSString *key = [self fixturePathWithName:@"image.png"];
+    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
+    
+    [_imageView hnk_setImageFromFile:key failure:^(NSError *error) {
+        XCTFail(@"");
+    }];
+    
+    UIImage *result = _imageView.image;
+    XCTAssertEqualObjects(image, result, @"");
+}
+
+- (void)testSetImageFromFileFailure_MemoryCacheMiss
+{
+    NSString *key = [self fixturePathWithName:@"image.png"];
+    
+    [_imageView hnk_setImageFromFile:key failure:nil];
+    
+    XCTAssertNil(_imageView.image, @"");
+}
+
+- (void)testSetImageFromFileFailure_MemoryCacheMiss_ImageSet
+{
+    UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    _imageView.image = previousImage;
+    NSString *key = [self fixturePathWithName:@"image.png"];
+    
+    [_imageView hnk_setImageFromFile:key failure:nil];
+    
+    UIImage *result = _imageView.image;
+    XCTAssertEqualObjects(result, previousImage, @"");
 }
 
 - (void)testSetImageFromEntity

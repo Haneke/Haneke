@@ -13,7 +13,11 @@
 
 - (void)hnk_setImageFromFile:(NSString*)path;
 
+- (void)hnk_setImageFromFile:(NSString*)path placeholderImage:(UIImage*)placeholderImage;
+
 - (void)hnk_setImageFromFile:(NSString*)path failure:(void (^)(NSError *error))failureBlock;
+
+- (void)hnk_setImageFromFile:(NSString*)path placeholderImage:(UIImage*)placeholderImage failure:(void (^)(NSError *error))failureBlock;
 
 - (void)hnk_setImageFromURL:(NSURL*)url;
 

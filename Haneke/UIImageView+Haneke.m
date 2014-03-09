@@ -34,15 +34,25 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 - (void)hnk_setImageFromFile:(NSString*)path
 {
-    [self hnk_setImageFromFile:path failure:nil];
+    [self hnk_setImageFromFile:path placeholderImage:nil failure:nil];
 }
 
-- (void)hnk_setImageFromFile:(NSString*)path failure:(void (^)(NSError *error))failureBlock
+- (void)hnk_setImageFromFile:(NSString*)path placeholderImage:(UIImage *)placeholderImage
+{
+    [self hnk_setImageFromFile:path placeholderImage:placeholderImage failure:nil];
+}
+
+- (void)hnk_setImageFromFile:(NSString*)path failure:(void (^)(NSError *))failureBlock
+{
+    [self hnk_setImageFromFile:path placeholderImage:nil failure:failureBlock];
+}
+
+- (void)hnk_setImageFromFile:(NSString*)path placeholderImage:(UIImage*)placeholderImage failure:(void (^)(NSError *error))failureBlock
 {
     self.hnk_lastCacheKey = path;
     HNKCacheFormat *format = self.hnk_cacheFormat;
     __block BOOL animated = NO;
-    [[HNKCache sharedCache] retrieveImageForKey:path formatName:format.name completionBlock:^(NSString *key, NSString *formatName, UIImage *image, NSError *error) {
+    const BOOL memoryCacheHit = [[HNKCache sharedCache] retrieveImageForKey:path formatName:format.name completionBlock:^(NSString *key, NSString *formatName, UIImage *image, NSError *error) {
         if ([self hnk_shouldCancelRequestForKey:key formatName:formatName]) return;
         
         if (image)
@@ -79,6 +89,10 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
         });
     }];
     animated = YES;
+    if (!memoryCacheHit && placeholderImage != nil)
+    {
+        self.image = placeholderImage;
+    }
 }
 
 - (void)hnk_setImageFromURL:(NSURL*)url
