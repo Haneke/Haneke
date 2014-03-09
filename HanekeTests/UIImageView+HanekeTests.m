@@ -107,7 +107,7 @@
     [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
 }
 
-- (void)testSetImageFromFile_MemoryCacheMiss_ImageSet
+- (void)testSetImageFromFile_ImageSet_MemoryCacheMiss
 {
     NSString *path = [self fixturePathWithName:@"image.png"];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
@@ -160,7 +160,7 @@
     XCTAssertEqualObjects(result, placeholderImage, @"");
 }
 
-- (void)testSetImageFromFilePlaceholderImage_NilPlaceholder_MemoryCacheMiss_ImageSet
+- (void)testSetImageFromFilePlaceholderImage_ImageSet_NilPlaceholder_MemoryCacheMiss
 {
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     _imageView.image = previousImage;
@@ -196,7 +196,7 @@
     XCTAssertNil(_imageView.image, @"");
 }
 
-- (void)testSetImageFromFileFailure_MemoryCacheMiss_ImageSet
+- (void)testSetImageFromFileFailure_ImageSet_MemoryCacheMiss
 {
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     _imageView.image = previousImage;
@@ -260,13 +260,27 @@
     XCTAssertEqualObjects(image, result, @"");
 }
 
-- (void)testSetImageFromURL
+- (void)testSetImageFromURL_MemoryCacheMiss
 {
     NSURL *url = [NSURL URLWithString:@"http://imgs.xkcd.com/comics/election.png"];
+    
     [_imageView hnk_setImageFromURL:url];
+    
+    XCTAssertNil(_imageView.image, @"");
 }
 
-- (void)testSetImageFromURL_Existing
+- (void)testSetImageFromURL_ImageSet_MemoryCacheMiss
+{
+    UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    _imageView.image = previousImage;
+    NSURL *url = [NSURL URLWithString:@"http://imgs.xkcd.com/comics/election.png"];
+
+    [_imageView hnk_setImageFromURL:url];
+    
+    XCTAssertEqualObjects(_imageView.image, previousImage, @"");
+}
+
+- (void)testSetImageFromURL_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = @"http://imgs.xkcd.com/comics/election.png";
@@ -275,6 +289,83 @@
     NSURL *url = [NSURL URLWithString:key];
     
     [_imageView hnk_setImageFromURL:url];
+    
+    UIImage *result = _imageView.image;
+    XCTAssertEqualObjects(image, result, @"");
+}
+
+- (void)testSetImageFromURLPlaceholderImage_MemoryCacheHit
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
+    UIImage *placeholderImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    NSString *key = @"http://imgs.xkcd.com/comics/election.png";
+    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
+    NSURL *url = [NSURL URLWithString:key];
+    
+    [_imageView hnk_setImageFromURL:url placeholderImage:placeholderImage];
+    
+    UIImage *result = _imageView.image;
+    XCTAssertEqualObjects(result, image, @"");
+}
+
+- (void)testSetImageFromURLPlaceholderImage_MemoryCacheMiss
+{
+    UIImage *placeholderImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    NSString *key = @"http://imgs.xkcd.com/comics/election.png";
+    NSURL *url = [NSURL URLWithString:key];
+    
+    [_imageView hnk_setImageFromURL:url placeholderImage:placeholderImage];
+    
+    UIImage *result = _imageView.image;
+    XCTAssertEqualObjects(result, placeholderImage, @"");
+}
+
+- (void)testSetImageFromURLPlaceholderImage_ImageSet_NilPlaceholder_MemoryCacheMiss
+{
+    UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    _imageView.image = previousImage;
+    NSString *key = @"http://imgs.xkcd.com/comics/election.png";
+    NSURL *url = [NSURL URLWithString:key];
+    
+    [_imageView hnk_setImageFromURL:url placeholderImage:nil];
+    
+    UIImage *result = _imageView.image;
+    XCTAssertEqualObjects(result, previousImage, @"");
+}
+
+- (void)testSetImageFromURLFailure_MemoryCacheMiss
+{
+    NSURL *url = [NSURL URLWithString:@"http://imgs.xkcd.com/comics/election.png"];
+    
+    [_imageView hnk_setImageFromURL:url failure:nil];
+    
+    XCTAssertNil(_imageView.image, @"");
+}
+
+- (void)testSetImageFromURLFailure_ImageSet_MemoryCacheMiss
+{
+    UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    _imageView.image = previousImage;
+    NSURL *url = [NSURL URLWithString:@"http://imgs.xkcd.com/comics/election.png"];
+    
+    [_imageView hnk_setImageFromURL:url failure:nil];
+    
+    UIImage *result = _imageView.image;
+    XCTAssertEqualObjects(result, previousImage, @"");
+}
+
+- (void)testSetImageFromURLFailure_MemoryCacheHit
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    NSString *key = @"http://imgs.xkcd.com/comics/election.png";
+    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
+    NSURL *url = [NSURL URLWithString:key];
+    
+    [_imageView hnk_setImageFromURL:url failure:^(NSError *error) {
+        XCTFail(@"");
+    }];
     
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(image, result, @"");

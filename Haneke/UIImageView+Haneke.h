@@ -21,7 +21,11 @@
 
 - (void)hnk_setImageFromURL:(NSURL*)url;
 
+- (void)hnk_setImageFromURL:(NSURL*)url placeholderImage:(UIImage*)placeholderImage;
+
 - (void)hnk_setImageFromURL:(NSURL*)url failure:(void (^)(NSError *error))failureBlock;
+
+- (void)hnk_setImageFromURL:(NSURL*)url placeholderImage:(UIImage*)placeholderImage failure:(void (^)(NSError *error))failureBlock;
 
 - (void)hnk_setImage:(UIImage*)image withKey:(NSString*)key;
 

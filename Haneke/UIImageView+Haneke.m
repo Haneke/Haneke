@@ -52,7 +52,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     self.hnk_lastCacheKey = path;
     HNKCacheFormat *format = self.hnk_cacheFormat;
     __block BOOL animated = NO;
-    const BOOL memoryCacheHit = [[HNKCache sharedCache] retrieveImageForKey:path formatName:format.name completionBlock:^(NSString *key, NSString *formatName, UIImage *image, NSError *error) {
+    const BOOL didSetImage = [[HNKCache sharedCache] retrieveImageForKey:path formatName:format.name completionBlock:^(NSString *key, NSString *formatName, UIImage *image, NSError *error) {
         if ([self hnk_shouldCancelRequestForKey:key formatName:formatName]) return;
         
         if (image)
@@ -89,7 +89,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
         });
     }];
     animated = YES;
-    if (!memoryCacheHit && placeholderImage != nil)
+    if (!didSetImage && placeholderImage != nil)
     {
         self.image = placeholderImage;
     }
@@ -97,17 +97,27 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 - (void)hnk_setImageFromURL:(NSURL*)url
 {
-    [self hnk_setImageFromURL:url failure:nil];
+    [self hnk_setImageFromURL:url placeholderImage:nil failure:nil];
+}
+
+- (void)hnk_setImageFromURL:(NSURL*)url placeholderImage:(UIImage *)placeholderImage
+{
+    [self hnk_setImageFromURL:url placeholderImage:placeholderImage failure:nil];
 }
 
 - (void)hnk_setImageFromURL:(NSURL*)url failure:(void (^)(NSError *error))failureBlock
+{
+    [self hnk_setImageFromURL:url placeholderImage:nil failure:failureBlock];
+}
+
+- (void)hnk_setImageFromURL:(NSURL*)url placeholderImage:(UIImage*)placeholderImage failure:(void (^)(NSError *error))failureBlock
 {
     [self.hnk_URLSessionDataTask cancel];
     NSString *absoluteString = url.absoluteString;
     self.hnk_lastCacheKey = absoluteString;
     HNKCacheFormat *format = self.hnk_cacheFormat;
     __block BOOL animated = NO;
-    [[HNKCache sharedCache] retrieveImageForKey:absoluteString formatName:format.name completionBlock:^(NSString *key, NSString *formatName, UIImage *image, NSError *error) {
+    const BOOL didSetImage = [[HNKCache sharedCache] retrieveImageForKey:absoluteString formatName:format.name completionBlock:^(NSString *key, NSString *formatName, UIImage *image, NSError *error) {
         if ([self hnk_shouldCancelRequestForKey:key formatName:formatName]) return;
         
         if (image)
@@ -153,6 +163,10 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
         [task resume];
     }];
     animated = YES;
+    if (!didSetImage && placeholderImage != nil)
+    {
+        self.image = placeholderImage;
+    }
 }
 
 - (void)hnk_setImage:(UIImage*)originalImage withKey:(NSString*)key
