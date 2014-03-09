@@ -6,8 +6,7 @@ Haneke
 
 A lightweight zero-config image cache for iOS. 
 
-Haneke resizes images and caches the result on memory and disk. Everything is done in background, allowing for fast, responsive scrolling. Asking Haneke to load, resize, cache and display an appropriately sized image is as simple as:
-
+Haneke resizes images and caches the result on memory and disk. Everything is done in background, allowing for fast, responsive scrolling. Asking Haneke to load, resize, cache and display an *appropriately sized image* is as simple as:
 
 ```objective-c
 [imageView hnk_setImageFromURL:url];
@@ -19,12 +18,13 @@ _Really._
 
 * First-level memory cache using `NSCache`.
 * Second-level LRU disk cache using the file system.
+* Zero-config `UIImageView` category to use the cache, optimized for `UITableView` and `UICollectionView` cell reuse.
 * Asynchronous and synchronous image retrieval.
 * Background image resizing and file reading.
+* Custom image transformations before and after resizing.
 * Thread-safe.
 * Automatic cache eviction on memory warnings or disk capacity reached.
 * Preloading images from the disk cache into memory on startup.
-* Zero-config `UIImageView` category to use the cache, optimized for `UITableView` and `UICollectionView` cell reuse.
 
 ##Add Haneke to your project
 
@@ -64,12 +64,12 @@ The cache behavior can be customized by defining cache formats. Each image view 
 
 Each image view has a default format created on demand. The default format is configured as follows:
 
-* Size matches the `bounds` of the image view
-* Images will be scaled based on the `contentMode` of the the image view
-* Images can be upscaled if they're smaller than the image view
-* High compression quality
-* No preloading
-* Up to 10MB of disk cache
+* Size matches the `bounds` of the image view.
+* Images will be scaled based on the `contentMode` of the the image view.
+* Images can be upscaled if they're smaller than the image view.
+* High compression quality.
+* No preloading.
+* Up to 10MB of disk cache.
 
 Modifying this default format is discouraged. Instead, you can set your own custom format like this:
 
