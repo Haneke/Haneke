@@ -33,7 +33,7 @@ _Really._
 
 ##UIImageView category
 
-Haneke provides convenience methods for `UIImageView` with optimizations for `UITableView` and `UICollectionView` cell reuse. Images will be resized appropriately and cached.
+Haneke provides convenience methods for `UIImageView` with optimizations for `UITableView` and `UICollectionView` cell reuse. Images will be resized appropriately and cached in a shared cache.
 
 ```objective-c
 // Setting a remote image
@@ -54,6 +54,68 @@ The above lines take care of:
 4. Or doing nothing if the `UIImageView` was reused during any of the above steps.
 5. Caching the resulting image.
 6. If needed, evicting the least recently used images in the cache.
+
+
+##Cache formats
+
+The cache behavior can be customized by defining cache formats. Each image view has a default format and you can also define your own formats. A format is uniquely identified by its name.
+
+### UIImageView format
+
+Each image view has a default format created on demand. The default format is configured as follows:
+
+* Size matches the `bounds` of the image view
+* Images will be scaled based on the `contentMode` of the the image view
+* Images can be upscaled if they're smaller than the image view
+* High compression quality
+* No preloading
+* Up to 10MB of disk cache
+
+Modifying this default format is discouraged. Instead, you can set your own custom format like this:
+
+```objective-c
+HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"thumbnail"];
+format.size = CGSizeMake(320, 240);
+format.scaleMode = HNKScaleModeAspectFill;
+format.compressionQuality = 0.5;
+format.diskCapacity = 1 * 1024 * 1024; // 1MB
+format.preloadPolicy = HNKPreloadPolicyLastSession;
+imageView.hnk_cacheFormat = format;
+```
+
+The image view category will take care of registering the format in the shared cache.
+
+### Disk cache
+
+A format can have disk cache by setting the `diskCapacity` property with a value greater than 0. Haneke will take care of evicting from disk the least recently used images of the format when the disk capacity is surpassed.
+
+### Preload policy
+
+When configured, Haneke will add some or all images cached on disk to the memory cache when a format is registered.
+
+If an image of the corresponding format is requested before preloading finishes, Haneke will cancel preloading to give priority to the request. To make the most of this feature it's recommended to register formats on startup.
+
+The available preload policies are:
+
+* `HNKPreloadPolicyNone`: No images will be preloaded.
+* `HNKPreloadPolicyLastSession`: Only images from the last session will be preloaded.
+* `HNKPreloadPolicyAll`: All images will be preloaded.
+
+Preloading only applies to formats that use disk cache.
+
+### Pre and post resize blocks
+
+Formats can have blocks that will be called before and after the original image is resized: `preResizeBlock` and `postResizeBlock` respectively. Both receive a key and the image up to the corresponding stage. For example:
+
+```objective-c
+format.postResizeBlock = ^UIImage* (NSString *key, UIImage *image) {
+    UIImage *roundedImage = [image imageByRoundingCorners];
+    return roundedImage;
+};
+```
+
+These blocks will be called only if the requested image is not found in the cache. They will be executed in background when using the image view category or the asynchronous methods of the cache directly.
+
 
 ##Requirements
 
