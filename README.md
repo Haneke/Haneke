@@ -87,21 +87,19 @@ The image view category will take care of registering the format in the shared c
 
 ### Disk cache
 
-A format can have disk cache by setting the `diskCapacity` property with a value greater than 0. Haneke will take care of evicting from disk the least recently used images of the format when the disk capacity is surpassed.
+A format can have disk cache by setting the `diskCapacity` property with a value greater than 0. Haneke will take care of evicting the least recently used images of the format from the disk cache when the disk capacity is surpassed.
 
 ### Preload policy
 
-When configured, Haneke will add some or all images cached on disk to the memory cache when a format is registered.
-
-If an image of the corresponding format is requested before preloading finishes, Haneke will cancel preloading to give priority to the request. To make the most of this feature it's recommended to register formats on startup.
-
-The available preload policies are:
+When registering a format, Haneke will load none, some or all images cached on disk into the memory cache based on the preload policy of the format. The available preload policies are:
 
 * `HNKPreloadPolicyNone`: No images will be preloaded.
 * `HNKPreloadPolicyLastSession`: Only images from the last session will be preloaded.
 * `HNKPreloadPolicyAll`: All images will be preloaded.
 
-Preloading only applies to formats that use disk cache.
+If an image of the corresponding format is requested before preloading finishes, Haneke will cancel preloading to give priority to the request. To make the most of this feature it's recommended to register formats on startup.
+
+Preloading only applies to formats that have disk cache.
 
 ### Pre and post resize blocks
 
