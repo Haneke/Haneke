@@ -198,14 +198,14 @@ typedef NS_ENUM(NSInteger, HNKPreloadPolicy)
 @property (nonatomic, assign) HNKPreloadPolicy preloadPolicy;
 
 /**
- Block to be called before an image is resized. The returned image will be resized.
+ Block to be called before an image is resized. The returned image will be resized. nil by default.
  @warning The block will be called only if the requested image is not found in the cache.
  @warning The block will be called in background when using the asynchronous methods of the cache.
  **/
 @property (nonatomic, copy) UIImage* (^preResizeBlock)(NSString *key, UIImage *image);
 
 /**
- Block to be called after an image is resized. The returned image will be used by the cache.
+ Block to be called after an image is resized. The returned image will be used by the cache. nil by default.
  @warning The block will be called only if the requested image is not found in the cache.
  @warning The block will be called in background when using the asynchronous methods of the cache.
  **/
