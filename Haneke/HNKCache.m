@@ -158,7 +158,9 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     UIImage *originalImage = [self imageFromEntity:entity error:errorPtr];
     if (!originalImage) return nil;
     
-    image = [format resizedImageFromImage:originalImage];
+    image = format.preResizeBlock ? format.preResizeBlock(key, originalImage) : originalImage;
+    image = [format resizedImageFromImage:image];
+    if (format.postResizeBlock) image = format.postResizeBlock(key, image);
     [self setMemoryImage:image forKey:key format:format];
     dispatch_async(format.diskQueue, ^{
         [self saveImage:image key:key format:format];
@@ -187,7 +189,9 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
                 });
                 return;
             }
-            UIImage *image = [format resizedImageFromImage:originalImage];
+            UIImage *image = format.preResizeBlock ? format.preResizeBlock(key, originalImage) : originalImage;
+            image = [format resizedImageFromImage:image];
+            if (format.postResizeBlock) image = format.postResizeBlock(key, image);
             dispatch_sync(dispatch_get_main_queue(), ^{
                 [self setMemoryImage:image forKey:key format:format];
                 completionBlock(entity, formatName, image, error);
@@ -594,13 +598,17 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
             resizedSize = formatSize;
             break;
     }
+    const CGSize originalSize = originalImage.size;
     if (!self.allowUpscaling)
     {
-        CGSize originalSize = originalImage.size;
         if (resizedSize.width > originalSize.width || resizedSize.height > originalSize.height)
         {
             return originalImage;
         }
+    }
+    if (resizedSize.width == originalSize.width && resizedSize.height == originalSize.height)
+    {
+        return originalImage;
     }
     UIImage *image = [originalImage hnk_imageByScalingToSize:resizedSize];
     return image;

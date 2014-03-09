@@ -10,6 +10,7 @@
 #import "HNKCache.h"
 #import "UIImage+HanekeTestUtils.h"
 #import "HNKCache+HanekeTestUtils.h"
+#import "XCTestCase+HanekeTestUtils.h"
 #import <OCMock/OCMock.h>
 
 @interface HNKCacheTests : XCTestCase
@@ -166,7 +167,43 @@
     XCTAssertNotNil(error.userInfo[NSLocalizedDescriptionKey], @"");
 }
 
-- (void)testRetrieveImageForEntity_Sync
+- (void)testImageForEntity_PreResizeBlock
+{
+    HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
+    UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
+    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    id entity = [HNKCache entityWithKey:key data:nil image:originalImage];
+    UIImage *preResizeImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:format.size];
+
+    format.preResizeBlock = ^UIImage* (NSString *givenKey, UIImage *givenImage) {
+        XCTAssertEqualObjects(givenKey, key, @"");
+        XCTAssertEqualObjects(givenImage, originalImage, @"");
+        return preResizeImage;
+    };
+    
+    UIImage *result = [_cache imageForEntity:entity formatName:format.name error:nil];
+    XCTAssertEqualObjects(result, preResizeImage, @"");
+}
+
+- (void)testImageForEntity_PostResizeBlock
+{
+    HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
+    UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
+    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    id entity = [HNKCache entityWithKey:key data:nil image:originalImage];
+    UIImage *postResizeImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:format.size];
+    
+    format.postResizeBlock = ^UIImage* (NSString *givenKey, UIImage *givenImage) {
+        XCTAssertEqualObjects(givenKey, key, @"");
+        XCTAssertEqualObjects(givenImage, originalImage, @"");
+        return postResizeImage;
+    };
+    
+    UIImage *result = [_cache imageForEntity:entity formatName:format.name error:nil];
+    XCTAssertEqualObjects(result, postResizeImage, @"");
+}
+
+- (void)testRetrieveImageForEntity_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
     id<HNKCacheEntity> entity = [HNKCache entityWithKey:@"1" data:nil image:image];
@@ -184,7 +221,7 @@
     XCTAssertTrue(result, @"");
 }
 
-- (void)testRetrieveImageForEntity_Async
+- (void)testRetrieveImageForEntity_MemoryCacheMiss
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
     id<HNKCacheEntity> entity = [HNKCache entityWithKey:@"1" data:nil image:image];
@@ -196,7 +233,65 @@
     XCTAssertFalse(result, @"");
 }
 
-- (void)testRetrieveImageForKey_Sync
+- (void)testRetrieveImageForEntity_PreResizeBlock_MemoryCacheMiss
+{
+    HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
+    UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
+    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:originalImage];
+    NSString *formatName = format.name;
+    
+    UIImage *preResizeImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:format.size];
+    
+    format.preResizeBlock = ^UIImage* (NSString *givenKey, UIImage *givenImage) {
+        XCTAssertEqualObjects(givenKey, key, @"");
+        XCTAssertEqualObjects(givenImage, originalImage, @"");
+        return preResizeImage;
+    };
+    
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        BOOL result = [_cache retrieveImageForEntity:entity formatName:formatName completionBlock:^(id<HNKCacheEntity> resultEntity, NSString *resultFormatName, UIImage *resultImage, NSError *error) {
+            XCTAssertEqualObjects(resultEntity, entity, @"");
+            XCTAssertEqualObjects(resultFormatName, formatName, @"");
+            XCTAssertEqualObjects(resultImage, preResizeImage, @"");
+            XCTAssertNil(error);
+            dispatch_semaphore_signal(semaphore);
+        }];
+
+        XCTAssertFalse(result, @"");
+    }];
+}
+
+- (void)testRetrieveImageForEntity_PostResizeBlock_MemoryCacheMiss
+{
+    HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
+    UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
+    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:originalImage];
+    NSString *formatName = format.name;
+    
+    UIImage *postResizeImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:format.size];
+    
+    format.preResizeBlock = ^UIImage* (NSString *givenKey, UIImage *givenImage) {
+        XCTAssertEqualObjects(givenKey, key, @"");
+        XCTAssertEqualObjects(givenImage, originalImage, @"");
+        return postResizeImage;
+    };
+    
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        BOOL result = [_cache retrieveImageForEntity:entity formatName:formatName completionBlock:^(id<HNKCacheEntity> resultEntity, NSString *resultFormatName, UIImage *resultImage, NSError *error) {
+            XCTAssertEqualObjects(resultEntity, entity, @"");
+            XCTAssertEqualObjects(resultFormatName, formatName, @"");
+            XCTAssertEqualObjects(resultImage, postResizeImage, @"");
+            XCTAssertNil(error);
+            dispatch_semaphore_signal(semaphore);
+        }];
+        
+        XCTAssertFalse(result, @"");
+    }];
+}
+
+- (void)testRetrieveImageForKey_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
     HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
@@ -214,7 +309,7 @@
     XCTAssertTrue(result, @"");
 }
 
-- (void)testRetrieveImageForKey_Async
+- (void)testRetrieveImageForKey_MemoryCacheMiss
 {
     HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
     NSString *formatName = format.name;

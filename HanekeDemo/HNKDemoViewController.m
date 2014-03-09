@@ -39,7 +39,14 @@
     // UIImageView category default: -[UIImageView contentMode], -[HNKCacheFormat initWithName:] default: HNKScaleModeFill.
     
     format.size = CGSizeMake(100, 100);
-    // // UIImageView category default: -[UIImageView bounds].size, -[HNKCacheFormat initWithName:] default: CGSizeZero.
+    // UIImageView category default: -[UIImageView bounds].size, -[HNKCacheFormat initWithName:] default: CGSizeZero.
+    
+    format.postResizeBlock = ^UIImage* (NSString *key, UIImage *image) {
+        NSString *title = [key.lastPathComponent stringByDeletingPathExtension];
+        title = [title stringByReplacingOccurrencesOfString:@"sample" withString:@""];
+        UIImage *modifiedImage = [image demo_imageByDrawingColoredText:title];
+        return modifiedImage;
+    };
     
     [[HNKCache sharedCache] registerFormat:format];
 }
@@ -110,7 +117,7 @@
                 if (![[NSFileManager defaultManager] fileExistsAtPath:path])
                 {
                     NSLog(@"Creating image %ld of %d", (long)i + 1, ImageCount);
-                    UIImage *image = [UIImage demo_randomImageWithIndex:i];
+                    UIImage *image = [UIImage demo_randomImage];
                     NSData *data = UIImageJPEGRepresentation(image, 1);
                     [data writeToFile:path atomically:YES];
                 }

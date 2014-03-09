@@ -14,6 +14,6 @@
 
 - (UIImage*)demo_imageByDrawingColoredText:(NSString*)text;
 
-+ (UIImage*)demo_randomImageWithIndex:(NSUInteger)index;
++ (UIImage*)demo_randomImage;
 
 @end
