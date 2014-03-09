@@ -6,7 +6,7 @@ Haneke
 
 A lightweight zero-config image cache for iOS. 
 
-Haneke resizes images and caches the result on memory and disk. Everything is done in background, allowing for fast, responsive scrolling. Asking Haneke to load, resize, cache and display an appropiately sized image is as simple as:
+Haneke resizes images and caches the result on memory and disk. Everything is done in background, allowing for fast, responsive scrolling. Asking Haneke to load, resize, cache and display an appropriately sized image is as simple as:
 
 
 ```objective-c
@@ -33,7 +33,7 @@ _Really._
 
 ##UIImageView category
 
-Haneke provides convenience methods for `UIImageView` with optimizations for `UITableView` and `UICollectionView` cell reuse. Images will be resized appropiately and cached.
+Haneke provides convenience methods for `UIImageView` with optimizations for `UITableView` and `UICollectionView` cell reuse. Images will be resized appropriately and cached.
 
 ```objective-c
 // Setting a remote image
@@ -48,9 +48,9 @@ Haneke provides convenience methods for `UIImageView` with optimizations for `UI
 
 The above lines take care of:
 
-1. If cached, retreiving an appropiately sized image (based on the `bounds` and `contentMode` of the `UIImageView`) from the memory or disk cache. Disk access is performed in background.
-2. If not cached, loading the original image from web/disk/memory and producing an appropiately sized image, both in background. Remote images will be retrieved from the shared `NSURLCache` if available.
-3. Setting the image and animating the change if appropiate.
+1. If cached, retrieving an appropriately sized image (based on the `bounds` and `contentMode` of the `UIImageView`) from the memory or disk cache. Disk access is performed in background.
+2. If not cached, loading the original image from web/disk/memory and producing an appropriately sized image, both in background. Remote images will be retrieved from the shared `NSURLCache` if available.
+3. Setting the image and animating the change if appropriate.
 4. Or doing nothing if the `UIImageView` was reused during any of the above steps.
 5. Caching the resulting image.
 6. If needed, evicting the least recently used images in the cache.
