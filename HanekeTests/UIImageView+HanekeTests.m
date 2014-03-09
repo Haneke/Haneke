@@ -10,6 +10,7 @@
 #import "UIImageView+Haneke.h"
 #import "UIImage+HanekeTestUtils.h"
 #import "HNKCache+HanekeTestUtils.h"
+#import "XCTestCase+HanekeTestUtils.h"
 
 @interface UIImageView_HanekeTests : XCTestCase
 
@@ -205,6 +206,37 @@
     
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(result, previousImage, @"");
+}
+
+- (void)testSetImageFromFileFailure_NoSuchFileError
+{
+    NSString *key = [self fixturePathWithName:@"image.png"];
+    
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_imageView hnk_setImageFromFile:key failure:^(NSError *error) {
+            XCTAssertNotNil(error);
+            XCTAssertEqual(error.code, NSFileReadNoSuchFileError, @"");
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
+}
+
+- (void)testSetImageFromFileFailure_CannotReadImageFromData
+{
+    NSString *path = [self fixturePathWithName:@"image.png"];
+    NSData *data = [NSData data];
+    [data writeToFile:path atomically:YES];
+    
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_imageView hnk_setImageFromFile:path failure:^(NSError *error) {
+            XCTAssertNotNil(error);
+            XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
+            XCTAssertEqual(error.code, HNKErrorEntityCannotReadImageFromData, @"");
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
+    
+    [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
 }
 
 - (void)testSetImageFromEntity

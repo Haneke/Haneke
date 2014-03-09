@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		87260AB918CCDB7000D3680F /* XCTestCase+HanekeTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 87260AB818CCDB7000D3680F /* XCTestCase+HanekeTestUtils.m */; };
 		873E229318AA8C7C00E7919C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E229218AA8C7C00E7919C /* Foundation.framework */; };
 		873E22A118AA8C7C00E7919C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E22A018AA8C7C00E7919C /* XCTest.framework */; };
 		873E22A218AA8C7C00E7919C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E229218AA8C7C00E7919C /* Foundation.framework */; };
@@ -60,6 +61,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		87260AB718CCDB7000D3680F /* XCTestCase+HanekeTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XCTestCase+HanekeTestUtils.h"; sourceTree = "<group>"; };
+		87260AB818CCDB7000D3680F /* XCTestCase+HanekeTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XCTestCase+HanekeTestUtils.m"; sourceTree = "<group>"; };
 		873E228F18AA8C7C00E7919C /* libHaneke.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHaneke.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		873E229218AA8C7C00E7919C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		873E229F18AA8C7C00E7919C /* HanekeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HanekeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -288,6 +291,8 @@
 				87A6908518B68BF200F97E13 /* HNKCache+HanekeTestUtils.m */,
 				87A6908118B6817C00F97E13 /* UIImage+HanekeTestUtils.h */,
 				87A6908218B6817C00F97E13 /* UIImage+HanekeTestUtils.m */,
+				87260AB718CCDB7000D3680F /* XCTestCase+HanekeTestUtils.h */,
+				87260AB818CCDB7000D3680F /* XCTestCase+HanekeTestUtils.m */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -416,6 +421,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				87260AB918CCDB7000D3680F /* XCTestCase+HanekeTestUtils.m in Sources */,
 				87A6908618B68BF200F97E13 /* HNKCache+HanekeTestUtils.m in Sources */,
 				87A6907E18B678C700F97E13 /* GTMCodeCoverageTestsXC.m in Sources */,
 				87F47BAE18AC123C00F1FB48 /* UIImageView+HanekeTests.m in Sources */,
