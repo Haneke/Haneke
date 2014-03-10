@@ -158,9 +158,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     UIImage *originalImage = [self imageFromEntity:entity error:errorPtr];
     if (!originalImage) return nil;
     
-    image = format.preResizeBlock ? format.preResizeBlock(key, originalImage) : originalImage;
-    image = [format resizedImageFromImage:image];
-    if (format.postResizeBlock) image = format.postResizeBlock(key, image);
+    image = [self imageFromOriginal:originalImage key:key format:format];
     [self setMemoryImage:image forKey:key format:format];
     dispatch_async(format.diskQueue, ^{
         [self saveImage:image key:key format:format];
@@ -189,9 +187,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
                 });
                 return;
             }
-            UIImage *image = format.preResizeBlock ? format.preResizeBlock(key, originalImage) : originalImage;
-            image = [format resizedImageFromImage:image];
-            if (format.postResizeBlock) image = format.postResizeBlock(key, image);
+            UIImage *image = [self imageFromOriginal:originalImage key:key format:format];
             dispatch_sync(dispatch_get_main_queue(), ^{
                 [self setMemoryImage:image forKey:key format:format];
                 completionBlock(entity, formatName, image, error);
@@ -386,6 +382,14 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
             return nil;
         }
     }
+    return image;
+}
+
+- (UIImage*)imageFromOriginal:(UIImage*)original key:(NSString*)key format:(HNKCacheFormat*)format
+{
+    UIImage *image = format.preResizeBlock ? format.preResizeBlock(key, original) : original;
+    image = [format resizedImageFromImage:image];
+    if (format.postResizeBlock) image = format.postResizeBlock(key, image);
     return image;
 }
 
