@@ -49,6 +49,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 - (void)hnk_setImageFromFile:(NSString*)path placeholderImage:(UIImage*)placeholderImage failure:(void (^)(NSError *error))failureBlock
 {
+    [self hnk_cancelImageRequest];
     self.hnk_lastCacheKey = path;
     HNKCacheFormat *format = self.hnk_cacheFormat;
     __block BOOL animated = NO;
@@ -112,7 +113,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 - (void)hnk_setImageFromURL:(NSURL*)url placeholderImage:(UIImage*)placeholderImage failure:(void (^)(NSError *error))failureBlock
 {
-    [self.hnk_URLSessionDataTask cancel];
+    [self hnk_cancelImageRequest];
     NSString *absoluteString = url.absoluteString;
     self.hnk_lastCacheKey = absoluteString;
     HNKCacheFormat *format = self.hnk_cacheFormat;
@@ -177,6 +178,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 - (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity
 {
+    [self hnk_cancelImageRequest];
     self.hnk_lastCacheKey = entity.cacheKey;
     [self hnk_retrieveImageFromEntity:entity failure:nil];
 }
@@ -215,6 +217,13 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
         [cache registerFormat:format];
     }
     return format;
+}
+
+- (void)hnk_cancelImageRequest
+{
+    [self.hnk_URLSessionDataTask cancel];
+    self.hnk_URLSessionDataTask = nil;
+    self.hnk_lastCacheKey = nil;
 }
 
 #pragma mark Private

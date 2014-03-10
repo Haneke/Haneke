@@ -7,6 +7,7 @@
 //
 
 #import "HNKDemoCollectionViewCell.h"
+#import "UIImageView+Haneke.h"
 
 @implementation HNKDemoCollectionViewCell
 
@@ -26,6 +27,7 @@
 
 - (void)prepareForReuse
 {
+    [self.imageView hnk_cancelImageRequest];
     self.imageView.image = nil;
 }
 

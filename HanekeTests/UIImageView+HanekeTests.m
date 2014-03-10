@@ -371,6 +371,19 @@
     XCTAssertEqualObjects(image, result, @"");
 }
 
+- (void)testCancelImageRequest_NoRequest
+{
+    [_imageView hnk_cancelImageRequest];
+}
+
+- (void)testCancelImageRequest_AfterRequest
+{
+    NSURL *url = [NSURL URLWithString:@"http://imgs.xkcd.com/comics/election.png"];
+    [_imageView hnk_setImageFromURL:url];
+    
+    [_imageView hnk_cancelImageRequest];
+}
+
 #pragma mark Utils
 
 - (NSString*)fixturePathWithName:(NSString*)name

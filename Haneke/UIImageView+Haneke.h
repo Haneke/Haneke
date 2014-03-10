@@ -79,6 +79,12 @@
  **/
  - (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity;
 
+/**
+ Cancels the current image request, if any. 
+ @discussion It is recommended to call this from [UITableViewCell prepareForReuse] or [UICollectionViewCell prepareForReuse], or as soon as you don't need the image view anymore.
+ **/
+- (void)hnk_cancelImageRequest;
+
 @property (nonatomic, strong) HNKCacheFormat *hnk_cacheFormat;
 
 @end
