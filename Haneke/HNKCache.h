@@ -26,7 +26,7 @@
 
 /**
  Initialize a cache with the given name.
- @param name Name of the cache. Used to as the name of the subdirectory for the disk cache.
+ @param name Name of the cache. Used as the name of the subdirectory for the disk cache.
 */
 - (id)initWithName:(NSString*)name;
 
@@ -37,7 +37,7 @@
 
 /**
  Registers a format in the cache. Haneke will automatically update the diskSize of the format as images are added. If a format with the same name already exists in the cache, it will be cleared first.
- @param The format to be registered in the cache.
+ @param Format to be registered in the cache.
  @discussion If the format preload policy allows it, Haneke will add some or all images cached on disk to the memory cache. If an image of the given format is requested, Haneke will cancel preloading to give priority to the request.
  @discussion A format can only be registered in one cache.
  */
@@ -76,7 +76,7 @@
  Retrieves an image from the cache. If the image exists in the memory cache, the completion block will be executed synchronously. If the image has to be retreived from the disk cache, the completion block will be executed asynchronously.
  @param key Image cache key.
  @param formatName Name of the format in which the image is desired. The format must have been previously registered with the cache.
- @param completionBlock The block to be called with the requested image. Always called from the main queue. Will be called synchronously if the image exists in the memory cache, or asynchronously if the image exists in the disk cache.
+ @param completionBlock Block to be called with the requested image. Always called from the main queue. Will be called synchronously if the image exists in the memory cache, or asynchronously if the image exists in the disk cache.
  @return YES if image exists in the memory cache (and thus, the completion block was called synchronously), NO otherwise.
  */
 - (BOOL)retrieveImageForKey:(NSString*)key formatName:(NSString *)formatName completionBlock:(void(^)(NSString *key, NSString *formatName, UIImage *image, NSError *error))completionBlock;
@@ -218,7 +218,7 @@ typedef NS_ENUM(NSInteger, HNKPreloadPolicy)
 
 /**
  Resized the given image based on the format. Used by the cache to create its images.
- @param image The original image.
+ @param image Image to resize.
  @return A resized image based on the format.
  */
 - (UIImage*)resizedImageFromImage:(UIImage*)image;
