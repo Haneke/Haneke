@@ -211,9 +211,7 @@
     NSString *formatName = format.name;
     [_cache setImage:image forKey:entity.cacheKey formatName:formatName];
 
-    BOOL result = [_cache retrieveImageForEntity:entity formatName:formatName completionBlock:^(id<HNKCacheEntity> resultEntity, NSString *resultFormatName, UIImage *resultImage, NSError *error) {
-        XCTAssertEqualObjects(resultEntity, entity, @"");
-        XCTAssertEqualObjects(resultFormatName, formatName, @"");
+    BOOL result = [_cache retrieveImageForEntity:entity formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {
         XCTAssertEqualObjects(resultImage, image, @"");
         XCTAssertNil(error);
     }];
@@ -228,7 +226,7 @@
     HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
     NSString *formatName = format.name;
     
-    BOOL result = [_cache retrieveImageForEntity:entity formatName:formatName completionBlock:^(id<HNKCacheEntity> resultEntity, NSString *resultFormatName, UIImage *resultImage, NSError *error) {}];
+    BOOL result = [_cache retrieveImageForEntity:entity formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {}];
     
     XCTAssertFalse(result, @"");
 }
@@ -250,9 +248,7 @@
     };
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        BOOL result = [_cache retrieveImageForEntity:entity formatName:formatName completionBlock:^(id<HNKCacheEntity> resultEntity, NSString *resultFormatName, UIImage *resultImage, NSError *error) {
-            XCTAssertEqualObjects(resultEntity, entity, @"");
-            XCTAssertEqualObjects(resultFormatName, formatName, @"");
+        BOOL result = [_cache retrieveImageForEntity:entity formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {
             XCTAssertEqualObjects(resultImage, preResizeImage, @"");
             XCTAssertNil(error);
             dispatch_semaphore_signal(semaphore);
@@ -279,9 +275,7 @@
     };
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        BOOL result = [_cache retrieveImageForEntity:entity formatName:formatName completionBlock:^(id<HNKCacheEntity> resultEntity, NSString *resultFormatName, UIImage *resultImage, NSError *error) {
-            XCTAssertEqualObjects(resultEntity, entity, @"");
-            XCTAssertEqualObjects(resultFormatName, formatName, @"");
+        BOOL result = [_cache retrieveImageForEntity:entity formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {
             XCTAssertEqualObjects(resultImage, postResizeImage, @"");
             XCTAssertNil(error);
             dispatch_semaphore_signal(semaphore);
@@ -299,9 +293,7 @@
     NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
     [_cache setImage:image forKey:key formatName:formatName];
     
-    BOOL result = [_cache retrieveImageForKey:key formatName:formatName completionBlock:^(NSString *resultKey, NSString *resultFormatName, UIImage *resultImage, NSError *error) {
-        XCTAssertEqualObjects(resultKey, key, @"");
-        XCTAssertEqualObjects(resultFormatName, formatName, @"");
+    BOOL result = [_cache retrieveImageForKey:key formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {
         XCTAssertEqualObjects(resultImage, image, @"");
         XCTAssertNil(error);
     }];
@@ -315,7 +307,7 @@
     NSString *formatName = format.name;
     NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
     
-    BOOL result = [_cache retrieveImageForKey:key formatName:formatName completionBlock:^(NSString *resultKey, NSString *resultFormatName, UIImage *resultImage, NSError *error) {}];
+    BOOL result = [_cache retrieveImageForKey:key formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {}];
     
     XCTAssertFalse(result, @"");
 }

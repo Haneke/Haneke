@@ -52,9 +52,10 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     [self hnk_cancelImageRequest];
     self.hnk_lastCacheKey = path;
     HNKCacheFormat *format = self.hnk_cacheFormat;
+    NSString *formatName = format.name;
     __block BOOL animated = NO;
-    const BOOL didSetImage = [[HNKCache sharedCache] retrieveImageForKey:path formatName:format.name completionBlock:^(NSString *key, NSString *formatName, UIImage *image, NSError *error) {
-        if ([self hnk_shouldCancelRequestForKey:key formatName:formatName]) return;
+    const BOOL didSetImage = [[HNKCache sharedCache] retrieveImageForKey:path formatName:format.name completionBlock:^(UIImage *image, NSError *error) {
+        if ([self hnk_shouldCancelRequestForKey:path formatName:formatName]) return;
         
         if (image)
         {
@@ -63,7 +64,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
         }
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            if ([self hnk_shouldCancelRequestForKey:key formatName:formatName]) return;
+            if ([self hnk_shouldCancelRequestForKey:path formatName:formatName]) return;
             
             NSError *error = nil;
             NSData *originalData = [NSData dataWithContentsOfFile:path options:kNilOptions error:&error];
@@ -79,10 +80,10 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
                 return;
             }
 
-            if ([self hnk_shouldCancelRequestForKey:key formatName:formatName]) return;
+            if ([self hnk_shouldCancelRequestForKey:path formatName:formatName]) return;
             
             dispatch_sync(dispatch_get_main_queue(), ^{
-                if ([self hnk_shouldCancelRequestForKey:key formatName:formatName]) return;
+                if ([self hnk_shouldCancelRequestForKey:path formatName:formatName]) return;
                 
                 HNKImageViewEntity *entity = [HNKImageViewEntity entityWithData:originalData key:path];
                 [self hnk_retrieveImageFromEntity:entity failure:failureBlock];
@@ -117,9 +118,10 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     NSString *absoluteString = url.absoluteString;
     self.hnk_lastCacheKey = absoluteString;
     HNKCacheFormat *format = self.hnk_cacheFormat;
+    NSString *formatName = format.name;
     __block BOOL animated = NO;
-    const BOOL didSetImage = [[HNKCache sharedCache] retrieveImageForKey:absoluteString formatName:format.name completionBlock:^(NSString *key, NSString *formatName, UIImage *image, NSError *error) {
-        if ([self hnk_shouldCancelRequestForKey:key formatName:formatName]) return;
+    const BOOL didSetImage = [[HNKCache sharedCache] retrieveImageForKey:absoluteString formatName:format.name completionBlock:^(UIImage *image, NSError *error) {
+        if ([self hnk_shouldCancelRequestForKey:absoluteString formatName:formatName]) return;
         
         if (image)
         {
@@ -130,7 +132,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
         NSURLSession *session = [NSURLSession sharedSession];
         NSURLSessionDataTask *task = [session dataTaskWithURL:url completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
         {
-            if ([self hnk_shouldCancelRequestForKey:key formatName:formatName]) return;
+            if ([self hnk_shouldCancelRequestForKey:absoluteString formatName:formatName]) return;
             
             if (error)
             {
@@ -232,8 +234,8 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 {
     HNKCacheFormat *format = self.hnk_cacheFormat;
     __block BOOL animated = NO;
-    [[HNKCache sharedCache] retrieveImageForEntity:entity formatName:format.name completionBlock:^(id<HNKCacheEntity> entity, NSString *formatName, UIImage *image, NSError *error) {
-        if ([self hnk_shouldCancelRequestForKey:entity.cacheKey formatName:formatName]) return;
+    [[HNKCache sharedCache] retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *image, NSError *error) {
+        if ([self hnk_shouldCancelRequestForKey:entity.cacheKey formatName:format.name]) return;
         
         if (image)
         {
