@@ -128,7 +128,7 @@
                 
                 if (![[NSFileManager defaultManager] fileExistsAtPath:path])
                 {
-                    NSLog(@"Creating image %ld of %d", (long)i + 1, ImageCount);
+                    NSLog(@"Creating image %ld of %ld", (long)i + 1, (long)ImageCount);
                     UIImage *image = [UIImage demo_randomImage];
                     NSData *data = UIImageJPEGRepresentation(image, 1);
                     [data writeToFile:path atomically:YES];
