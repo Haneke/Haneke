@@ -46,20 +46,20 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 - (void)hnk_setImageFromFile:(NSString*)path
 {
-    [self hnk_setImageFromFile:path placeholderImage:nil failure:nil];
+    [self hnk_setImageFromFile:path placeholderImage:nil success:nil failure:nil];
 }
 
 - (void)hnk_setImageFromFile:(NSString*)path placeholderImage:(UIImage *)placeholderImage
 {
-    [self hnk_setImageFromFile:path placeholderImage:placeholderImage failure:nil];
+    [self hnk_setImageFromFile:path placeholderImage:placeholderImage success:nil failure:nil];
 }
 
-- (void)hnk_setImageFromFile:(NSString*)path failure:(void (^)(NSError *))failureBlock
+- (void)hnk_setImageFromFile:(NSString*)path success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *))failureBlock
 {
-    [self hnk_setImageFromFile:path placeholderImage:nil failure:failureBlock];
+    [self hnk_setImageFromFile:path placeholderImage:nil success:successBlock failure:failureBlock];
 }
 
-- (void)hnk_setImageFromFile:(NSString*)path placeholderImage:(UIImage*)placeholderImage failure:(void (^)(NSError *error))failureBlock
+- (void)hnk_setImageFromFile:(NSString*)path placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     [self hnk_cancelImageRequest];
     self.hnk_lastCacheKey = path;
@@ -71,7 +71,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
         
         if (image)
         {
-            [self hnk_setImage:image animated:animated];
+            [self hnk_setImage:image animated:animated success:successBlock];
             return;
         }
         
@@ -98,7 +98,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
                 if ([self hnk_shouldCancelRequestForKey:path formatName:formatName]) return;
                 
                 HNKImageViewEntity *entity = [HNKImageViewEntity entityWithData:originalData key:path];
-                [self hnk_retrieveImageFromEntity:entity failure:failureBlock];
+                [self hnk_retrieveImageFromEntity:entity success:successBlock failure:failureBlock];
             });
         });
     }];
@@ -111,20 +111,20 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 - (void)hnk_setImageFromURL:(NSURL*)url
 {
-    [self hnk_setImageFromURL:url placeholderImage:nil failure:nil];
+    [self hnk_setImageFromURL:url placeholderImage:nil success:nil failure:nil];
 }
 
 - (void)hnk_setImageFromURL:(NSURL*)url placeholderImage:(UIImage *)placeholderImage
 {
-    [self hnk_setImageFromURL:url placeholderImage:placeholderImage failure:nil];
+    [self hnk_setImageFromURL:url placeholderImage:placeholderImage success:nil failure:nil];
 }
 
-- (void)hnk_setImageFromURL:(NSURL*)url failure:(void (^)(NSError *error))failureBlock
+- (void)hnk_setImageFromURL:(NSURL*)url success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    [self hnk_setImageFromURL:url placeholderImage:nil failure:failureBlock];
+    [self hnk_setImageFromURL:url placeholderImage:nil success:successBlock failure:failureBlock];
 }
 
-- (void)hnk_setImageFromURL:(NSURL*)url placeholderImage:(UIImage*)placeholderImage failure:(void (^)(NSError *error))failureBlock
+- (void)hnk_setImageFromURL:(NSURL*)url placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     [self hnk_cancelImageRequest];
     NSString *absoluteString = url.absoluteString;
@@ -137,7 +137,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
         
         if (image)
         {
-            [self hnk_setImage:image animated:animated];
+            [self hnk_setImage:image animated:animated success:successBlock];
             return;
         }
 
@@ -171,7 +171,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
             }
             
             HNKImageViewEntity *entity = [HNKImageViewEntity entityWithData:data key:absoluteString];
-            [self hnk_retrieveImageFromEntity:entity failure:failureBlock];
+            [self hnk_retrieveImageFromEntity:entity success:successBlock failure:failureBlock];
             self.hnk_URLSessionDataTask = nil;
         }];
         self.hnk_URLSessionDataTask = task;
@@ -194,7 +194,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 {
     [self hnk_cancelImageRequest];
     self.hnk_lastCacheKey = entity.cacheKey;
-    [self hnk_retrieveImageFromEntity:entity failure:nil];
+    [self hnk_retrieveImageFromEntity:entity success:nil failure:nil];
 }
 
 - (void)setHnk_cacheFormat:(HNKCacheFormat *)hnk_cacheFormat
@@ -242,7 +242,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 #pragma mark Private
 
-- (void)hnk_retrieveImageFromEntity:(id<HNKCacheEntity>)entity failure:(void (^)(NSError *error))failureBlock
+- (void)hnk_retrieveImageFromEntity:(id<HNKCacheEntity>)entity success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     HNKCacheFormat *format = self.hnk_cacheFormat;
     __block BOOL animated = NO;
@@ -251,7 +251,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
         
         if (image)
         {
-            [self hnk_setImage:image animated:animated];
+            [self hnk_setImage:image animated:animated success:successBlock];
         }
         else
         {
@@ -261,12 +261,19 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     animated = YES;
 }
 
-- (void)hnk_setImage:(UIImage*)image animated:(BOOL)animated
+- (void)hnk_setImage:(UIImage*)image animated:(BOOL)animated success:(void (^)(UIImage *image))successBlock
 {
-    const NSTimeInterval duration = animated ? 0.1 : 0;
-    [UIView transitionWithView:self duration:duration options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
-        self.image = image;
-    } completion:nil];
+    if (successBlock)
+    {
+        successBlock(image);
+    }
+    else
+    {
+        const NSTimeInterval duration = animated ? 0.1 : 0;
+        [UIView transitionWithView:self duration:duration options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+            self.image = image;
+        } completion:nil];
+    }
 }
 
 - (HNKScaleMode)hnk_scaleMode
