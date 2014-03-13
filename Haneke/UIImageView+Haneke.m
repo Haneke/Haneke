@@ -205,7 +205,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
         [[HNKCache sharedCache] registerFormat:hnk_cacheFormat];
     }
     objc_setAssociatedObject(self, @selector(hnk_cacheFormat), hnk_cacheFormat, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    self.contentMode = hnk_cacheFormat.scaleMode;
+    self.contentMode = (UIViewContentMode)hnk_cacheFormat.scaleMode;
 }
 
 - (HNKCacheFormat*)hnk_cacheFormat
