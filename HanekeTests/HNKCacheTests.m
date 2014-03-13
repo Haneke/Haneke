@@ -101,7 +101,7 @@
     
     XCTAssertNotNil(result, @"");
     XCTAssertNil(error, @"");
-    XCTAssertEqual(resultSize, format.size, @"");
+    XCTAssertTrue(CGSizeEqualToSize(resultSize, format.size), @"");
 }
 
 - (void)testImageForEntity_ImplementingCacheOriginalImage
@@ -115,7 +115,7 @@
     
     XCTAssertNotNil(result, @"");
     XCTAssertNil(error, @"");
-    XCTAssertEqual(resultSize, format.size, @"");
+    XCTAssertTrue(CGSizeEqualToSize(resultSize, format.size), @"");
 }
 
 - (void)testImageForEntity_ImplementingCacheOriginalData
@@ -129,7 +129,7 @@
     
     XCTAssertNotNil(result, @"");
     XCTAssertNil(error, @"");
-    XCTAssertEqual(resultSize, format.size, @"");
+    XCTAssertTrue(CGSizeEqualToSize(resultSize, format.size), @"");
 }
 
 - (void)testImageForEntity_ImplementingNone
@@ -160,7 +160,7 @@
     
     XCTAssertNotNil(result, @"");
     XCTAssertNil(error, @"");
-    XCTAssertEqual(resultSize, format.size, @"");
+    XCTAssertTrue(CGSizeEqualToSize(resultSize, format.size), @"");
 }
 
 - (void)testImageForEntity_InvalidData
