@@ -101,10 +101,51 @@
     XCTAssertEqualObjects(result, format, @"");
 }
 
-- (void)testSetImageWithKey
+- (void)testSetImageWithKey_MemoryCacheMiss
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    [_imageView hnk_setImage:image withKey:@"test"];
+    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+
+    [_imageView hnk_setImage:image withKey:key];
+    
+    XCTAssertNil(_imageView.image, @"");
+}
+
+- (void)testSetImageWithKey_MemoryCacheHit
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
+    
+    [_imageView hnk_setImage:image withKey:key];
+    
+    XCTAssertEqualObjects(_imageView.image, image, @"");
+}
+
+- (void)testSetImageWithKeyPlaceholderImage_MemoryCacheMiss
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
+    UIImage *placeholderImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    
+    [_imageView hnk_setImage:image withKey:key placeholderImage:placeholderImage];
+    
+    XCTAssertEqualObjects(_imageView.image, placeholderImage, @"");
+}
+
+- (void)testSetImageWithKeyPlaceholderImage_MemoryCacheHit
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
+    UIImage *placeholderImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
+    
+    [_imageView hnk_setImage:image withKey:key placeholderImage:placeholderImage];
+    
+    UIImage *result = _imageView.image;
+    XCTAssertEqualObjects(image, result, @"");
 }
 
 - (void)testSetImageFromFile_MemoryCacheMiss
@@ -270,14 +311,15 @@
     [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
 }
 
-- (void)testSetImageFromEntity
+- (void)testSetImageFromEntity_MemoryCacheMiss
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     id<HNKCacheEntity> entity = [HNKCache entityWithKey:@"test" data:nil image:image];
     [_imageView hnk_setImageFromEntity:entity];
+    XCTAssertNil(_imageView.image, @"");
 }
 
-- (void)testSetImageFromEntity_Existing
+- (void)testSetImageFromEntity_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = @"test";
@@ -286,6 +328,32 @@
     id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:image];
     
     [_imageView hnk_setImageFromEntity:entity];
+    
+    UIImage *result = _imageView.image;
+    XCTAssertEqualObjects(image, result, @"");
+}
+
+- (void)testSetImageFromEntityPlaceholderImage_MemoryCacheMiss
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
+    UIImage *placeholderImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:@"test" data:nil image:image];
+    
+    [_imageView hnk_setImageFromEntity:entity placeholderImage:placeholderImage];
+    
+    XCTAssertEqualObjects(_imageView.image, placeholderImage, @"");
+}
+
+- (void)testSetImageFromEntityPlaceholderImage_MemoryCacheHit
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
+    UIImage *placeholderImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    NSString *key = @"test";
+    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:image];
+    
+    [_imageView hnk_setImageFromEntity:entity placeholderImage:placeholderImage];
     
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(image, result, @"");
