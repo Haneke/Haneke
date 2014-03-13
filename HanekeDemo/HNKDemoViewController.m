@@ -7,7 +7,7 @@
 //
 
 #import "HNKDemoViewController.h"
-#import "UIImageView+Haneke.h"
+#import "Haneke.h"
 #import "HNKDemoCollectionViewCell.h"
 #import "UIImage+HanekeDemo.h" // To create random images
 
