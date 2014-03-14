@@ -379,8 +379,11 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
             NSString *key = entity.cacheKey;
             NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Invalid entity %@: Must return non-nil object in either cacheOriginalImage or cacheOriginalData", @""), key.lastPathComponent];
             HanekeLog(@"%@", errorDescription);
-            NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
-            *errorPtr = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorEntityMustReturnImageOrData userInfo:userInfo];
+            if (errorPtr != NULL)
+            {
+                NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
+                *errorPtr = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorEntityMustReturnImageOrData userInfo:userInfo];
+            }
             return nil;
         }
         image = [UIImage imageWithData:data scale:[UIScreen mainScreen].scale];
@@ -389,8 +392,11 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
             NSString *key = entity.cacheKey;
             NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Invalid entity %@: Cannot read image from data", @""), key.lastPathComponent];
             HanekeLog(@"%@", errorDescription);
-            NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
-            *errorPtr = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorEntityCannotReadImageFromData userInfo:userInfo];
+            if (errorPtr != NULL)
+            {
+                NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
+                *errorPtr = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorEntityCannotReadImageFromData userInfo:userInfo];
+            }
             return nil;
         }
     }
