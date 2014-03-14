@@ -95,6 +95,7 @@
 /** Resizes, displays and caches an appropiately sized image from the given image.
  @param image Original image.
  @param key A key. Used by the cache to uniquely identify an image.
+ @see hnk_setImage:withKey:placeholderImage:success:failure:
  **/
 - (void)hnk_setImage:(UIImage*)image withKey:(NSString*)key;
 
@@ -102,19 +103,66 @@
  @param image Original image.
  @param key A key. Used by the cache to uniquely identify an image.
  @param placeholderImage Image to be used as a placeholder until the requested image is ready. The placeholder image will only be used if the requested image is not available in the memory cache. If nil, the image view will not change its image until the requested image is ready.
+ @see hnk_setImage:withKey:placeholderImage:success:failure:
  **/
 - (void)hnk_setImage:(UIImage*)image withKey:(NSString*)key placeholderImage:(UIImage*)placeholderImage;
 
+/** Resizes, displays and caches an appropiately sized image from the given image. If a success block is provided you will be responsible for setting the image.
+ @param image Original image.
+ @param key A key. Used by the cache to uniquely identify an image.
+ @param successBlock Block to be called when the requested image is ready to be set. If provided, the block is reponsible for setting the image. Can be nil.
+ @param failureBlock Block to be called if an error occurs. The most likely cause of error is that the given path does not contain an image. Can be nil.
+ @warning If a success block is provided you will be responsible for setting the image.
+ @see hnk_setImage:withKey:placeholderImage:success:failure:
+ **/
+- (void)hnk_setImage:(UIImage*)image withKey:(NSString*)key success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
+
+/** Resizes, displays and caches an appropiately sized image from the given image. If a success block is provided you will be responsible for setting the image.
+ @param image Original image.
+ @param key A key. Used by the cache to uniquely identify an image.
+ @param placeholderImage Image to be used as a placeholder until the requested image is ready. The placeholder image will only be used if the requested image is not available in the memory cache. If nil, the image view will not change its image until the requested image is ready.
+ @param successBlock Block to be called when the requested image is ready to be set. If provided, the block is reponsible for setting the image. Can be nil.
+ @param failureBlock Block to be called if an error occurs. The most likely cause of error is that the given path does not contain an image. Can be nil.
+ @discussion Retrieves an appropiately sized image (based on the bounds and contentMode of the UIImageView) from the memory or disk cache. Disk access is performed in background. If not cached, loads the original image from the given url, produces an appropiately sized image and caches the result, everything in background.
+ @discussion If no success block is provided, the requested image will be set with a short fade transition, or synchronously and without transition when retrieved from the memory cache.
+ @discussion If needed, the least recently used images in the cache will be evicted in background.
+ @warning If a success block is provided you will be responsible for setting the image.
+ **/
+- (void)hnk_setImage:(UIImage*)image withKey:(NSString*)key placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
+
 /** Loads, resizes, displays and caches an appropiately sized image from the given entity.
- @param Entity from which the original image will be retrieved if needed. The entity will have to provide the original image or its data only if it can't be found in the cache.
+ @param entity Entity from which the original image will be retrieved if needed. The entity will have to provide the original image or its data only if it can't be found in the cache.
+ @see hnk_setImageFromEntity:placeholderImage:success:failure:
  **/
 - (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity;
 
 /** Loads, resizes, displays and caches an appropiately sized image from the given entity.
- @param Entity from which the original image will be retrieved if needed. The entity will have to provide the original image or its data only if it can't be found in the cache.
+ @param entity Entity from which the original image will be retrieved if needed. The entity will have to provide the original image or its data only if it can't be found in the cache.
  @param placeholderImage Image to be used as a placeholder until the requested image is ready. The placeholder image will only be used if the requested image is not available in the memory cache. If nil, the image view will not change its image until the requested image is ready.
+ @see hnk_setImageFromEntity:placeholderImage:success:failure:
  **/
 - (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity placeholderImage:(UIImage*)placeholderImage;
+
+/** Loads, resizes, displays and caches an appropiately sized image from the given entity. If a success block is provided you will be responsible for setting the image.
+ @param entity Entity from which the original image will be retrieved if needed. The entity will have to provide the original image or its data only if it can't be found in the cache.
+ @param successBlock Block to be called when the requested image is ready to be set. If provided, the block is reponsible for setting the image. Can be nil.
+ @param failureBlock Block to be called if an error occurs. The most likely cause of error is that the given path does not contain an image. Can be nil.
+ @warning If a success block is provided you will be responsible for setting the image.
+ @see hnk_setImageFromEntity:placeholderImage:success:failure:
+ **/
+- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
+
+/** Loads, resizes, displays and caches an appropiately sized image from the given entity. If a success block is provided you will be responsible for setting the image.
+ @param entity Entity from which the original image will be retrieved if needed. The entity will have to provide the original image or its data only if it can't be found in the cache.
+ @param placeholderImage Image to be used as a placeholder until the requested image is ready. The placeholder image will only be used if the requested image is not available in the memory cache. If nil, the image view will not change its image until the requested image is ready.
+ @param successBlock Block to be called when the requested image is ready to be set. If provided, the block is reponsible for setting the image. Can be nil.
+ @param failureBlock Block to be called if an error occurs. The most likely cause of error is that the given path does not contain an image. Can be nil.
+ @discussion Retrieves an appropiately sized image (based on the bounds and contentMode of the UIImageView) from the memory or disk cache. Disk access is performed in background. If not cached, loads the original image from the given url, produces an appropiately sized image and caches the result, everything in background.
+ @discussion If no success block is provided, the requested image will be set with a short fade transition, or synchronously and without transition when retrieved from the memory cache.
+ @discussion If needed, the least recently used images in the cache will be evicted in background.
+ @warning If a success block is provided you will be responsible for setting the image.
+ **/
+- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
 
 /**
  Cancels the current image request, if any. 

@@ -186,14 +186,23 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 - (void)hnk_setImage:(UIImage*)originalImage withKey:(NSString*)key
 {
-    HNKImageViewEntity *entity = [HNKImageViewEntity entityWithImage:originalImage key:key];
-    [self hnk_setImageFromEntity:entity placeholderImage:nil success:nil failure:nil];
+    [self hnk_setImage:originalImage withKey:key placeholderImage:nil success:nil failure:nil];
 }
 
 - (void)hnk_setImage:(UIImage*)originalImage withKey:(NSString*)key placeholderImage:(UIImage*)placeholderImage
 {
+    [self hnk_setImage:originalImage withKey:key placeholderImage:placeholderImage success:nil failure:nil];
+}
+
+- (void)hnk_setImage:(UIImage*)originalImage withKey:(NSString*)key success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+{
+    [self hnk_setImage:originalImage withKey:key placeholderImage:nil success:successBlock failure:failureBlock];
+}
+
+- (void)hnk_setImage:(UIImage*)originalImage withKey:(NSString*)key placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+{
     HNKImageViewEntity *entity = [HNKImageViewEntity entityWithImage:originalImage key:key];
-    [self hnk_setImageFromEntity:entity placeholderImage:placeholderImage success:nil failure:nil];
+    [self hnk_setImageFromEntity:entity placeholderImage:placeholderImage success:successBlock failure:failureBlock];
 }
 
 - (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity
@@ -206,7 +215,12 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     [self hnk_setImageFromEntity:entity placeholderImage:placeholderImage success:nil failure:nil];
 }
 
-- (BOOL)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+{
+    [self hnk_setImageFromEntity:entity placeholderImage:nil success:successBlock failure:failureBlock];
+}
+
+- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     [self hnk_cancelImageRequest];
     self.hnk_lastCacheKey = entity.cacheKey;
@@ -215,7 +229,6 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     {
         self.image = placeholderImage;
     }
-    return didSetImage;
 }
 
 - (void)setHnk_cacheFormat:(HNKCacheFormat *)hnk_cacheFormat
