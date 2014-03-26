@@ -575,7 +575,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
             NSLog(@"Set attributes failed with error %@", [error localizedDescription]);
         }
         else
-        {
+        { // The image was removed from disk cache but is still in the memory cache
             [self saveImage:image key:key format:format];
         }
     }
