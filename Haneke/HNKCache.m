@@ -118,7 +118,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     dispatch_async(format.diskQueue, ^{
         [self calculateDiskSizeOfFormat:format];
         [self controlDiskCapacityOfFormat:format];
-        [self preloadImageOfFormat:format];
+        [self preloadImagesOfFormat:format];
     });
 }
 
@@ -477,7 +477,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     }];
 }
 
-- (void)preloadImageOfFormat:(HNKCacheFormat*)format
+- (void)preloadImagesOfFormat:(HNKCacheFormat*)format
 {
     HNKPreloadPolicy preloadPolicy = format.preloadPolicy;
     if (preloadPolicy == HNKPreloadPolicyNone) return;
