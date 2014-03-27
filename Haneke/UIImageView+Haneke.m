@@ -62,7 +62,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 - (void)hnk_setImageFromFile:(NSString*)path placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     [self hnk_cancelImageRequest];
-    self.hnk_lastCacheKey = path;
+    self.hnk_requestedCacheKey = path;
     HNKCacheFormat *format = self.hnk_cacheFormat;
     NSString *formatName = format.name;
     __block BOOL animated = NO;
@@ -83,12 +83,9 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
             if (!originalData)
             {
                 HanekeLog(@"Request %@ failed with error %@", path, error);
-                if (failureBlock)
-                {
-                    dispatch_sync(dispatch_get_main_queue(), ^{
-                        failureBlock(error);
-                    });
-                }
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    [self hnk_failWithError:error failure:failureBlock];
+                });
                 return;
             }
 
@@ -128,7 +125,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 {
     [self hnk_cancelImageRequest];
     NSString *absoluteString = url.absoluteString;
-    self.hnk_lastCacheKey = absoluteString;
+    self.hnk_requestedCacheKey = absoluteString;
     HNKCacheFormat *format = self.hnk_cacheFormat;
     NSString *formatName = format.name;
     __block BOOL animated = NO;
@@ -149,7 +146,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
             if (error)
             {
                 HanekeLog(@"Request %@ failed with error %@", absoluteString, error);
-                if (failureBlock) failureBlock(error);
+                [self hnk_failWithError:error failure:failureBlock];
                 return;
             }
             const long long expectedContentLength = response.expectedContentLength;
@@ -160,12 +157,9 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
                 {
                     NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Request %@ received %ld out of %ld bytes", @""), absoluteString, (long)dataLength, (long)expectedContentLength];
                     HanekeLog(@"%@", errorDescription);
-                    if (failureBlock)
-                    {
-                        NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription , NSURLErrorKey : url};
-                        NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorImageFromURLMissingData userInfo:userInfo];
-                        failureBlock(error);
-                    }
+                    NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription , NSURLErrorKey : url};
+                    NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorImageFromURLMissingData userInfo:userInfo];
+                    [self hnk_failWithError:error failure:failureBlock];
                     return;
                 }
             }
@@ -223,7 +217,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 - (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     [self hnk_cancelImageRequest];
-    self.hnk_lastCacheKey = entity.cacheKey;
+    self.hnk_requestedCacheKey = entity.cacheKey;
     const BOOL didSetImage = [self hnk_retrieveImageFromEntity:entity success:successBlock failure:failureBlock];
     if (!didSetImage && placeholderImage != nil)
     {
@@ -271,7 +265,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 {
     [self.hnk_URLSessionDataTask cancel];
     self.hnk_URLSessionDataTask = nil;
-    self.hnk_lastCacheKey = nil;
+    self.hnk_requestedCacheKey = nil;
 }
 
 #pragma mark Private
@@ -289,16 +283,27 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
         }
         else
         {
-            if (failureBlock) failureBlock(error);
+            [self hnk_failWithError:error failure:failureBlock];
         }
     }];
     animated = YES;
     return didSetImage;
 }
 
+- (void)hnk_failWithError:(NSError*)error failure:(void (^)(NSError *error))failureBlock
+{
+    self.hnk_URLSessionDataTask = nil;
+    self.hnk_requestedCacheKey = nil;
+    
+    if (failureBlock) failureBlock(error);
+}
+
 
 - (void)hnk_setImage:(UIImage*)image animated:(BOOL)animated success:(void (^)(UIImage *image))successBlock
 {
+    self.hnk_URLSessionDataTask = nil;
+    self.hnk_requestedCacheKey = nil;
+    
     if (successBlock)
     {
         successBlock(image);
@@ -337,7 +342,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 - (BOOL)hnk_shouldCancelRequestForKey:(NSString*)key formatName:(NSString*)formatName
 {
-    if ([self.hnk_lastCacheKey isEqualToString:key]) return NO;
+    if ([self.hnk_requestedCacheKey isEqualToString:key]) return NO;
     
     HanekeLog(@"Cancelled request due to view reuse: %@/%@", formatName, key.lastPathComponent);
     return YES;
@@ -345,14 +350,14 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 #pragma mark Properties (Private)
 
-- (NSString*)hnk_lastCacheKey
+- (NSString*)hnk_requestedCacheKey
 {
-    return (NSString *)objc_getAssociatedObject(self, @selector(hnk_lastCacheKey));
+    return (NSString *)objc_getAssociatedObject(self, @selector(hnk_requestedCacheKey));
 }
 
-- (void)setHnk_lastCacheKey:(NSString*)cacheKey
+- (void)setHnk_requestedCacheKey:(NSString*)cacheKey
 {
-    objc_setAssociatedObject(self, @selector(hnk_lastCacheKey), cacheKey, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, @selector(hnk_requestedCacheKey), cacheKey, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (NSURLSessionDataTask*)hnk_URLSessionDataTask
