@@ -118,7 +118,7 @@ These blocks will be called only if the requested image is not found in the cach
 
 Haneke provides useful logging that is **turned off** by default. You can see it in action in the demo.
 
-To turn logging on you must set the preprocessor macro `HANEKE_DEBUG` to 1. The recommend way to do this is by adding `HANEKE_DEBUG=1` to the *Preprocessor Macros* build setting. If you included Haneke directly, add it to your project target. If you are using CocoaPods, add it to the *Pods-Haneke* target of the *Pods* project.
+To turn logging on you must set the preprocessor macro `HANEKE_DEBUG` to 1. The recommended way to do this is by adding `HANEKE_DEBUG=1` to the *Preprocessor Macros* build setting. If you included Haneke directly, add it to your project target. If you are using CocoaPods, add it to the *Pods-Haneke* target of the *Pods* project.
 
 
 ##Requirements
