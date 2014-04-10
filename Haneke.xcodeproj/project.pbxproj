@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8711F1B618F6F35600F27EC1 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8711F1B518F6F35600F27EC1 /* ImageIO.framework */; };
 		87260AB918CCDB7000D3680F /* XCTestCase+HanekeTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 87260AB818CCDB7000D3680F /* XCTestCase+HanekeTestUtils.m */; };
 		873E229318AA8C7C00E7919C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E229218AA8C7C00E7919C /* Foundation.framework */; };
 		873E22A118AA8C7C00E7919C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E22A018AA8C7C00E7919C /* XCTest.framework */; };
@@ -61,6 +62,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8711F1B518F6F35600F27EC1 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		87260AB718CCDB7000D3680F /* XCTestCase+HanekeTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XCTestCase+HanekeTestUtils.h"; sourceTree = "<group>"; };
 		87260AB818CCDB7000D3680F /* XCTestCase+HanekeTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XCTestCase+HanekeTestUtils.m"; sourceTree = "<group>"; };
 		873E228F18AA8C7C00E7919C /* libHaneke.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHaneke.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -114,6 +116,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8711F1B618F6F35600F27EC1 /* ImageIO.framework in Frameworks */,
 				873E229318AA8C7C00E7919C /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -167,6 +170,7 @@
 		873E229118AA8C7C00E7919C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8711F1B518F6F35600F27EC1 /* ImageIO.framework */,
 				873E229218AA8C7C00E7919C /* Foundation.framework */,
 				873E22A018AA8C7C00E7919C /* XCTest.framework */,
 				873E22A318AA8C7C00E7919C /* UIKit.framework */,
