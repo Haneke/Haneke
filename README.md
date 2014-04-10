@@ -21,6 +21,7 @@ _Really._
 * Zero-config `UIImageView` category to use the cache, optimized for `UITableView` and `UICollectionView` cell reuse.
 * Asynchronous and synchronous image retrieval.
 * Background image resizing and file reading.
+* Image decompression.
 * Custom image transformations before and after resizing.
 * Thread-safe.
 * Automatic cache eviction on memory warnings or disk capacity reached.
