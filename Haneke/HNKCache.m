@@ -19,6 +19,7 @@
 //
 
 #import "HNKCache.h"
+@import ImageIO;
 
 NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
@@ -37,6 +38,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 - (CGSize)hnk_aspectFillSizeForSize:(CGSize)size;
 - (CGSize)hnk_aspectFitSizeForSize:(CGSize)size;
 - (UIImage *)hnk_imageByScalingToSize:(CGSize)newSize;
++ (UIImage *)hnk_decompressedImageWithData:(NSData*)data;
 
 @end
 
@@ -154,7 +156,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     });
     if (imageData)
     {
-        image = [UIImage imageWithData:imageData scale:[UIScreen mainScreen].scale]; // Do not use imageWithContentsOfFile: as it doesn't consider scale
+        image = [UIImage hnk_decompressedImageWithData:imageData];
         if (image)
         {
             HanekeLog(@"Disk cache hit: %@/%@", formatName, key.lastPathComponent);
@@ -239,7 +241,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
         if (imageData)
         {
             HanekeLog(@"Disk cache hit: %@/%@", formatName, key.lastPathComponent);
-            UIImage *image = [UIImage imageWithData:imageData scale:[UIScreen mainScreen].scale];
+            UIImage *image = [UIImage hnk_decompressedImageWithData:imageData];
             if (image)
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -386,7 +388,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
             }
             return nil;
         }
-        image = [UIImage imageWithData:data scale:[UIScreen mainScreen].scale];
+        image = [UIImage hnk_decompressedImageWithData:data];
         if (!image)
         {
             NSString *key = entity.cacheKey;
@@ -505,7 +507,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
         NSString *path = url.path;
         NSData *data = [NSData dataWithContentsOfFile:path];
         if (!data) return;
-        UIImage *image = [UIImage imageWithData:data scale:[UIScreen mainScreen].scale];
+        UIImage *image = [UIImage hnk_decompressedImageWithData:data];
         if (!image) return;
         NSString *key = [self keyFromPath:path];
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -688,6 +690,16 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return newImage;
+}
+
++ (UIImage*)hnk_decompressedImageWithData:(NSData*)data
+{
+    CGImageSourceRef source = CGImageSourceCreateWithData((__bridge CFDataRef)data, NULL);
+    CGImageRef cgImage = CGImageSourceCreateImageAtIndex(source, 0, (__bridge CFDictionaryRef)@{(id)kCGImageSourceShouldCacheImmediately: @YES});
+    UIImage *image = [UIImage imageWithCGImage:cgImage scale:[UIScreen mainScreen].scale orientation:UIImageOrientationUp];
+    CGImageRelease(cgImage);
+    CFRelease(source);
+    return image;
 }
 
 @end
