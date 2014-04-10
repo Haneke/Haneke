@@ -696,6 +696,8 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 {
     CGImageSourceRef source = CGImageSourceCreateWithData((__bridge CFDataRef)data, NULL);
     CGImageRef cgImage = CGImageSourceCreateImageAtIndex(source, 0, (__bridge CFDictionaryRef)@{(id)kCGImageSourceShouldCacheImmediately: @YES});
+    if (cgImage == NULL) return nil;
+    
     UIImage *image = [UIImage imageWithCGImage:cgImage scale:[UIScreen mainScreen].scale orientation:UIImageOrientationUp];
     CGImageRelease(cgImage);
     CFRelease(source);
