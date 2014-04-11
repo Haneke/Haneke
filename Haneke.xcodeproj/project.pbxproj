@@ -1,748 +1,1933 @@
-// !$*UTF8*$!
-{
-	archiveVersion = 1;
-	classes = {
-	};
-	objectVersion = 46;
-	objects = {
-
-/* Begin PBXBuildFile section */
-		8711F1B618F6F35600F27EC1 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8711F1B518F6F35600F27EC1 /* ImageIO.framework */; };
-		87260AB918CCDB7000D3680F /* XCTestCase+HanekeTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 87260AB818CCDB7000D3680F /* XCTestCase+HanekeTestUtils.m */; };
-		873E229318AA8C7C00E7919C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E229218AA8C7C00E7919C /* Foundation.framework */; };
-		873E22A118AA8C7C00E7919C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E22A018AA8C7C00E7919C /* XCTest.framework */; };
-		873E22A218AA8C7C00E7919C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E229218AA8C7C00E7919C /* Foundation.framework */; };
-		873E22A418AA8C7C00E7919C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E22A318AA8C7C00E7919C /* UIKit.framework */; };
-		873E22A718AA8C7C00E7919C /* libHaneke.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E228F18AA8C7C00E7919C /* libHaneke.a */; };
-		873E22AD18AA8C7C00E7919C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 873E22AB18AA8C7C00E7919C /* InfoPlist.strings */; };
-		873E22BA18AA8CC900E7919C /* HNKCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 873E22B918AA8CC900E7919C /* HNKCache.m */; };
-		873E22BF18AA8D9F00E7919C /* HNKCacheTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 873E22BE18AA8D9F00E7919C /* HNKCacheTests.m */; };
-		873E22F418AA90F000E7919C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E229218AA8C7C00E7919C /* Foundation.framework */; };
-		873E22F518AA90F000E7919C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E22C618AA90B600E7919C /* CoreGraphics.framework */; };
-		873E22F618AA90F000E7919C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E22A318AA8C7C00E7919C /* UIKit.framework */; };
-		873E22FC18AA90F000E7919C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 873E22FA18AA90F000E7919C /* InfoPlist.strings */; };
-		873E22FE18AA90F000E7919C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 873E22FD18AA90F000E7919C /* main.m */; };
-		873E230218AA90F000E7919C /* HNKDemoAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 873E230118AA90F000E7919C /* HNKDemoAppDelegate.m */; };
-		873E230418AA90F000E7919C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 873E230318AA90F000E7919C /* Images.xcassets */; };
-		873E231F18AA915300E7919C /* HNKDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 873E231E18AA915300E7919C /* HNKDemoViewController.m */; };
-		873E232418AA982F00E7919C /* HNKCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 873E22B918AA8CC900E7919C /* HNKCache.m */; };
-		873E232618AA992500E7919C /* sample.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 873E232518AA992500E7919C /* sample.jpg */; };
-		873E233218AAC1A800E7919C /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 873E233118AAC1A800E7919C /* libOCMock.a */; };
-		876E5F2018AB762600B4EAF6 /* UIImageView+Haneke.m in Sources */ = {isa = PBXBuildFile; fileRef = 876E5F1F18AB762600B4EAF6 /* UIImageView+Haneke.m */; };
-		876E5F2118AB831500B4EAF6 /* UIImageView+Haneke.m in Sources */ = {isa = PBXBuildFile; fileRef = 876E5F1F18AB762600B4EAF6 /* UIImageView+Haneke.m */; };
-		87A6907E18B678C700F97E13 /* GTMCodeCoverageTestsXC.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A6907C18B678C700F97E13 /* GTMCodeCoverageTestsXC.m */; };
-		87A6907F18B67B4A00F97E13 /* GTMCodeCoverageApp.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A6907B18B678C700F97E13 /* GTMCodeCoverageApp.m */; };
-		87A6908318B6817C00F97E13 /* UIImage+HanekeTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A6908218B6817C00F97E13 /* UIImage+HanekeTestUtils.m */; };
-		87A6908618B68BF200F97E13 /* HNKCache+HanekeTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A6908518B68BF200F97E13 /* HNKCache+HanekeTestUtils.m */; };
-		87F47BAE18AC123C00F1FB48 /* UIImageView+HanekeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F47BAD18AC123C00F1FB48 /* UIImageView+HanekeTests.m */; };
-		87F47BB618AD436700F1FB48 /* UIImage+HanekeDemo.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F47BB518AD436700F1FB48 /* UIImage+HanekeDemo.m */; };
-		87F47BB918AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F47BB818AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m */; };
-/* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		873E22A518AA8C7C00E7919C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 873E228718AA8C7C00E7919C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 873E228E18AA8C7C00E7919C;
-			remoteInfo = Haneke;
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		873E228D18AA8C7C00E7919C /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
-/* Begin PBXFileReference section */
-		8711F1B518F6F35600F27EC1 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
-		87260AB718CCDB7000D3680F /* XCTestCase+HanekeTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XCTestCase+HanekeTestUtils.h"; sourceTree = "<group>"; };
-		87260AB818CCDB7000D3680F /* XCTestCase+HanekeTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XCTestCase+HanekeTestUtils.m"; sourceTree = "<group>"; };
-		873E228F18AA8C7C00E7919C /* libHaneke.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHaneke.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		873E229218AA8C7C00E7919C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		873E229F18AA8C7C00E7919C /* HanekeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HanekeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		873E22A018AA8C7C00E7919C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		873E22A318AA8C7C00E7919C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		873E22AA18AA8C7C00E7919C /* HanekeTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HanekeTests-Info.plist"; sourceTree = "<group>"; };
-		873E22AC18AA8C7C00E7919C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		873E22B818AA8CC900E7919C /* HNKCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKCache.h; sourceTree = "<group>"; };
-		873E22B918AA8CC900E7919C /* HNKCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKCache.m; sourceTree = "<group>"; };
-		873E22BE18AA8D9F00E7919C /* HNKCacheTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKCacheTests.m; sourceTree = "<group>"; };
-		873E22C618AA90B600E7919C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		873E22F318AA90EF00E7919C /* HanekeDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HanekeDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		873E22F918AA90F000E7919C /* HanekeDemo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HanekeDemo-Info.plist"; sourceTree = "<group>"; };
-		873E22FB18AA90F000E7919C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		873E22FD18AA90F000E7919C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		873E22FF18AA90F000E7919C /* HanekeDemo-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HanekeDemo-Prefix.pch"; sourceTree = "<group>"; };
-		873E230018AA90F000E7919C /* HNKDemoAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HNKDemoAppDelegate.h; sourceTree = "<group>"; };
-		873E230118AA90F000E7919C /* HNKDemoAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HNKDemoAppDelegate.m; sourceTree = "<group>"; };
-		873E230318AA90F000E7919C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		873E231D18AA915300E7919C /* HNKDemoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKDemoViewController.h; sourceTree = "<group>"; };
-		873E231E18AA915300E7919C /* HNKDemoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKDemoViewController.m; sourceTree = "<group>"; };
-		873E232518AA992500E7919C /* sample.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = sample.jpg; sourceTree = "<group>"; };
-		873E232A18AAC1A800E7919C /* NSNotificationCenter+OCMAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNotificationCenter+OCMAdditions.h"; sourceTree = "<group>"; };
-		873E232B18AAC1A800E7919C /* OCMArg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMArg.h; sourceTree = "<group>"; };
-		873E232C18AAC1A800E7919C /* OCMConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMConstraint.h; sourceTree = "<group>"; };
-		873E232D18AAC1A800E7919C /* OCMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMock.h; sourceTree = "<group>"; };
-		873E232E18AAC1A800E7919C /* OCMockObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMockObject.h; sourceTree = "<group>"; };
-		873E232F18AAC1A800E7919C /* OCMockRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMockRecorder.h; sourceTree = "<group>"; };
-		873E233118AAC1A800E7919C /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libOCMock.a; sourceTree = "<group>"; };
-		874875DF18D1D33E00D02E03 /* Haneke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Haneke.h; sourceTree = "<group>"; };
-		876E5F1E18AB762600B4EAF6 /* UIImageView+Haneke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+Haneke.h"; sourceTree = "<group>"; };
-		876E5F1F18AB762600B4EAF6 /* UIImageView+Haneke.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+Haneke.m"; sourceTree = "<group>"; };
-		87A6907A18B678C700F97E13 /* GTMCodeCoverageApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMCodeCoverageApp.h; sourceTree = "<group>"; };
-		87A6907B18B678C700F97E13 /* GTMCodeCoverageApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMCodeCoverageApp.m; sourceTree = "<group>"; };
-		87A6907C18B678C700F97E13 /* GTMCodeCoverageTestsXC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMCodeCoverageTestsXC.m; sourceTree = "<group>"; };
-		87A6908118B6817C00F97E13 /* UIImage+HanekeTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+HanekeTestUtils.h"; sourceTree = "<group>"; };
-		87A6908218B6817C00F97E13 /* UIImage+HanekeTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+HanekeTestUtils.m"; sourceTree = "<group>"; };
-		87A6908418B68BF200F97E13 /* HNKCache+HanekeTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "HNKCache+HanekeTestUtils.h"; sourceTree = "<group>"; };
-		87A6908518B68BF200F97E13 /* HNKCache+HanekeTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "HNKCache+HanekeTestUtils.m"; sourceTree = "<group>"; };
-		87F47BAD18AC123C00F1FB48 /* UIImageView+HanekeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+HanekeTests.m"; sourceTree = "<group>"; };
-		87F47BB418AD436700F1FB48 /* UIImage+HanekeDemo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+HanekeDemo.h"; sourceTree = "<group>"; };
-		87F47BB518AD436700F1FB48 /* UIImage+HanekeDemo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+HanekeDemo.m"; sourceTree = "<group>"; };
-		87F47BB718AD4D0400F1FB48 /* HNKDemoCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKDemoCollectionViewCell.h; sourceTree = "<group>"; };
-		87F47BB818AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKDemoCollectionViewCell.m; sourceTree = "<group>"; };
-/* End PBXFileReference section */
-
-/* Begin PBXFrameworksBuildPhase section */
-		873E228C18AA8C7C00E7919C /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8711F1B618F6F35600F27EC1 /* ImageIO.framework in Frameworks */,
-				873E229318AA8C7C00E7919C /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		873E229C18AA8C7C00E7919C /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				873E22A118AA8C7C00E7919C /* XCTest.framework in Frameworks */,
-				873E22A718AA8C7C00E7919C /* libHaneke.a in Frameworks */,
-				873E22A418AA8C7C00E7919C /* UIKit.framework in Frameworks */,
-				873E22A218AA8C7C00E7919C /* Foundation.framework in Frameworks */,
-				873E233218AAC1A800E7919C /* libOCMock.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		873E22F018AA90EF00E7919C /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				873E22F518AA90F000E7919C /* CoreGraphics.framework in Frameworks */,
-				873E22F618AA90F000E7919C /* UIKit.framework in Frameworks */,
-				873E22F418AA90F000E7919C /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXFrameworksBuildPhase section */
-
-/* Begin PBXGroup section */
-		873E228618AA8C7C00E7919C = {
-			isa = PBXGroup;
-			children = (
-				873E229418AA8C7C00E7919C /* Haneke */,
-				873E22A818AA8C7C00E7919C /* HanekeTests */,
-				873E22F718AA90F000E7919C /* HanekeDemo */,
-				873E229118AA8C7C00E7919C /* Frameworks */,
-				873E229018AA8C7C00E7919C /* Products */,
-			);
-			sourceTree = "<group>";
-		};
-		873E229018AA8C7C00E7919C /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				873E228F18AA8C7C00E7919C /* libHaneke.a */,
-				873E229F18AA8C7C00E7919C /* HanekeTests.xctest */,
-				873E22F318AA90EF00E7919C /* HanekeDemo.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		873E229118AA8C7C00E7919C /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				8711F1B518F6F35600F27EC1 /* ImageIO.framework */,
-				873E229218AA8C7C00E7919C /* Foundation.framework */,
-				873E22A018AA8C7C00E7919C /* XCTest.framework */,
-				873E22A318AA8C7C00E7919C /* UIKit.framework */,
-				873E22C618AA90B600E7919C /* CoreGraphics.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		873E229418AA8C7C00E7919C /* Haneke */ = {
-			isa = PBXGroup;
-			children = (
-				874875DF18D1D33E00D02E03 /* Haneke.h */,
-				873E22B818AA8CC900E7919C /* HNKCache.h */,
-				873E22B918AA8CC900E7919C /* HNKCache.m */,
-				876E5F1E18AB762600B4EAF6 /* UIImageView+Haneke.h */,
-				876E5F1F18AB762600B4EAF6 /* UIImageView+Haneke.m */,
-			);
-			path = Haneke;
-			sourceTree = "<group>";
-		};
-		873E22A818AA8C7C00E7919C /* HanekeTests */ = {
-			isa = PBXGroup;
-			children = (
-				87A6907918B678A000F97E13 /* Code Coverage iOS 7 Workaround */,
-				873E22BE18AA8D9F00E7919C /* HNKCacheTests.m */,
-				873E22A918AA8C7C00E7919C /* Supporting Files */,
-				87F47BAD18AC123C00F1FB48 /* UIImageView+HanekeTests.m */,
-				873E232718AAC1A800E7919C /* usr */,
-				87A6908018B6813E00F97E13 /* Utils */,
-			);
-			path = HanekeTests;
-			sourceTree = "<group>";
-		};
-		873E22A918AA8C7C00E7919C /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				873E22AA18AA8C7C00E7919C /* HanekeTests-Info.plist */,
-				873E22AB18AA8C7C00E7919C /* InfoPlist.strings */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		873E22F718AA90F000E7919C /* HanekeDemo */ = {
-			isa = PBXGroup;
-			children = (
-				873E230018AA90F000E7919C /* HNKDemoAppDelegate.h */,
-				873E230118AA90F000E7919C /* HNKDemoAppDelegate.m */,
-				87F47BB718AD4D0400F1FB48 /* HNKDemoCollectionViewCell.h */,
-				87F47BB818AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m */,
-				873E231D18AA915300E7919C /* HNKDemoViewController.h */,
-				873E231E18AA915300E7919C /* HNKDemoViewController.m */,
-				873E230318AA90F000E7919C /* Images.xcassets */,
-				873E232518AA992500E7919C /* sample.jpg */,
-				873E22F818AA90F000E7919C /* Supporting Files */,
-				87F47BB418AD436700F1FB48 /* UIImage+HanekeDemo.h */,
-				87F47BB518AD436700F1FB48 /* UIImage+HanekeDemo.m */,
-			);
-			path = HanekeDemo;
-			sourceTree = "<group>";
-		};
-		873E22F818AA90F000E7919C /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				873E22F918AA90F000E7919C /* HanekeDemo-Info.plist */,
-				873E22FA18AA90F000E7919C /* InfoPlist.strings */,
-				873E22FD18AA90F000E7919C /* main.m */,
-				873E22FF18AA90F000E7919C /* HanekeDemo-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		873E232718AAC1A800E7919C /* usr */ = {
-			isa = PBXGroup;
-			children = (
-				873E232818AAC1A800E7919C /* include */,
-				873E233018AAC1A800E7919C /* lib */,
-			);
-			path = usr;
-			sourceTree = "<group>";
-		};
-		873E232818AAC1A800E7919C /* include */ = {
-			isa = PBXGroup;
-			children = (
-				873E232918AAC1A800E7919C /* OCMock */,
-			);
-			path = include;
-			sourceTree = "<group>";
-		};
-		873E232918AAC1A800E7919C /* OCMock */ = {
-			isa = PBXGroup;
-			children = (
-				873E232A18AAC1A800E7919C /* NSNotificationCenter+OCMAdditions.h */,
-				873E232B18AAC1A800E7919C /* OCMArg.h */,
-				873E232C18AAC1A800E7919C /* OCMConstraint.h */,
-				873E232D18AAC1A800E7919C /* OCMock.h */,
-				873E232E18AAC1A800E7919C /* OCMockObject.h */,
-				873E232F18AAC1A800E7919C /* OCMockRecorder.h */,
-			);
-			path = OCMock;
-			sourceTree = "<group>";
-		};
-		873E233018AAC1A800E7919C /* lib */ = {
-			isa = PBXGroup;
-			children = (
-				873E233118AAC1A800E7919C /* libOCMock.a */,
-			);
-			path = lib;
-			sourceTree = "<group>";
-		};
-		87A6907918B678A000F97E13 /* Code Coverage iOS 7 Workaround */ = {
-			isa = PBXGroup;
-			children = (
-				87A6907A18B678C700F97E13 /* GTMCodeCoverageApp.h */,
-				87A6907B18B678C700F97E13 /* GTMCodeCoverageApp.m */,
-				87A6907C18B678C700F97E13 /* GTMCodeCoverageTestsXC.m */,
-			);
-			name = "Code Coverage iOS 7 Workaround";
-			sourceTree = "<group>";
-		};
-		87A6908018B6813E00F97E13 /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				87A6908418B68BF200F97E13 /* HNKCache+HanekeTestUtils.h */,
-				87A6908518B68BF200F97E13 /* HNKCache+HanekeTestUtils.m */,
-				87A6908118B6817C00F97E13 /* UIImage+HanekeTestUtils.h */,
-				87A6908218B6817C00F97E13 /* UIImage+HanekeTestUtils.m */,
-				87260AB718CCDB7000D3680F /* XCTestCase+HanekeTestUtils.h */,
-				87260AB818CCDB7000D3680F /* XCTestCase+HanekeTestUtils.m */,
-			);
-			name = Utils;
-			sourceTree = "<group>";
-		};
-/* End PBXGroup section */
-
-/* Begin PBXNativeTarget section */
-		873E228E18AA8C7C00E7919C /* Haneke */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 873E22B218AA8C7C00E7919C /* Build configuration list for PBXNativeTarget "Haneke" */;
-			buildPhases = (
-				873E228B18AA8C7C00E7919C /* Sources */,
-				873E228C18AA8C7C00E7919C /* Frameworks */,
-				873E228D18AA8C7C00E7919C /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = Haneke;
-			productName = Haneke;
-			productReference = 873E228F18AA8C7C00E7919C /* libHaneke.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		873E229E18AA8C7C00E7919C /* HanekeTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 873E22B518AA8C7C00E7919C /* Build configuration list for PBXNativeTarget "HanekeTests" */;
-			buildPhases = (
-				873E229B18AA8C7C00E7919C /* Sources */,
-				873E229C18AA8C7C00E7919C /* Frameworks */,
-				873E229D18AA8C7C00E7919C /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				873E22A618AA8C7C00E7919C /* PBXTargetDependency */,
-			);
-			name = HanekeTests;
-			productName = HanekeTests;
-			productReference = 873E229F18AA8C7C00E7919C /* HanekeTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		873E22F218AA90EF00E7919C /* HanekeDemo */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 873E231718AA90F000E7919C /* Build configuration list for PBXNativeTarget "HanekeDemo" */;
-			buildPhases = (
-				873E22EF18AA90EF00E7919C /* Sources */,
-				873E22F018AA90EF00E7919C /* Frameworks */,
-				873E22F118AA90EF00E7919C /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = HanekeDemo;
-			productName = HanekeDemo;
-			productReference = 873E22F318AA90EF00E7919C /* HanekeDemo.app */;
-			productType = "com.apple.product-type.application";
-		};
-/* End PBXNativeTarget section */
-
-/* Begin PBXProject section */
-		873E228718AA8C7C00E7919C /* Project object */ = {
-			isa = PBXProject;
-			attributes = {
-				LastUpgradeCheck = 0500;
-				ORGANIZATIONNAME = "Hermes Pique";
-				TargetAttributes = {
-					873E229E18AA8C7C00E7919C = {
-						TestTargetID = 873E22F218AA90EF00E7919C;
-					};
-				};
-			};
-			buildConfigurationList = 873E228A18AA8C7C00E7919C /* Build configuration list for PBXProject "Haneke" */;
-			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
-			hasScannedForEncodings = 0;
-			knownRegions = (
-				en,
-			);
-			mainGroup = 873E228618AA8C7C00E7919C;
-			productRefGroup = 873E229018AA8C7C00E7919C /* Products */;
-			projectDirPath = "";
-			projectRoot = "";
-			targets = (
-				873E228E18AA8C7C00E7919C /* Haneke */,
-				873E229E18AA8C7C00E7919C /* HanekeTests */,
-				873E22F218AA90EF00E7919C /* HanekeDemo */,
-			);
-		};
-/* End PBXProject section */
-
-/* Begin PBXResourcesBuildPhase section */
-		873E229D18AA8C7C00E7919C /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				873E22AD18AA8C7C00E7919C /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		873E22F118AA90EF00E7919C /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				873E22FC18AA90F000E7919C /* InfoPlist.strings in Resources */,
-				873E232618AA992500E7919C /* sample.jpg in Resources */,
-				873E230418AA90F000E7919C /* Images.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
-
-/* Begin PBXSourcesBuildPhase section */
-		873E228B18AA8C7C00E7919C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				876E5F2018AB762600B4EAF6 /* UIImageView+Haneke.m in Sources */,
-				873E22BA18AA8CC900E7919C /* HNKCache.m in Sources */,
-				87A6907F18B67B4A00F97E13 /* GTMCodeCoverageApp.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		873E229B18AA8C7C00E7919C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				87260AB918CCDB7000D3680F /* XCTestCase+HanekeTestUtils.m in Sources */,
-				87A6908618B68BF200F97E13 /* HNKCache+HanekeTestUtils.m in Sources */,
-				87A6907E18B678C700F97E13 /* GTMCodeCoverageTestsXC.m in Sources */,
-				87F47BAE18AC123C00F1FB48 /* UIImageView+HanekeTests.m in Sources */,
-				873E22BF18AA8D9F00E7919C /* HNKCacheTests.m in Sources */,
-				87A6908318B6817C00F97E13 /* UIImage+HanekeTestUtils.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		873E22EF18AA90EF00E7919C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				873E230218AA90F000E7919C /* HNKDemoAppDelegate.m in Sources */,
-				87F47BB918AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m in Sources */,
-				876E5F2118AB831500B4EAF6 /* UIImageView+Haneke.m in Sources */,
-				87F47BB618AD436700F1FB48 /* UIImage+HanekeDemo.m in Sources */,
-				873E22FE18AA90F000E7919C /* main.m in Sources */,
-				873E231F18AA915300E7919C /* HNKDemoViewController.m in Sources */,
-				873E232418AA982F00E7919C /* HNKCache.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		873E22A618AA8C7C00E7919C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 873E228E18AA8C7C00E7919C /* Haneke */;
-			targetProxy = 873E22A518AA8C7C00E7919C /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		873E22AB18AA8C7C00E7919C /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				873E22AC18AA8C7C00E7919C /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		873E22FA18AA90F000E7919C /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				873E22FB18AA90F000E7919C /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
-/* Begin XCBuildConfiguration section */
-		873E22B018AA8C7C00E7919C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
-			};
-			name = Debug;
-		};
-		873E22B118AA8C7C00E7919C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = YES;
-				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				SDKROOT = iphoneos;
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		873E22B318AA8C7C00E7919C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DSTROOT = /tmp/Haneke.dst;
-				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
-				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-					"GTM_USING_XCTEST=1",
-					"GTM_IS_COVERAGE_BUILD=1",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-			};
-			name = Debug;
-		};
-		873E22B418AA8C7C00E7919C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DSTROOT = /tmp/Haneke.dst;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "";
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-			};
-			name = Release;
-		};
-		873E22B618AA8C7C00E7919C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
-				BUNDLE_LOADER = "";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
-				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
-				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-					"GTM_IS_COVERAGE_BUILD=1",
-				);
-				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/${TARGET_NAME}/usr/include/**",
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-				);
-				INFOPLIST_FILE = "HanekeTests/HanekeTests-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"${SRCROOT}/${TARGET_NAME}/usr/lib",
-				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-framework",
-					XCTest,
-					"-ObjC",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Debug;
-		};
-		873E22B718AA8C7C00E7919C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
-				BUNDLE_LOADER = "";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
-				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
-				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/${TARGET_NAME}/usr/include/**",
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-				);
-				INFOPLIST_FILE = "HanekeTests/HanekeTests-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"${SRCROOT}/${TARGET_NAME}/usr/lib",
-				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-framework",
-					XCTest,
-					"-ObjC",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Release;
-		};
-		873E231818AA90F000E7919C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "HanekeDemo/HanekeDemo-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-					GTM_IS_COVERAGE_BUILD,
-					"HANEKE_DEBUG=1",
-				);
-				INFOPLIST_FILE = "HanekeDemo/HanekeDemo-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = app;
-			};
-			name = Debug;
-		};
-		873E231918AA90F000E7919C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "HanekeDemo/HanekeDemo-Prefix.pch";
-				INFOPLIST_FILE = "HanekeDemo/HanekeDemo-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = app;
-			};
-			name = Release;
-		};
-/* End XCBuildConfiguration section */
-
-/* Begin XCConfigurationList section */
-		873E228A18AA8C7C00E7919C /* Build configuration list for PBXProject "Haneke" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				873E22B018AA8C7C00E7919C /* Debug */,
-				873E22B118AA8C7C00E7919C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		873E22B218AA8C7C00E7919C /* Build configuration list for PBXNativeTarget "Haneke" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				873E22B318AA8C7C00E7919C /* Debug */,
-				873E22B418AA8C7C00E7919C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		873E22B518AA8C7C00E7919C /* Build configuration list for PBXNativeTarget "HanekeTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				873E22B618AA8C7C00E7919C /* Debug */,
-				873E22B718AA8C7C00E7919C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		873E231718AA90F000E7919C /* Build configuration list for PBXNativeTarget "HanekeDemo" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				873E231818AA90F000E7919C /* Debug */,
-				873E231918AA90F000E7919C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-/* End XCConfigurationList section */
-	};
-	rootObject = 873E228718AA8C7C00E7919C /* Project object */;
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>archiveVersion</key>
+	<string>1</string>
+	<key>classes</key>
+	<dict/>
+	<key>objectVersion</key>
+	<string>46</string>
+	<key>objects</key>
+	<dict>
+		<key>07BC4F4035AC4A428EFCA40B</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Copy Pods Resources</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>"${SRCROOT}/Pods/Pods-resources.sh"
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>159C131D67A249FF88A5879F</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Copy Pods Resources</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>"${SRCROOT}/Pods/Pods-resources.sh"
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>576709FDDF2C4E2EB1936B08</key>
+		<dict>
+			<key>fileRef</key>
+			<string>87083B31E71541F6A5BA5CAC</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>86CF5F35E74E47B19BACF7E1</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Check Pods Manifest.lock</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>diff "${PODS_ROOT}/../Podfile.lock" "${PODS_ROOT}/Manifest.lock" &gt; /dev/null
+if [[ $? != 0 ]] ; then
+    cat &lt;&lt; EOM
+error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.
+EOM
+    exit 1
+fi
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>87083B31E71541F6A5BA5CAC</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>archive.ar</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>libPods.a</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>87260AB718CCDB7000D3680F</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>XCTestCase+HanekeTestUtils.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>87260AB818CCDB7000D3680F</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>XCTestCase+HanekeTestUtils.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>87260AB918CCDB7000D3680F</key>
+		<dict>
+			<key>fileRef</key>
+			<string>87260AB818CCDB7000D3680F</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>873E228618AA8C7C00E7919C</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>873E229418AA8C7C00E7919C</string>
+				<string>873E22A818AA8C7C00E7919C</string>
+				<string>873E22F718AA90F000E7919C</string>
+				<string>873E229118AA8C7C00E7919C</string>
+				<string>873E229018AA8C7C00E7919C</string>
+				<string>F8F6C1CA74F843B3BAF53166</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E228718AA8C7C00E7919C</key>
+		<dict>
+			<key>attributes</key>
+			<dict>
+				<key>LastUpgradeCheck</key>
+				<string>0510</string>
+				<key>ORGANIZATIONNAME</key>
+				<string>Hermes Pique</string>
+				<key>TargetAttributes</key>
+				<dict>
+					<key>873E229E18AA8C7C00E7919C</key>
+					<dict>
+						<key>TestTargetID</key>
+						<string>873E22F218AA90EF00E7919C</string>
+					</dict>
+				</dict>
+			</dict>
+			<key>buildConfigurationList</key>
+			<string>873E228A18AA8C7C00E7919C</string>
+			<key>compatibilityVersion</key>
+			<string>Xcode 3.2</string>
+			<key>developmentRegion</key>
+			<string>English</string>
+			<key>hasScannedForEncodings</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXProject</string>
+			<key>knownRegions</key>
+			<array>
+				<string>en</string>
+			</array>
+			<key>mainGroup</key>
+			<string>873E228618AA8C7C00E7919C</string>
+			<key>productRefGroup</key>
+			<string>873E229018AA8C7C00E7919C</string>
+			<key>projectDirPath</key>
+			<string></string>
+			<key>projectReferences</key>
+			<array/>
+			<key>projectRoot</key>
+			<string></string>
+			<key>targets</key>
+			<array>
+				<string>873E228E18AA8C7C00E7919C</string>
+				<string>873E229E18AA8C7C00E7919C</string>
+				<string>873E22F218AA90EF00E7919C</string>
+			</array>
+		</dict>
+		<key>873E228A18AA8C7C00E7919C</key>
+		<dict>
+			<key>buildConfigurations</key>
+			<array>
+				<string>873E22B018AA8C7C00E7919C</string>
+				<string>873E22B118AA8C7C00E7919C</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+		</dict>
+		<key>873E228B18AA8C7C00E7919C</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>876E5F2018AB762600B4EAF6</string>
+				<string>873E22BA18AA8CC900E7919C</string>
+				<string>87A6907F18B67B4A00F97E13</string>
+			</array>
+			<key>isa</key>
+			<string>PBXSourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>873E228C18AA8C7C00E7919C</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>873E229318AA8C7C00E7919C</string>
+				<string>576709FDDF2C4E2EB1936B08</string>
+			</array>
+			<key>isa</key>
+			<string>PBXFrameworksBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>873E228D18AA8C7C00E7919C</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>dstPath</key>
+			<string>include/$(PRODUCT_NAME)</string>
+			<key>dstSubfolderSpec</key>
+			<string>16</string>
+			<key>files</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXCopyFilesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>873E228E18AA8C7C00E7919C</key>
+		<dict>
+			<key>buildConfigurationList</key>
+			<string>873E22B218AA8C7C00E7919C</string>
+			<key>buildPhases</key>
+			<array>
+				<string>A365FEFCB1E94FFF81281DB7</string>
+				<string>873E228B18AA8C7C00E7919C</string>
+				<string>873E228C18AA8C7C00E7919C</string>
+				<string>873E228D18AA8C7C00E7919C</string>
+				<string>07BC4F4035AC4A428EFCA40B</string>
+			</array>
+			<key>buildRules</key>
+			<array/>
+			<key>dependencies</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXNativeTarget</string>
+			<key>name</key>
+			<string>Haneke</string>
+			<key>productName</key>
+			<string>Haneke</string>
+			<key>productReference</key>
+			<string>873E228F18AA8C7C00E7919C</string>
+			<key>productType</key>
+			<string>com.apple.product-type.library.static</string>
+		</dict>
+		<key>873E228F18AA8C7C00E7919C</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>archive.ar</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>libHaneke.a</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>873E229018AA8C7C00E7919C</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>873E228F18AA8C7C00E7919C</string>
+				<string>873E229F18AA8C7C00E7919C</string>
+				<string>873E22F318AA90EF00E7919C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Products</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E229118AA8C7C00E7919C</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>873E229218AA8C7C00E7919C</string>
+				<string>873E22A018AA8C7C00E7919C</string>
+				<string>873E22A318AA8C7C00E7919C</string>
+				<string>873E22C618AA90B600E7919C</string>
+				<string>87083B31E71541F6A5BA5CAC</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Frameworks</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E229218AA8C7C00E7919C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>Foundation.framework</string>
+			<key>path</key>
+			<string>System/Library/Frameworks/Foundation.framework</string>
+			<key>sourceTree</key>
+			<string>SDKROOT</string>
+		</dict>
+		<key>873E229318AA8C7C00E7919C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>873E229218AA8C7C00E7919C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>873E229418AA8C7C00E7919C</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>874875DF18D1D33E00D02E03</string>
+				<string>873E22B818AA8CC900E7919C</string>
+				<string>873E22B918AA8CC900E7919C</string>
+				<string>876E5F1E18AB762600B4EAF6</string>
+				<string>876E5F1F18AB762600B4EAF6</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>Haneke</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E229B18AA8C7C00E7919C</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>87260AB918CCDB7000D3680F</string>
+				<string>87A6908618B68BF200F97E13</string>
+				<string>87A6907E18B678C700F97E13</string>
+				<string>87F47BAE18AC123C00F1FB48</string>
+				<string>873E22BF18AA8D9F00E7919C</string>
+				<string>87A6908318B6817C00F97E13</string>
+			</array>
+			<key>isa</key>
+			<string>PBXSourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>873E229C18AA8C7C00E7919C</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>873E22A118AA8C7C00E7919C</string>
+				<string>873E22A718AA8C7C00E7919C</string>
+				<string>873E22A418AA8C7C00E7919C</string>
+				<string>873E22A218AA8C7C00E7919C</string>
+				<string>873E233218AAC1A800E7919C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXFrameworksBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>873E229D18AA8C7C00E7919C</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>873E22AD18AA8C7C00E7919C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXResourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>873E229E18AA8C7C00E7919C</key>
+		<dict>
+			<key>buildConfigurationList</key>
+			<string>873E22B518AA8C7C00E7919C</string>
+			<key>buildPhases</key>
+			<array>
+				<string>873E229B18AA8C7C00E7919C</string>
+				<string>873E229C18AA8C7C00E7919C</string>
+				<string>873E229D18AA8C7C00E7919C</string>
+			</array>
+			<key>buildRules</key>
+			<array/>
+			<key>dependencies</key>
+			<array>
+				<string>873E22A618AA8C7C00E7919C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXNativeTarget</string>
+			<key>name</key>
+			<string>HanekeTests</string>
+			<key>productName</key>
+			<string>HanekeTests</string>
+			<key>productReference</key>
+			<string>873E229F18AA8C7C00E7919C</string>
+			<key>productType</key>
+			<string>com.apple.product-type.bundle.unit-test</string>
+		</dict>
+		<key>873E229F18AA8C7C00E7919C</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>wrapper.cfbundle</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>HanekeTests.xctest</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>873E22A018AA8C7C00E7919C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>XCTest.framework</string>
+			<key>path</key>
+			<string>Library/Frameworks/XCTest.framework</string>
+			<key>sourceTree</key>
+			<string>DEVELOPER_DIR</string>
+		</dict>
+		<key>873E22A118AA8C7C00E7919C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>873E22A018AA8C7C00E7919C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>873E22A218AA8C7C00E7919C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>873E229218AA8C7C00E7919C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>873E22A318AA8C7C00E7919C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>UIKit.framework</string>
+			<key>path</key>
+			<string>Library/Frameworks/UIKit.framework</string>
+			<key>sourceTree</key>
+			<string>DEVELOPER_DIR</string>
+		</dict>
+		<key>873E22A418AA8C7C00E7919C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>873E22A318AA8C7C00E7919C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>873E22A518AA8C7C00E7919C</key>
+		<dict>
+			<key>containerPortal</key>
+			<string>873E228718AA8C7C00E7919C</string>
+			<key>isa</key>
+			<string>PBXContainerItemProxy</string>
+			<key>proxyType</key>
+			<string>1</string>
+			<key>remoteGlobalIDString</key>
+			<string>873E228E18AA8C7C00E7919C</string>
+			<key>remoteInfo</key>
+			<string>Haneke</string>
+		</dict>
+		<key>873E22A618AA8C7C00E7919C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXTargetDependency</string>
+			<key>target</key>
+			<string>873E228E18AA8C7C00E7919C</string>
+			<key>targetProxy</key>
+			<string>873E22A518AA8C7C00E7919C</string>
+		</dict>
+		<key>873E22A718AA8C7C00E7919C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>873E228F18AA8C7C00E7919C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>873E22A818AA8C7C00E7919C</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>87A6907918B678A000F97E13</string>
+				<string>873E22BE18AA8D9F00E7919C</string>
+				<string>873E22A918AA8C7C00E7919C</string>
+				<string>87F47BAD18AC123C00F1FB48</string>
+				<string>873E232718AAC1A800E7919C</string>
+				<string>87A6908018B6813E00F97E13</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>HanekeTests</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E22A918AA8C7C00E7919C</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>873E22AA18AA8C7C00E7919C</string>
+				<string>873E22AB18AA8C7C00E7919C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Supporting Files</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E22AA18AA8C7C00E7919C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.plist.xml</string>
+			<key>path</key>
+			<string>HanekeTests-Info.plist</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E22AB18AA8C7C00E7919C</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>873E22AC18AA8C7C00E7919C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXVariantGroup</string>
+			<key>name</key>
+			<string>InfoPlist.strings</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E22AC18AA8C7C00E7919C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.plist.strings</string>
+			<key>name</key>
+			<string>en</string>
+			<key>path</key>
+			<string>en.lproj/InfoPlist.strings</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E22AD18AA8C7C00E7919C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>873E22AB18AA8C7C00E7919C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>873E22B018AA8C7C00E7919C</key>
+		<dict>
+			<key>buildSettings</key>
+			<dict>
+				<key>ALWAYS_SEARCH_USER_PATHS</key>
+				<string>NO</string>
+				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
+				<string>gnu++0x</string>
+				<key>CLANG_CXX_LIBRARY</key>
+				<string>libc++</string>
+				<key>CLANG_ENABLE_MODULES</key>
+				<string>YES</string>
+				<key>CLANG_ENABLE_OBJC_ARC</key>
+				<string>YES</string>
+				<key>CLANG_WARN_BOOL_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_CONSTANT_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_DIRECT_OBJC_ISA_USAGE</key>
+				<string>YES_ERROR</string>
+				<key>CLANG_WARN_EMPTY_BODY</key>
+				<string>YES</string>
+				<key>CLANG_WARN_ENUM_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_INT_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_OBJC_ROOT_CLASS</key>
+				<string>YES_ERROR</string>
+				<key>CLANG_WARN__DUPLICATE_METHOD_MATCH</key>
+				<string>YES</string>
+				<key>COPY_PHASE_STRIP</key>
+				<string>NO</string>
+				<key>GCC_C_LANGUAGE_STANDARD</key>
+				<string>gnu99</string>
+				<key>GCC_DYNAMIC_NO_PIC</key>
+				<string>NO</string>
+				<key>GCC_OPTIMIZATION_LEVEL</key>
+				<string>0</string>
+				<key>GCC_PREPROCESSOR_DEFINITIONS</key>
+				<array>
+					<string>DEBUG=1</string>
+					<string>$(inherited)</string>
+				</array>
+				<key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
+				<string>NO</string>
+				<key>GCC_WARN_64_TO_32_BIT_CONVERSION</key>
+				<string>YES</string>
+				<key>GCC_WARN_ABOUT_RETURN_TYPE</key>
+				<string>YES_ERROR</string>
+				<key>GCC_WARN_UNDECLARED_SELECTOR</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNINITIALIZED_AUTOS</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNUSED_FUNCTION</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNUSED_VARIABLE</key>
+				<string>YES</string>
+				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+				<string>7.0</string>
+				<key>ONLY_ACTIVE_ARCH</key>
+				<string>YES</string>
+				<key>SDKROOT</key>
+				<string>iphoneos</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+		<key>873E22B118AA8C7C00E7919C</key>
+		<dict>
+			<key>buildSettings</key>
+			<dict>
+				<key>ALWAYS_SEARCH_USER_PATHS</key>
+				<string>NO</string>
+				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
+				<string>gnu++0x</string>
+				<key>CLANG_CXX_LIBRARY</key>
+				<string>libc++</string>
+				<key>CLANG_ENABLE_MODULES</key>
+				<string>YES</string>
+				<key>CLANG_ENABLE_OBJC_ARC</key>
+				<string>YES</string>
+				<key>CLANG_WARN_BOOL_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_CONSTANT_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_DIRECT_OBJC_ISA_USAGE</key>
+				<string>YES_ERROR</string>
+				<key>CLANG_WARN_EMPTY_BODY</key>
+				<string>YES</string>
+				<key>CLANG_WARN_ENUM_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_INT_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_OBJC_ROOT_CLASS</key>
+				<string>YES_ERROR</string>
+				<key>CLANG_WARN__DUPLICATE_METHOD_MATCH</key>
+				<string>YES</string>
+				<key>COPY_PHASE_STRIP</key>
+				<string>YES</string>
+				<key>ENABLE_NS_ASSERTIONS</key>
+				<string>NO</string>
+				<key>GCC_C_LANGUAGE_STANDARD</key>
+				<string>gnu99</string>
+				<key>GCC_WARN_64_TO_32_BIT_CONVERSION</key>
+				<string>YES</string>
+				<key>GCC_WARN_ABOUT_RETURN_TYPE</key>
+				<string>YES_ERROR</string>
+				<key>GCC_WARN_UNDECLARED_SELECTOR</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNINITIALIZED_AUTOS</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNUSED_FUNCTION</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNUSED_VARIABLE</key>
+				<string>YES</string>
+				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+				<string>7.0</string>
+				<key>SDKROOT</key>
+				<string>iphoneos</string>
+				<key>VALIDATE_PRODUCT</key>
+				<string>YES</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+		<key>873E22B218AA8C7C00E7919C</key>
+		<dict>
+			<key>buildConfigurations</key>
+			<array>
+				<string>873E22B318AA8C7C00E7919C</string>
+				<string>873E22B418AA8C7C00E7919C</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+		</dict>
+		<key>873E22B318AA8C7C00E7919C</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>F8F6C1CA74F843B3BAF53166</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>DSTROOT</key>
+				<string>/tmp/Haneke.dst</string>
+				<key>GCC_GENERATE_TEST_COVERAGE_FILES</key>
+				<string>YES</string>
+				<key>GCC_INSTRUMENT_PROGRAM_FLOW_ARCS</key>
+				<string>YES</string>
+				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
+				<string>YES</string>
+				<key>GCC_PREFIX_HEADER</key>
+				<string></string>
+				<key>GCC_PREPROCESSOR_DEFINITIONS</key>
+				<array>
+					<string>DEBUG=1</string>
+					<string>$(inherited)</string>
+					<string>GTM_USING_XCTEST=1</string>
+					<string>GTM_IS_COVERAGE_BUILD=1</string>
+				</array>
+				<key>OTHER_LDFLAGS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>-ObjC</string>
+				</array>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>SKIP_INSTALL</key>
+				<string>YES</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+		<key>873E22B418AA8C7C00E7919C</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>F8F6C1CA74F843B3BAF53166</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>DSTROOT</key>
+				<string>/tmp/Haneke.dst</string>
+				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
+				<string>YES</string>
+				<key>GCC_PREFIX_HEADER</key>
+				<string></string>
+				<key>OTHER_LDFLAGS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>-ObjC</string>
+				</array>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>SKIP_INSTALL</key>
+				<string>YES</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+		<key>873E22B518AA8C7C00E7919C</key>
+		<dict>
+			<key>buildConfigurations</key>
+			<array>
+				<string>873E22B618AA8C7C00E7919C</string>
+				<string>873E22B718AA8C7C00E7919C</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+		</dict>
+		<key>873E22B618AA8C7C00E7919C</key>
+		<dict>
+			<key>buildSettings</key>
+			<dict>
+				<key>BUNDLE_LOADER</key>
+				<string></string>
+				<key>FRAMEWORK_SEARCH_PATHS</key>
+				<array>
+					<string>$(SDKROOT)/Developer/Library/Frameworks</string>
+					<string>$(inherited)</string>
+					<string>$(DEVELOPER_FRAMEWORKS_DIR)</string>
+				</array>
+				<key>GCC_GENERATE_TEST_COVERAGE_FILES</key>
+				<string>NO</string>
+				<key>GCC_INSTRUMENT_PROGRAM_FLOW_ARCS</key>
+				<string>YES</string>
+				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
+				<string>YES</string>
+				<key>GCC_PREFIX_HEADER</key>
+				<string></string>
+				<key>GCC_PREPROCESSOR_DEFINITIONS</key>
+				<array>
+					<string>DEBUG=1</string>
+					<string>$(inherited)</string>
+					<string>GTM_IS_COVERAGE_BUILD=1</string>
+				</array>
+				<key>HEADER_SEARCH_PATHS</key>
+				<array>
+					<string>${SRCROOT}/${TARGET_NAME}/usr/include/**</string>
+					<string>$(inherited)</string>
+					<string>/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include</string>
+				</array>
+				<key>INFOPLIST_FILE</key>
+				<string>HanekeTests/HanekeTests-Info.plist</string>
+				<key>LIBRARY_SEARCH_PATHS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>${SRCROOT}/${TARGET_NAME}/usr/lib</string>
+				</array>
+				<key>OTHER_LDFLAGS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>-framework</string>
+					<string>XCTest</string>
+					<string>-ObjC</string>
+				</array>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>TEST_HOST</key>
+				<string>$(BUNDLE_LOADER)</string>
+				<key>WRAPPER_EXTENSION</key>
+				<string>xctest</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+		<key>873E22B718AA8C7C00E7919C</key>
+		<dict>
+			<key>buildSettings</key>
+			<dict>
+				<key>BUNDLE_LOADER</key>
+				<string></string>
+				<key>FRAMEWORK_SEARCH_PATHS</key>
+				<array>
+					<string>$(SDKROOT)/Developer/Library/Frameworks</string>
+					<string>$(inherited)</string>
+					<string>$(DEVELOPER_FRAMEWORKS_DIR)</string>
+				</array>
+				<key>GCC_GENERATE_TEST_COVERAGE_FILES</key>
+				<string>NO</string>
+				<key>GCC_INSTRUMENT_PROGRAM_FLOW_ARCS</key>
+				<string>NO</string>
+				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
+				<string>YES</string>
+				<key>GCC_PREFIX_HEADER</key>
+				<string></string>
+				<key>HEADER_SEARCH_PATHS</key>
+				<array>
+					<string>${SRCROOT}/${TARGET_NAME}/usr/include/**</string>
+					<string>$(inherited)</string>
+					<string>/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include</string>
+				</array>
+				<key>INFOPLIST_FILE</key>
+				<string>HanekeTests/HanekeTests-Info.plist</string>
+				<key>LIBRARY_SEARCH_PATHS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>${SRCROOT}/${TARGET_NAME}/usr/lib</string>
+				</array>
+				<key>OTHER_LDFLAGS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>-framework</string>
+					<string>XCTest</string>
+					<string>-ObjC</string>
+				</array>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>TEST_HOST</key>
+				<string>$(BUNDLE_LOADER)</string>
+				<key>WRAPPER_EXTENSION</key>
+				<string>xctest</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+		<key>873E22B818AA8CC900E7919C</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>HNKCache.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E22B918AA8CC900E7919C</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>HNKCache.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E22BA18AA8CC900E7919C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>873E22B918AA8CC900E7919C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>873E22BE18AA8D9F00E7919C</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>HNKCacheTests.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E22BF18AA8D9F00E7919C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>873E22BE18AA8D9F00E7919C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>873E22C618AA90B600E7919C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>CoreGraphics.framework</string>
+			<key>path</key>
+			<string>System/Library/Frameworks/CoreGraphics.framework</string>
+			<key>sourceTree</key>
+			<string>SDKROOT</string>
+		</dict>
+		<key>873E22EF18AA90EF00E7919C</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>873E230218AA90F000E7919C</string>
+				<string>87F47BB918AD4D0400F1FB48</string>
+				<string>876E5F2118AB831500B4EAF6</string>
+				<string>87F47BB618AD436700F1FB48</string>
+				<string>873E22FE18AA90F000E7919C</string>
+				<string>873E231F18AA915300E7919C</string>
+				<string>873E232418AA982F00E7919C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXSourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>873E22F018AA90EF00E7919C</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>873E22F518AA90F000E7919C</string>
+				<string>873E22F618AA90F000E7919C</string>
+				<string>873E22F418AA90F000E7919C</string>
+				<string>C11DC890C9C24C39B1CF258A</string>
+			</array>
+			<key>isa</key>
+			<string>PBXFrameworksBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>873E22F118AA90EF00E7919C</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>873E22FC18AA90F000E7919C</string>
+				<string>873E232618AA992500E7919C</string>
+				<string>873E230418AA90F000E7919C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXResourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>873E22F218AA90EF00E7919C</key>
+		<dict>
+			<key>buildConfigurationList</key>
+			<string>873E231718AA90F000E7919C</string>
+			<key>buildPhases</key>
+			<array>
+				<string>86CF5F35E74E47B19BACF7E1</string>
+				<string>873E22EF18AA90EF00E7919C</string>
+				<string>873E22F018AA90EF00E7919C</string>
+				<string>873E22F118AA90EF00E7919C</string>
+				<string>159C131D67A249FF88A5879F</string>
+			</array>
+			<key>buildRules</key>
+			<array/>
+			<key>dependencies</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXNativeTarget</string>
+			<key>name</key>
+			<string>HanekeDemo</string>
+			<key>productName</key>
+			<string>HanekeDemo</string>
+			<key>productReference</key>
+			<string>873E22F318AA90EF00E7919C</string>
+			<key>productType</key>
+			<string>com.apple.product-type.application</string>
+		</dict>
+		<key>873E22F318AA90EF00E7919C</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>wrapper.application</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>HanekeDemo.app</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>873E22F418AA90F000E7919C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>873E229218AA8C7C00E7919C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>873E22F518AA90F000E7919C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>873E22C618AA90B600E7919C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>873E22F618AA90F000E7919C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>873E22A318AA8C7C00E7919C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>873E22F718AA90F000E7919C</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>873E230018AA90F000E7919C</string>
+				<string>873E230118AA90F000E7919C</string>
+				<string>87F47BB718AD4D0400F1FB48</string>
+				<string>87F47BB818AD4D0400F1FB48</string>
+				<string>873E231D18AA915300E7919C</string>
+				<string>873E231E18AA915300E7919C</string>
+				<string>873E230318AA90F000E7919C</string>
+				<string>873E232518AA992500E7919C</string>
+				<string>873E22F818AA90F000E7919C</string>
+				<string>87F47BB418AD436700F1FB48</string>
+				<string>87F47BB518AD436700F1FB48</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>HanekeDemo</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E22F818AA90F000E7919C</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>873E22F918AA90F000E7919C</string>
+				<string>873E22FA18AA90F000E7919C</string>
+				<string>873E22FD18AA90F000E7919C</string>
+				<string>873E22FF18AA90F000E7919C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Supporting Files</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E22F918AA90F000E7919C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.plist.xml</string>
+			<key>path</key>
+			<string>HanekeDemo-Info.plist</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E22FA18AA90F000E7919C</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>873E22FB18AA90F000E7919C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXVariantGroup</string>
+			<key>name</key>
+			<string>InfoPlist.strings</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E22FB18AA90F000E7919C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.plist.strings</string>
+			<key>name</key>
+			<string>en</string>
+			<key>path</key>
+			<string>en.lproj/InfoPlist.strings</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E22FC18AA90F000E7919C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>873E22FA18AA90F000E7919C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>873E22FD18AA90F000E7919C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>main.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E22FE18AA90F000E7919C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>873E22FD18AA90F000E7919C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>873E22FF18AA90F000E7919C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>HanekeDemo-Prefix.pch</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E230018AA90F000E7919C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>HNKDemoAppDelegate.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E230118AA90F000E7919C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>HNKDemoAppDelegate.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E230218AA90F000E7919C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>873E230118AA90F000E7919C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>873E230318AA90F000E7919C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>folder.assetcatalog</string>
+			<key>path</key>
+			<string>Images.xcassets</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E230418AA90F000E7919C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>873E230318AA90F000E7919C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>873E231718AA90F000E7919C</key>
+		<dict>
+			<key>buildConfigurations</key>
+			<array>
+				<string>873E231818AA90F000E7919C</string>
+				<string>873E231918AA90F000E7919C</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+		</dict>
+		<key>873E231818AA90F000E7919C</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>F8F6C1CA74F843B3BAF53166</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>ASSETCATALOG_COMPILER_APPICON_NAME</key>
+				<string>AppIcon</string>
+				<key>ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME</key>
+				<string>LaunchImage</string>
+				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
+				<string>iPhone Developer</string>
+				<key>FRAMEWORK_SEARCH_PATHS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>$(DEVELOPER_FRAMEWORKS_DIR)</string>
+				</array>
+				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
+				<string>YES</string>
+				<key>GCC_PREFIX_HEADER</key>
+				<string>HanekeDemo/HanekeDemo-Prefix.pch</string>
+				<key>GCC_PREPROCESSOR_DEFINITIONS</key>
+				<array>
+					<string>DEBUG=1</string>
+					<string>$(inherited)</string>
+					<string>GTM_IS_COVERAGE_BUILD</string>
+					<string>HANEKE_DEBUG=1</string>
+				</array>
+				<key>INFOPLIST_FILE</key>
+				<string>HanekeDemo/HanekeDemo-Info.plist</string>
+				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+				<string>6.0</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>WRAPPER_EXTENSION</key>
+				<string>app</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+		<key>873E231918AA90F000E7919C</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>F8F6C1CA74F843B3BAF53166</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>ASSETCATALOG_COMPILER_APPICON_NAME</key>
+				<string>AppIcon</string>
+				<key>ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME</key>
+				<string>LaunchImage</string>
+				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
+				<string>iPhone Developer</string>
+				<key>FRAMEWORK_SEARCH_PATHS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>$(DEVELOPER_FRAMEWORKS_DIR)</string>
+				</array>
+				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
+				<string>YES</string>
+				<key>GCC_PREFIX_HEADER</key>
+				<string>HanekeDemo/HanekeDemo-Prefix.pch</string>
+				<key>INFOPLIST_FILE</key>
+				<string>HanekeDemo/HanekeDemo-Info.plist</string>
+				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+				<string>6.0</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>WRAPPER_EXTENSION</key>
+				<string>app</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+		<key>873E231D18AA915300E7919C</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>HNKDemoViewController.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E231E18AA915300E7919C</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>HNKDemoViewController.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E231F18AA915300E7919C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>873E231E18AA915300E7919C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>873E232418AA982F00E7919C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>873E22B918AA8CC900E7919C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>873E232518AA992500E7919C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.jpeg</string>
+			<key>path</key>
+			<string>sample.jpg</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E232618AA992500E7919C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>873E232518AA992500E7919C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>873E232718AAC1A800E7919C</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>873E232818AAC1A800E7919C</string>
+				<string>873E233018AAC1A800E7919C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>usr</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E232818AAC1A800E7919C</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>873E232918AAC1A800E7919C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>include</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E232918AAC1A800E7919C</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>873E232A18AAC1A800E7919C</string>
+				<string>873E232B18AAC1A800E7919C</string>
+				<string>873E232C18AAC1A800E7919C</string>
+				<string>873E232D18AAC1A800E7919C</string>
+				<string>873E232E18AAC1A800E7919C</string>
+				<string>873E232F18AAC1A800E7919C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>OCMock</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E232A18AAC1A800E7919C</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>NSNotificationCenter+OCMAdditions.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E232B18AAC1A800E7919C</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>OCMArg.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E232C18AAC1A800E7919C</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>OCMConstraint.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E232D18AAC1A800E7919C</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>OCMock.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E232E18AAC1A800E7919C</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>OCMockObject.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E232F18AAC1A800E7919C</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>OCMockRecorder.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E233018AAC1A800E7919C</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>873E233118AAC1A800E7919C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>lib</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E233118AAC1A800E7919C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>archive.ar</string>
+			<key>path</key>
+			<string>libOCMock.a</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>873E233218AAC1A800E7919C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>873E233118AAC1A800E7919C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>874875DF18D1D33E00D02E03</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>Haneke.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>876E5F1E18AB762600B4EAF6</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>UIImageView+Haneke.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>876E5F1F18AB762600B4EAF6</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>UIImageView+Haneke.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>876E5F2018AB762600B4EAF6</key>
+		<dict>
+			<key>fileRef</key>
+			<string>876E5F1F18AB762600B4EAF6</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>876E5F2118AB831500B4EAF6</key>
+		<dict>
+			<key>fileRef</key>
+			<string>876E5F1F18AB762600B4EAF6</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>87A6907918B678A000F97E13</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>87A6907A18B678C700F97E13</string>
+				<string>87A6907B18B678C700F97E13</string>
+				<string>87A6907C18B678C700F97E13</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Code Coverage iOS 7 Workaround</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>87A6907A18B678C700F97E13</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>GTMCodeCoverageApp.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>87A6907B18B678C700F97E13</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>GTMCodeCoverageApp.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>87A6907C18B678C700F97E13</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>GTMCodeCoverageTestsXC.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>87A6907E18B678C700F97E13</key>
+		<dict>
+			<key>fileRef</key>
+			<string>87A6907C18B678C700F97E13</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>87A6907F18B67B4A00F97E13</key>
+		<dict>
+			<key>fileRef</key>
+			<string>87A6907B18B678C700F97E13</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>87A6908018B6813E00F97E13</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>87A6908418B68BF200F97E13</string>
+				<string>87A6908518B68BF200F97E13</string>
+				<string>87A6908118B6817C00F97E13</string>
+				<string>87A6908218B6817C00F97E13</string>
+				<string>87260AB718CCDB7000D3680F</string>
+				<string>87260AB818CCDB7000D3680F</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Utils</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>87A6908118B6817C00F97E13</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>UIImage+HanekeTestUtils.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>87A6908218B6817C00F97E13</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>UIImage+HanekeTestUtils.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>87A6908318B6817C00F97E13</key>
+		<dict>
+			<key>fileRef</key>
+			<string>87A6908218B6817C00F97E13</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>87A6908418B68BF200F97E13</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>HNKCache+HanekeTestUtils.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>87A6908518B68BF200F97E13</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>HNKCache+HanekeTestUtils.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>87A6908618B68BF200F97E13</key>
+		<dict>
+			<key>fileRef</key>
+			<string>87A6908518B68BF200F97E13</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>87F47BAD18AC123C00F1FB48</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>UIImageView+HanekeTests.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>87F47BAE18AC123C00F1FB48</key>
+		<dict>
+			<key>fileRef</key>
+			<string>87F47BAD18AC123C00F1FB48</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>87F47BB418AD436700F1FB48</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>UIImage+HanekeDemo.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>87F47BB518AD436700F1FB48</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>UIImage+HanekeDemo.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>87F47BB618AD436700F1FB48</key>
+		<dict>
+			<key>fileRef</key>
+			<string>87F47BB518AD436700F1FB48</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>87F47BB718AD4D0400F1FB48</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>HNKDemoCollectionViewCell.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>87F47BB818AD4D0400F1FB48</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>HNKDemoCollectionViewCell.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>87F47BB918AD4D0400F1FB48</key>
+		<dict>
+			<key>fileRef</key>
+			<string>87F47BB818AD4D0400F1FB48</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>A365FEFCB1E94FFF81281DB7</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Check Pods Manifest.lock</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>diff "${PODS_ROOT}/../Podfile.lock" "${PODS_ROOT}/Manifest.lock" &gt; /dev/null
+if [[ $? != 0 ]] ; then
+    cat &lt;&lt; EOM
+error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.
+EOM
+    exit 1
+fi
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>C11DC890C9C24C39B1CF258A</key>
+		<dict>
+			<key>fileRef</key>
+			<string>87083B31E71541F6A5BA5CAC</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>F8F6C1CA74F843B3BAF53166</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods.xcconfig</string>
+			<key>path</key>
+			<string>Pods/Pods.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+	</dict>
+	<key>rootObject</key>
+	<string>873E228718AA8C7C00E7919C</string>
+</dict>
+</plist>

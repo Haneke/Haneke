@@ -20,6 +20,7 @@
 
 #import "UIImageView+Haneke.h"
 #import <objc/runtime.h>
+#import "AFNetworking.h"
 
 @interface HNKImageViewEntity : NSObject<HNKCacheEntity>
 
@@ -138,21 +139,15 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
             return;
         }
 
-        NSURLSession *session = [NSURLSession sharedSession];
-        NSURLSessionDataTask *task = [session dataTaskWithURL:url completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
-        {
+        NSURLRequest *request = [NSURLRequest requestWithURL:url];
+        AFHTTPRequestOperation *afOperation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+        [afOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
             if ([self hnk_shouldCancelRequestForKey:absoluteString formatName:formatName]) return;
-            
-            if (error)
-            {
-                HanekeLog(@"Request %@ failed with error %@", absoluteString, error);
-                [self hnk_failWithError:error failure:failureBlock];
-                return;
-            }
-            const long long expectedContentLength = response.expectedContentLength;
+ 
+            const long long expectedContentLength = operation.response.expectedContentLength;
             if (expectedContentLength > -1)
             {
-                const NSUInteger dataLength = data.length;
+                const NSUInteger dataLength = operation.responseData.length;
                 if (dataLength < expectedContentLength)
                 {
                     NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Request %@ received %ld out of %ld bytes", @""), absoluteString, (long)dataLength, (long)expectedContentLength];
@@ -164,12 +159,19 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
                 }
             }
             
-            HNKImageViewEntity *entity = [HNKImageViewEntity entityWithData:data key:absoluteString];
+            HNKImageViewEntity *entity = [HNKImageViewEntity entityWithData:operation.responseData key:absoluteString];
             [self hnk_retrieveImageFromEntity:entity success:successBlock failure:failureBlock];
-            self.hnk_URLSessionDataTask = nil;
+            self.hnk_AFHTTPRequestOperation = nil;
+            
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            if ([self hnk_shouldCancelRequestForKey:absoluteString formatName:formatName]) return;
+            
+            HanekeLog(@"Request %@ failed with error %@", absoluteString, error);
+            [self hnk_failWithError:error failure:failureBlock];
         }];
-        self.hnk_URLSessionDataTask = task;
-        [task resume];
+
+        self.hnk_AFHTTPRequestOperation = afOperation;
+        [[NSOperationQueue mainQueue] addOperation:afOperation];
     }];
     animated = YES;
     if (!didSetImage && placeholderImage != nil)
@@ -263,8 +265,8 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 - (void)hnk_cancelImageRequest
 {
-    [self.hnk_URLSessionDataTask cancel];
-    self.hnk_URLSessionDataTask = nil;
+    [self.hnk_AFHTTPRequestOperation cancel];
+    self.hnk_AFHTTPRequestOperation = nil;
     self.hnk_requestedCacheKey = nil;
 }
 
@@ -292,7 +294,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 - (void)hnk_failWithError:(NSError*)error failure:(void (^)(NSError *error))failureBlock
 {
-    self.hnk_URLSessionDataTask = nil;
+    self.hnk_AFHTTPRequestOperation = nil;
     self.hnk_requestedCacheKey = nil;
     
     if (failureBlock) failureBlock(error);
@@ -301,7 +303,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 - (void)hnk_setImage:(UIImage*)image animated:(BOOL)animated success:(void (^)(UIImage *image))successBlock
 {
-    self.hnk_URLSessionDataTask = nil;
+    self.hnk_AFHTTPRequestOperation = nil;
     self.hnk_requestedCacheKey = nil;
     
     if (successBlock)
@@ -360,14 +362,14 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     objc_setAssociatedObject(self, @selector(hnk_requestedCacheKey), cacheKey, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (NSURLSessionDataTask*)hnk_URLSessionDataTask
+- (AFHTTPRequestOperation*)hnk_AFHTTPRequestOperation
 {
-    return (NSURLSessionDataTask *)objc_getAssociatedObject(self, @selector(hnk_URLSessionDataTask));
+    return (AFHTTPRequestOperation *)objc_getAssociatedObject(self, @selector(hnk_AFHTTPRequestOperation));
 }
 
-- (void)setHnk_URLSessionDataTask:(NSURLSessionDataTask*)URLSessionDataTask
+- (void)setHnk_AFHTTPRequestOperation:(AFHTTPRequestOperation*)afHTTPRequestOperation
 {
-    objc_setAssociatedObject(self, @selector(hnk_URLSessionDataTask), URLSessionDataTask, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, @selector(hnk_AFHTTPRequestOperation), afHTTPRequestOperation, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 @end
