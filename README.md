@@ -126,6 +126,8 @@ To turn logging on you must set the preprocessor macro `HANEKE_DEBUG` to 1. The 
 
 Haneke requires iOS 7.0 or above and ARC. 
 
+iOS 6 compatibility can be achieved with very few [changes](https://github.com/hpique/Haneke/pull/17). You can use [@shkutkov](https://github.com/shkutkov)'s [fork](https://github.com/shkutkov/Haneke) that adds it by replacing `NSURLSession` with [AFNetworking](https://github.com/AFNetworking/AFNetworking).
+
 ##Roadmap
 
 Haneke is in initial development and its public API should not be considered stable.
