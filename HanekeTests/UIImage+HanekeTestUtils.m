@@ -24,7 +24,12 @@
 
 + (UIImage*)hnk_imageWithColor:(UIColor*)color size:(CGSize)size
 {
-    UIGraphicsBeginImageContextWithOptions(size, YES, 0);
+    return [UIImage hnk_imageWithColor:color size:size opaque:YES];
+}
+
++ (UIImage*)hnk_imageWithColor:(UIColor*)color size:(CGSize)size opaque:(BOOL)opaque
+{
+    UIGraphicsBeginImageContextWithOptions(size, opaque, 0);
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetFillColorWithColor(context, color.CGColor);
     CGContextFillRect(context, CGRectMake(0, 0, size.width, size.height));

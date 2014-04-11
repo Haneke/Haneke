@@ -24,4 +24,14 @@
 
 + (UIImage*)hnk_imageWithColor:(UIColor*)color size:(CGSize)size;
 
++ (UIImage*)hnk_imageWithColor:(UIColor*)color size:(CGSize)size opaque:(BOOL)opaque;
+
+@end
+
+// Implemented in HNKCache.m
+
+@interface UIImage (hnk_utils)
+
+- (BOOL)hnk_hasAlpha;
+
 @end

@@ -38,6 +38,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 - (CGSize)hnk_aspectFillSizeForSize:(CGSize)size;
 - (CGSize)hnk_aspectFitSizeForSize:(CGSize)size;
 - (UIImage *)hnk_imageByScalingToSize:(CGSize)newSize;
+- (BOOL)hnk_hasAlpha;
 + (UIImage *)hnk_decompressedImageWithData:(NSData*)data;
 
 @end
@@ -547,7 +548,8 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     NSString *path = [self pathForKey:key format:format];
     if (image)
     {
-        NSData *imageData = UIImageJPEGRepresentation(image, format.compressionQuality);
+        const BOOL hasAlpha = [image hnk_hasAlpha];
+        NSData *imageData = hasAlpha ? UIImagePNGRepresentation(image) : UIImageJPEGRepresentation(image, format.compressionQuality);
         NSError *error;
         if (![imageData writeToFile:path options:kNilOptions error:&error])
         {
@@ -583,7 +585,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     }
 }
 
-#pragma mark - Notifications
+#pragma mark Notifications
 
 - (void)didReceiveMemoryWarning:(NSNotification*)notification
 {
@@ -683,9 +685,19 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     return CGSizeMake(ceil(resultSize.width), ceil(resultSize.height));
 }
 
+- (BOOL)hnk_hasAlpha
+{
+    const CGImageAlphaInfo alpha = CGImageGetAlphaInfo(self.CGImage);
+    return (alpha == kCGImageAlphaFirst ||
+            alpha == kCGImageAlphaLast ||
+            alpha == kCGImageAlphaPremultipliedFirst ||
+            alpha == kCGImageAlphaPremultipliedLast);
+}
+
 - (UIImage *)hnk_imageByScalingToSize:(CGSize)newSize
 {
-    UIGraphicsBeginImageContextWithOptions(newSize, NO, 0.0);
+    const BOOL hasAlpha = [self hnk_hasAlpha];
+    UIGraphicsBeginImageContextWithOptions(newSize, !hasAlpha, 0.0);
     [self drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();

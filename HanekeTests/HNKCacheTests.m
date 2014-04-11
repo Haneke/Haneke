@@ -89,7 +89,7 @@
     [_cache clearFormatNamed:format.name];
 }
 
-- (void)testImageForEntity_Image
+- (void)testImageForEntity_OpaqueImage
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
     id entity = [HNKCache entityWithKey:@"1" data:nil image:image];
@@ -102,6 +102,23 @@
     XCTAssertNotNil(result, @"");
     XCTAssertNil(error, @"");
     XCTAssertTrue(CGSizeEqualToSize(resultSize, format.size), @"");
+    XCTAssertFalse(result.hnk_hasAlpha, @"");
+}
+
+- (void)testImageForEntity_ImageWithAlpha
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10) opaque:NO];
+    id entity = [HNKCache entityWithKey:@"1" data:nil image:image];
+    HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
+    NSError *error = nil;
+    
+    UIImage *result = [_cache imageForEntity:entity formatName:format.name error:&error];
+    CGSize resultSize = result.size;
+    
+    XCTAssertNotNil(result, @"");
+    XCTAssertNil(error, @"");
+    XCTAssertTrue(CGSizeEqualToSize(resultSize, format.size), @"");
+    XCTAssertTrue(result.hnk_hasAlpha, @"");
 }
 
 - (void)testImageForEntity_ImplementingCacheOriginalImage
