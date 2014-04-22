@@ -2,7 +2,7 @@ Haneke
 ======
 <img src="https://raw.github.com/hpique/Haneke/master/screenshot.png" width="75%" "alt="Screenshot" />
 
-[![Build Status](https://travis-ci.org/hpique/Haneke.png)](https://travis-ci.org/hpique/Haneke)
+<!-- [![Build Status](https://travis-ci.org/hpique/Haneke.png)](https://travis-ci.org/hpique/Haneke) -->
 
 A lightweight zero-config image cache for iOS. 
 
