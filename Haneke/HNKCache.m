@@ -623,6 +623,8 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
         case HNKScaleModeFill:
             resizedSize = formatSize;
             break;
+        case HNKScaleModeNoScale:
+            return originalImage;
     }
     const CGSize originalSize = originalImage.size;
     if (!self.allowUpscaling)
