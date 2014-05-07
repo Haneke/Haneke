@@ -170,6 +170,11 @@
  **/
 - (void)hnk_cancelImageRequest;
 
+/**
+ The cache format used by the image view. 
+ @discussion Each image view has a default format created on demand. The default format size matches the bounds of the image view and will scale images based on the contentMode of the the image view.
+ @discussion Modifying the default format is discouraged. Instead, you can set your own custom format. To apply the same custom format to various image views you must use the same format instance.
+ **/
 @property (nonatomic, strong) HNKCacheFormat *hnk_cacheFormat;
 
 @end

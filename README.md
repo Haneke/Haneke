@@ -75,16 +75,20 @@ Each image view has a default format created on demand. The default format is co
 Modifying this default format is discouraged. Instead, you can set your own custom format like this:
 
 ```objective-c
-HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"thumbnail"];
-format.size = CGSizeMake(320, 240);
-format.scaleMode = HNKScaleModeAspectFill;
-format.compressionQuality = 0.5;
-format.diskCapacity = 1 * 1024 * 1024; // 1MB
-format.preloadPolicy = HNKPreloadPolicyLastSession;
+HNKCacheFormat *format = [HNKCache sharedCache].formats[@"thumbnail"];
+if (!format)
+{
+	format = [[HNKCacheFormat alloc] initWithName:@"thumbnail"];
+	format.size = CGSizeMake(320, 240);
+	format.scaleMode = HNKScaleModeAspectFill;
+	format.compressionQuality = 0.5;
+	format.diskCapacity = 1 * 1024 * 1024; // 1MB
+	format.preloadPolicy = HNKPreloadPolicyLastSession;
+}
 imageView.hnk_cacheFormat = format;
 ```
 
-The image view category will take care of registering the format in the shared cache.
+To apply the same custom format to various image views you must use the same format instance. The above example does this by initializing the custom format only if it's not already registered in the shared cache. In the last line, the image view category takes care of registering the format in the shared cache if needed.
 
 ### Disk cache
 
