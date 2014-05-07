@@ -172,6 +172,7 @@ typedef NS_ENUM(NSInteger, HNKPreloadPolicy)
 
 /**
  Allow upscalling. Images smaller than the format size will be upscaled if set to YES. NO by default.
+ @discussion Has no effect if the scale mode is HNKScaleModeNone.
  */
 @property (nonatomic, assign) BOOL allowUpscaling;
 
@@ -187,12 +188,13 @@ typedef NS_ENUM(NSInteger, HNKPreloadPolicy)
 @property (nonatomic, readonly) NSString *name;
 
 /**
- Format image size. Images will be scaled to fit or fill this size based on scaleMode.
+ Format image size. Images will be scaled to fit or fill this size or ignore it based on scaleMode.
+ @discussion Has no effect if the scale mode is HNKScaleModeNone.
  */
 @property (nonatomic, assign) CGSize size;
 
 /**
- Format scale mode. Determines if images will fit or fill the format size, and if the aspect ratio will be mantained or not. HNKScaleModeFill by default.
+ Format scale mode. Determines if images will fit or fill the format size or not. HNKScaleModeFill by default.
  */
 @property (nonatomic, assign) HNKScaleMode scaleMode;
 
