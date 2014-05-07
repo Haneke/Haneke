@@ -131,7 +131,8 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     HNKCacheFormat *format = self.hnk_cacheFormat;
     NSString *formatName = format.name;
     __block BOOL animated = NO;
-    const BOOL didSetImage = [[HNKCache sharedCache] retrieveImageForKey:absoluteString formatName:format.name completionBlock:^(UIImage *image, NSError *error) {
+    const BOOL didSetImage = [[HNKCache sharedCache] retrieveImageForKey:absoluteString formatName:format.name completionBlock:^(UIImage *image, NSError *error)
+    {
         if ([self hnk_shouldCancelRequestForKey:absoluteString formatName:formatName]) return;
         
         if (image)
@@ -148,7 +149,10 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
             if (error)
             {
                 HanekeLog(@"Request %@ failed with error %@", absoluteString, error);
-                [self hnk_failWithError:error failure:failureBlock];
+                dispatch_async(dispatch_get_main_queue(), ^
+                {
+                    [self hnk_failWithError:error failure:failureBlock];
+                });
                 return;
             }
             const long long expectedContentLength = response.expectedContentLength;
@@ -161,14 +165,21 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
                     HanekeLog(@"%@", errorDescription);
                     NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription , NSURLErrorKey : url};
                     NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorImageFromURLMissingData userInfo:userInfo];
-                    [self hnk_failWithError:error failure:failureBlock];
+                    dispatch_async(dispatch_get_main_queue(), ^
+                    {
+                        [self hnk_failWithError:error failure:failureBlock];
+                    });
                     return;
                 }
             }
             
-            HNKImageViewEntity *entity = [HNKImageViewEntity entityWithData:data key:absoluteString];
-            [self hnk_retrieveImageFromEntity:entity success:successBlock failure:failureBlock];
-            self.hnk_URLSessionDataTask = nil;
+            dispatch_async(dispatch_get_main_queue(), ^
+            {
+                HNKImageViewEntity *entity = [HNKImageViewEntity entityWithData:data key:absoluteString];
+                [self hnk_retrieveImageFromEntity:entity success:successBlock failure:failureBlock];
+                self.hnk_URLSessionDataTask = nil;
+            });
+            
         }];
         self.hnk_URLSessionDataTask = task;
         [task resume];
