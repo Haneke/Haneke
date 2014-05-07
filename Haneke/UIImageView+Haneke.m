@@ -38,6 +38,8 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
             return @"aspectfill";
         case HNKScaleModeAspectFit:
             return @"aspectfit";
+        case HNKScaleModeNone:
+            return @"scalenone";
     }
     return nil;
 }

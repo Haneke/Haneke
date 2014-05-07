@@ -155,7 +155,7 @@ typedef NS_ENUM(NSInteger, HNKScaleMode)
     HNKScaleModeFill = UIViewContentModeScaleToFill,
     HNKScaleModeAspectFit = UIViewContentModeScaleAspectFit,
     HNKScaleModeAspectFill = UIViewContentModeScaleAspectFill,
-    HNKScaleModeNoScale
+    HNKScaleModeNone
 };
 
 typedef NS_ENUM(NSInteger, HNKPreloadPolicy)
@@ -177,6 +177,7 @@ typedef NS_ENUM(NSInteger, HNKPreloadPolicy)
 
 /**
  The quality of the resulting JPEG image, expressed as a value from 0.0 to 1.0. The value 0.0 represents the maximum compression (or lowest quality) while the value 1.0 represents the least compression (or best quality). 1.0 by default.
+ @discussion Only affects opaque images.
  */
 @property (nonatomic, assign) CGFloat compressionQuality;
 
