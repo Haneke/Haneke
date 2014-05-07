@@ -154,7 +154,8 @@ typedef NS_ENUM(NSInteger, HNKScaleMode)
 {
     HNKScaleModeFill = UIViewContentModeScaleToFill,
     HNKScaleModeAspectFit = UIViewContentModeScaleAspectFit,
-    HNKScaleModeAspectFill = UIViewContentModeScaleAspectFill
+    HNKScaleModeAspectFill = UIViewContentModeScaleAspectFill,
+    HNKScaleModeNone
 };
 
 typedef NS_ENUM(NSInteger, HNKPreloadPolicy)
