@@ -74,21 +74,6 @@
     XCTAssertTrue(format.diskSize == 0, @"");
 }
 
-- (void)testClearFormat_Existing
-{
-    HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"format"];
-    [_cache registerFormat:format];
-    
-    [_cache clearFormatNamed:format.name];
-    XCTAssertTrue(format.diskSize == 0, @"");
-}
-
-- (void)testClearFormat_Inexisting
-{
-    HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"format"];
-    [_cache clearFormatNamed:format.name];
-}
-
 - (void)testImageForEntity_OpaqueImage
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
@@ -342,6 +327,21 @@
 }
 
 #pragma mark Removing images
+
+- (void)testRemoveImagesOfFormatNamed_Existing
+{
+    HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"format"];
+    [_cache registerFormat:format];
+    
+    [_cache removeImagesOfFormatNamed:format.name];
+    XCTAssertTrue(format.diskSize == 0, @"");
+}
+
+- (void)testRemoveImagesOfFormatNamed_Inexisting
+{
+    HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"format"];
+    [_cache removeImagesOfFormatNamed:format.name];
+}
 
 - (void)testRemoveImagesFromEntity_NoImagesNoFormats
 {

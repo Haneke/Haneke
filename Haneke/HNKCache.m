@@ -112,7 +112,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     NSString *formatName = format.name;
     if (_formats[formatName])
     {
-        [self clearFormatNamed:formatName];
+        [self removeImagesOfFormatNamed:formatName];
     }
     _formats[formatName] = format;
     format.cache = self;
@@ -306,7 +306,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
 #pragma mark Removing images
 
-- (void)clearFormatNamed:(NSString*)formatName
+- (void)removeImagesOfFormatNamed:(NSString*)formatName
 {
     HNKCacheFormat *format = _formats[formatName];
     if (!format) return;
@@ -338,7 +338,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 {
     [self.formats enumerateKeysAndObjectsUsingBlock:^(NSString *name, id obj, BOOL *stop)
      {
-         [self clearFormatNamed:name];
+         [self removeImagesOfFormatNamed:name];
      }];
 }
 

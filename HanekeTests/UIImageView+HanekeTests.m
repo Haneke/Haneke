@@ -47,7 +47,7 @@
 - (void)tearDown
 {
     HNKCacheFormat *format = _imageView.hnk_cacheFormat;
-    [[HNKCache sharedCache] clearFormatNamed:format.name];
+    [[HNKCache sharedCache] removeImagesOfFormatNamed:format.name];
 }
 
 #pragma mark cacheFormat

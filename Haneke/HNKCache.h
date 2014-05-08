@@ -113,20 +113,20 @@
 /// @name Removing images
 ///---------------------------------------------
 
-/** Removes all images of the given format.
- @param formatName Name of the format whose images will be removed.
- */
-- (void)clearFormatNamed:(NSString*)formatName;
-
-/** Removes all images of the given entity.
- @param entity Entity whose images will be removed.
- */
-- (void)removeImagesOfEntity:(id<HNKCacheEntity>)entity;
-
 /**
  Removes all cached images.
  */
 - (void)removeAllImages;
+
+/** Removes all cached images of the given format.
+ @param formatName Name of the format whose images will be removed.
+ */
+- (void)removeImagesOfFormatNamed:(NSString*)formatName;
+
+/** Removes all cached images of the given entity.
+ @param entity Entity whose images will be removed.
+ */
+- (void)removeImagesOfEntity:(id<HNKCacheEntity>)entity;
 
 @end
 
