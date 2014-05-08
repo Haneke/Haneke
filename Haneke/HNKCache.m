@@ -334,6 +334,14 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     });
 }
 
+- (void)removeAllImages
+{
+    [self.formats enumerateKeysAndObjectsUsingBlock:^(NSString *name, id obj, BOOL *stop)
+     {
+         [self clearFormatNamed:name];
+     }];
+}
+
 - (void)removeImagesOfEntity:(id<HNKCacheEntity>)entity
 {
     NSString *cacheKey = entity.cacheKey;

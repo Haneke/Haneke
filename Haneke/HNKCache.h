@@ -123,6 +123,11 @@
  */
 - (void)removeImagesOfEntity:(id<HNKCacheEntity>)entity;
 
+/**
+ Removes all cached images.
+ */
+- (void)removeAllImages;
+
 @end
 
 /** Represents an object that is associated with an image. Used by the cache to assign identifiers to images and obtain the original data or image needed to create resized images. 

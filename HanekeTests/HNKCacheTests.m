@@ -350,6 +350,44 @@
     [_cache removeImagesOfEntity:entity];
 }
 
+- (void)testRemoveAllImages_OneFormat
+{
+    HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(2, 2)];
+    static NSString *key = @"test";
+    [_cache setImage:image forKey:key formatName:format.name];
+    
+    [_cache removeAllImages];
+    
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:nil];
+    image = [_cache imageForEntity:entity formatName:format.name error:nil];
+    XCTAssertNil(image, @"");
+}
+
+- (void)testRemoveAllImages_TwoFormats
+{
+    HNKCacheFormat *format1 = [[HNKCacheFormat alloc] initWithName:@"format1"];
+    format1.size = CGSizeMake(2, 2);
+    [_cache registerFormat:format1];
+    
+    HNKCacheFormat *format2 = [[HNKCacheFormat alloc] initWithName:@"format2"];
+    format2.size = CGSizeMake(10, 10);
+    [_cache registerFormat:format2];
+
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(20, 20)];
+    static NSString *key = @"test";
+    [_cache setImage:image forKey:key formatName:format1.name];
+    [_cache setImage:image forKey:key formatName:format2.name];
+    
+    [_cache removeAllImages];
+    
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:nil];
+    image = [_cache imageForEntity:entity formatName:format1.name error:nil];
+    XCTAssertNil(image, @"");
+    image = [_cache imageForEntity:entity formatName:format2.name error:nil];
+    XCTAssertNil(image, @"");
+}
+
 - (void)testRemoveImagesFromEntity_Images
 {
     HNKCacheFormat *format = [self registerFormatWithSize:CGSizeMake(1, 1)];
