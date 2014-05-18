@@ -143,7 +143,7 @@ Haneke is in initial development and its public API should not be considered sta
 
 ##License
 
- Copyright 2014 Hermes Pique (@hpique)
+ Copyright 2014 Hermes Pique ([@hpique](https://twitter.com/hpique))
  
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
