@@ -23,6 +23,7 @@
 #import "UIImage+HanekeTestUtils.h"
 #import "HNKCache+HanekeTestUtils.h"
 #import "XCTestCase+HanekeTestUtils.h"
+#import <OHHTTPStubs/OHHTTPStubs.h>
 
 @interface UIImageView(HanekeTest)
 
@@ -41,11 +42,15 @@
 
 - (void)setUp
 {
+    [super setUp];
     _imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
 }
 
 - (void)tearDown
 {
+    [super tearDown];
+    [OHHTTPStubs removeAllStubs];
+    
     HNKCacheFormat *format = _imageView.hnk_cacheFormat;
     [[HNKCache sharedCache] removeImagesOfFormatNamed:format.name];
 }
@@ -654,6 +659,79 @@
     XCTAssertNil(_imageView.hnk_URLSessionDataTask, @"");
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(result, image, @"");
+}
+
+- (void)testSetImageFromURLSuccessFailure_DownloadSuccess
+{
+    NSURL *URL = [NSURL URLWithString:@"http://haneke.com/image.jpg"];
+    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+        return [request.URL.absoluteString isEqualToString:URL.absoluteString];
+    } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
+        UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(5, 5)];
+        NSData *data = UIImageJPEGRepresentation(image, 1);
+        return [OHHTTPStubsResponse responseWithData:data statusCode:200 headers:nil];
+    }];
+    
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore)
+     {
+         [_imageView hnk_setImageFromURL:URL success:^(UIImage *image) {
+             dispatch_semaphore_signal(semaphore);
+         } failure:^(NSError *error) {
+             XCTFail(@"");
+             dispatch_semaphore_signal(semaphore);
+         }];
+     }];
+}
+
+- (void)testSetImageFromURLSuccessFailure_DownloadFailure
+{
+    NSURL *URL = [NSURL URLWithString:@"http://haneke.com/image.jpg"];
+    NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:kCFURLErrorNotConnectedToInternet userInfo:nil];
+    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+        return [request.URL.absoluteString isEqualToString:URL.absoluteString];
+    } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
+        return [OHHTTPStubsResponse responseWithError:error];
+    }];
+    
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore)
+     {
+         [_imageView hnk_setImageFromURL:URL success:^(UIImage *image) {
+             XCTFail(@"");
+             dispatch_semaphore_signal(semaphore);
+         } failure:^(NSError *result) {
+             dispatch_semaphore_signal(semaphore);
+             XCTAssertNotNil(error, @"");
+             XCTAssertEqual(error.code, result.code, @"");
+         }];
+     }];
+}
+
+- (void)testSetImageFromURLSuccessFailure_DownloadMissingData
+{
+    NSURL *URL = [NSURL URLWithString:@"http://haneke.com/image.jpg"];
+    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+        return [request.URL.absoluteString isEqualToString:URL.absoluteString];
+    } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
+        
+        UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(5, 5)];
+        NSData *data = UIImageJPEGRepresentation(image, 1);
+        NSString *contentLengthString = [NSString stringWithFormat:@"%lu", data.length * 10];
+        OHHTTPStubsResponse *response = [OHHTTPStubsResponse responseWithData:data statusCode:200 headers:nil];
+        response.httpHeaders = @{@"Content-Length": contentLengthString}; // See: https://github.com/AliSoftware/OHHTTPStubs/pull/62
+        return response;
+    }];
+    
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore)
+     {
+         [_imageView hnk_setImageFromURL:URL success:^(UIImage *image) {
+             XCTFail(@"");
+             dispatch_semaphore_signal(semaphore);
+         } failure:^(NSError *error) {
+             dispatch_semaphore_signal(semaphore);
+             XCTAssertNotNil(error, @"");
+             XCTAssertEqual(HNKErrorImageFromURLMissingData, error.code, @"");
+         }];
+     }];
 }
 
 #pragma mark cancelImageRequest
