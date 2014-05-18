@@ -1,10 +1,10 @@
 Haneke
 ======
+[![Version](https://cocoapod-badges.herokuapp.com/v/Haneke/badge.png)](http://cocoadocs.org/docsets/Haneke) [![Platform](https://cocoapod-badges.herokuapp.com/p/Haneke/badge.png)](http://cocoadocs.org/docsets/Haneke) [![Build Status](https://travis-ci.org/hpique/Haneke.png)](https://travis-ci.org/hpique/Haneke)
+
+A lightweight zero-config image cache for iOS.
+
 <img src="https://raw.github.com/hpique/Haneke/master/screenshot.png" width="75%" "alt="Screenshot" />
-
-[![Build Status](https://travis-ci.org/hpique/Haneke.png)](https://travis-ci.org/hpique/Haneke)
-
-A lightweight zero-config image cache for iOS. 
 
 Haneke resizes images and caches the result on memory and disk. Everything is done in background, allowing for fast, responsive scrolling. Asking Haneke to load, resize, cache and display an *appropriately sized image* is as simple as:
 
@@ -27,10 +27,15 @@ _Really._
 * Automatic cache eviction on memory warnings or disk capacity reached.
 * Preloading images from the disk cache into memory on startup.
 
-##Add Haneke to your project
+##Installation
 
-1. Add the [Haneke](https://github.com/hpique/Haneke/tree/master/Haneke) folder to your project.
-2. Profit!
+Using [CocoaPods](http://cocoapods.org/):
+
+```ruby
+pod 'Haneke', '~> 0.1'
+```
+
+Alternatively, you can simply add the files from the [Haneke](https://github.com/hpique/Haneke/tree/master/Haneke) directory to your project.
 
 ##UIImageView category
 
