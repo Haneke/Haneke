@@ -38,4 +38,21 @@
     return image;
 }
 
+- (BOOL)hnk_isEqualToCGImage:(CGImageRef)imageRef
+{
+    UIImage *image = [UIImage imageWithCGImage:imageRef scale:[UIScreen mainScreen].scale orientation:UIImageOrientationUp];
+    NSData *data = [image hnk_normalizedData];
+    NSData *originalData = [self hnk_normalizedData];
+    return [originalData isEqualToData:data];
+}
+
+- (NSData*)hnk_normalizedData
+{
+    UIGraphicsBeginImageContext(self.size);
+    [self drawInRect:CGRectMake(0, 0, self.size.width, self.size.height)];
+    UIImage *drawnImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return UIImagePNGRepresentation(drawnImage);
+}
+
 @end
