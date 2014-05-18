@@ -28,7 +28,7 @@
     block(semaphore);
     NSInteger i = 0;
     static const NSTimeInterval IterationDelay = 0.005;
-    static const NSInteger MaxIterations = 200;
+    static const NSInteger MaxIterations = 400;
     while (i < MaxIterations && dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
     {
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
