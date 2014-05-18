@@ -1,0 +1,13 @@
+PODS:
+  - OCMock (2.2.4)
+  - OHHTTPStubs (3.1.1)
+
+DEPENDENCIES:
+  - OCMock (~> 2.2)
+  - OHHTTPStubs (~> 3.1.1)
+
+SPEC CHECKSUMS:
+  OCMock: 5008fae4b4789b8fc3e48cd7660f2eb5ef8ce89e
+  OHHTTPStubs: be1c4263e49191b586d8313dcd6068da6f699d2c
+
+COCOAPODS: 0.32.1

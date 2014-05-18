@@ -2,6 +2,7 @@ language: objective-c
 before_script:
   - brew update
   - brew upgrade xctool
+  - pod install
 script: 
-  - xctool -project Haneke.xcodeproj -scheme 'Haneke' -configuration Release -sdk iphonesimulator test
-  - xctool -project Haneke.xcodeproj -scheme 'HanekeDemo' -configuration Release -sdk iphonesimulator
+  - xctool -workspace Haneke.xcworkspace -scheme 'Haneke' -configuration Release -sdk iphonesimulator test
+  - xctool -workspace Haneke.xcworkspace -scheme 'HanekeDemo' -configuration Release -sdk iphonesimulator
