@@ -27,6 +27,7 @@
 		873E231F18AA915300E7919C /* HNKDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 873E231E18AA915300E7919C /* HNKDemoViewController.m */; };
 		873E232418AA982F00E7919C /* HNKCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 873E22B918AA8CC900E7919C /* HNKCache.m */; };
 		873E232618AA992500E7919C /* sample.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 873E232518AA992500E7919C /* sample.jpg */; };
+		8762BB13192915BC007AE90D /* UIImageHanekeUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8762BB12192915BC007AE90D /* UIImageHanekeUtilsTests.m */; };
 		876E5F2018AB762600B4EAF6 /* UIImageView+Haneke.m in Sources */ = {isa = PBXBuildFile; fileRef = 876E5F1F18AB762600B4EAF6 /* UIImageView+Haneke.m */; };
 		876E5F2118AB831500B4EAF6 /* UIImageView+Haneke.m in Sources */ = {isa = PBXBuildFile; fileRef = 876E5F1F18AB762600B4EAF6 /* UIImageView+Haneke.m */; };
 		87A6907E18B678C700F97E13 /* GTMCodeCoverageTestsXC.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A6907C18B678C700F97E13 /* GTMCodeCoverageTestsXC.m */; };
@@ -89,6 +90,7 @@
 		873E231E18AA915300E7919C /* HNKDemoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKDemoViewController.m; sourceTree = "<group>"; };
 		873E232518AA992500E7919C /* sample.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = sample.jpg; sourceTree = "<group>"; };
 		874875DF18D1D33E00D02E03 /* Haneke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Haneke.h; sourceTree = "<group>"; };
+		8762BB12192915BC007AE90D /* UIImageHanekeUtilsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIImageHanekeUtilsTests.m; sourceTree = "<group>"; };
 		876E5F1E18AB762600B4EAF6 /* UIImageView+Haneke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+Haneke.h"; sourceTree = "<group>"; };
 		876E5F1F18AB762600B4EAF6 /* UIImageView+Haneke.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+Haneke.m"; sourceTree = "<group>"; };
 		87A6907A18B678C700F97E13 /* GTMCodeCoverageApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMCodeCoverageApp.h; sourceTree = "<group>"; };
@@ -194,6 +196,7 @@
 				87A6907918B678A000F97E13 /* Code Coverage iOS 7 Workaround */,
 				873E22BE18AA8D9F00E7919C /* HNKCacheTests.m */,
 				873E22A918AA8C7C00E7919C /* Supporting Files */,
+				8762BB12192915BC007AE90D /* UIImageHanekeUtilsTests.m */,
 				87F47BAD18AC123C00F1FB48 /* UIImageView+HanekeTests.m */,
 				87A6908018B6813E00F97E13 /* Utils */,
 			);
@@ -422,6 +425,7 @@
 			files = (
 				87260AB918CCDB7000D3680F /* XCTestCase+HanekeTestUtils.m in Sources */,
 				87A6908618B68BF200F97E13 /* HNKCache+HanekeTestUtils.m in Sources */,
+				8762BB13192915BC007AE90D /* UIImageHanekeUtilsTests.m in Sources */,
 				87A6907E18B678C700F97E13 /* GTMCodeCoverageTestsXC.m in Sources */,
 				87F47BAE18AC123C00F1FB48 /* UIImageView+HanekeTests.m in Sources */,
 				873E22BF18AA8D9F00E7919C /* HNKCacheTests.m in Sources */,

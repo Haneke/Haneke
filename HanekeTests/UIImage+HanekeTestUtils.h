@@ -26,6 +26,8 @@
 
 + (UIImage*)hnk_imageWithColor:(UIColor*)color size:(CGSize)size opaque:(BOOL)opaque;
 
+- (BOOL)hnk_isEqualToCGImage:(CGImageRef)imageRef;
+
 @end
 
 // Implemented in HNKCache.m
