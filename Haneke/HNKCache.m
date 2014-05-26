@@ -45,7 +45,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
 - (NSString*)pathForKey:(NSString*)key format:(HNKCacheFormat*)format;
 
-- (void)removeFileAtPath:(NSString*)path format:(HNKCacheFormat*)format;
+- (void)removeFileForKey:(NSString*)key format:(HNKCacheFormat*)format;
 
 - (void)saveImage:(UIImage*)image key:(NSString*)key format:(HNKCacheFormat*)format;
 
@@ -375,8 +375,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     NSDictionary *formats = _formats.copy;
     [formats enumerateKeysAndObjectsUsingBlock:^(id key, HNKCacheFormat *format, BOOL *stop) {
         dispatch_async(format.diskQueue, ^{
-            NSString *path = [self pathForKey:cacheKey format:format];
-            [self removeFileAtPath:path format:format];
+            [self removeFileForKey:key format:format];
         });
     }];
 }
@@ -558,23 +557,10 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     return path;
 }
 
-- (void)removeFileAtPath:(NSString*)path format:(HNKCacheFormat*)format
+- (void)removeFileForKey:(NSString*)key format:(HNKCacheFormat*)format
 {
-    NSError *error;
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSDictionary *attributes = [fileManager attributesOfItemAtPath:path error:&error];
-    if (attributes)
-    {
-        unsigned long long fileSize = attributes.fileSize;
-        if ([fileManager removeItemAtPath:path error:&error])
-        {
-            format.diskSize -= fileSize;
-        }
-        else
-        {
-            NSLog(@"Failed to remove file with error %@", error);
-        }
-    }
+    NSString *path = [self pathForKey:key format:format];
+    [self removeFileAtPath:path format:format];
 }
 
 - (void)saveImage:(UIImage*)image key:(NSString*)key format:(HNKCacheFormat*)format
@@ -617,6 +603,27 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
         else
         { // The image was removed from disk cache but is still in the memory cache
             [self saveImage:image key:key format:format];
+        }
+    }
+}
+
+#pragma mark Utils
+
+- (void)removeFileAtPath:(NSString*)path format:(HNKCacheFormat*)format
+{
+    NSError *error;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSDictionary *attributes = [fileManager attributesOfItemAtPath:path error:&error];
+    if (attributes)
+    {
+        unsigned long long fileSize = attributes.fileSize;
+        if ([fileManager removeItemAtPath:path error:&error])
+        {
+            format.diskSize -= fileSize;
+        }
+        else
+        {
+            NSLog(@"Failed to remove file with error %@", error);
         }
     }
 }
