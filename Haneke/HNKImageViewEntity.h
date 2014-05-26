@@ -18,3 +18,8 @@
 + (HNKImageViewEntity*)entityWithData:(NSData*)data key:(NSString*)key;
 
 @end
+
+enum
+{
+    HNKErrorImageFromURLMissingData = -400,
+};
