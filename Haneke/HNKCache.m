@@ -554,11 +554,6 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
 - (void)removeFileAtPath:(NSString*)path format:(HNKCacheFormat*)format
 {
-    NSString *key = [self keyFromPath:path];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        // Remove the image from memory cache to prevent leaving uninitialized images poiting to deleted files.
-        [self setMemoryImage:nil forKey:key format:format];
-    });
     NSError *error;
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSDictionary *attributes = [fileManager attributesOfItemAtPath:path error:&error];
