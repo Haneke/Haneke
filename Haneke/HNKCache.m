@@ -557,13 +557,16 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
         NSError *error;
         NSString *path = [self pathForKey:key format:format];
-        if (![imageData writeToFile:path options:kNilOptions error:&error])
+        if ([imageData writeToFile:path options:kNilOptions error:&error])
+        {
+            NSUInteger byteCount = imageData.length;
+            format.diskSize += byteCount;
+            [self controlDiskCapacityOfFormat:format];
+        }
+        else
         {
             NSLog(@"Failed to write to file %@", error);
         }
-        NSUInteger byteCount = imageData.length;
-        format.diskSize += byteCount;
-        [self controlDiskCapacityOfFormat:format];
     }
     else
     {
