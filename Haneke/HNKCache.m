@@ -45,8 +45,6 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
 - (NSString*)pathForKey:(NSString*)key format:(HNKCacheFormat*)format;
 
-- (void)removeFileForKey:(NSString*)key format:(HNKCacheFormat*)format;
-
 - (void)setDiskImage:(UIImage*)image forKey:(NSString*)key format:(HNKCacheFormat*)format;
 
 - (void)updateAccessDateOfImage:(UIImage*)image key:(NSString*)key format:(HNKCacheFormat*)format;
@@ -375,7 +373,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     NSDictionary *formats = _formats.copy;
     [formats enumerateKeysAndObjectsUsingBlock:^(id key, HNKCacheFormat *format, BOOL *stop) {
         dispatch_async(format.diskQueue, ^{
-            [self removeFileForKey:key format:format];
+            [self setDiskImage:nil forKey:key format:format];
         });
     }];
 }
@@ -555,12 +553,6 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     NSString *escapedKey = CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,(CFStringRef)key, NULL, CFSTR("/:"), kCFStringEncodingUTF8));
     NSString *path = [format.directory stringByAppendingPathComponent:escapedKey];
     return path;
-}
-
-- (void)removeFileForKey:(NSString*)key format:(HNKCacheFormat*)format
-{
-    NSString *path = [self pathForKey:key format:format];
-    [self removeFileAtPath:path format:format];
 }
 
 - (void)setDiskImage:(UIImage*)image forKey:(NSString*)key format:(HNKCacheFormat*)format
