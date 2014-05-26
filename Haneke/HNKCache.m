@@ -41,8 +41,6 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
 - (void)enumeratePreloadImagesOfFormat:(HNKCacheFormat*)format usingBlock:(void(^)(NSString *key, UIImage *image))block;
 
-- (NSString*)keyFromPath:(NSString*)path;
-
 - (NSString*)pathForKey:(NSString*)key format:(HNKCacheFormat*)format;
 
 - (void)setDiskImage:(UIImage*)image forKey:(NSString*)key format:(HNKCacheFormat*)format;
@@ -541,13 +539,6 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     }];
 }
 
-- (NSString*)keyFromPath:(NSString*)path
-{
-    NSString *escapedKey = path.lastPathComponent;
-    NSString *key = CFBridgingRelease(CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault, (CFStringRef)escapedKey, CFSTR(""), kCFStringEncodingUTF8));
-    return key;
-}
-
 - (NSString*)pathForKey:(NSString*)key format:(HNKCacheFormat*)format
 {
     NSString *escapedKey = CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,(CFStringRef)key, NULL, CFSTR("/:"), kCFStringEncodingUTF8));
@@ -602,6 +593,13 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 }
 
 #pragma mark Utils
+
+- (NSString*)keyFromPath:(NSString*)path
+{
+    NSString *escapedKey = path.lastPathComponent;
+    NSString *key = CFBridgingRelease(CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault, (CFStringRef)escapedKey, CFSTR(""), kCFStringEncodingUTF8));
+    return key;
+}
 
 - (void)removeFileAtPath:(NSString*)path format:(HNKCacheFormat*)format
 {
