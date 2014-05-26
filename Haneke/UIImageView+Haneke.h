@@ -20,6 +20,7 @@
 
 #import <UIKit/UIKit.h>
 #import "HNKCache.h"
+#import "HNKImageViewEntity.h"
 
 @interface UIImageView (Haneke)
 
