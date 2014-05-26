@@ -33,6 +33,22 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
         dispatch_sync(dispatch_get_main_queue(), block);\
     }
 
+@interface HNKCache(Disk)
+
+- (void)calculateDiskSizeOfFormat:(HNKCacheFormat*)format;
+
+- (void)controlDiskCapacityOfFormat:(HNKCacheFormat*)format;
+
+- (void)preloadImagesOfFormat:(HNKCacheFormat*)format;
+
+- (void)removeFileAtPath:(NSString*)path format:(HNKCacheFormat*)format;
+
+- (void)saveImage:(UIImage*)image key:(NSString*)key format:(HNKCacheFormat*)format;
+
+- (void)updateAccessDateOfImage:(UIImage*)image key:(NSString*)key format:(HNKCacheFormat*)format;
+
+@end
+
 @interface UIImage (hnk_utils)
 
 - (CGSize)hnk_aspectFillSizeForSize:(CGSize)size;
@@ -449,7 +465,18 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     }
 }
 
-#pragma mark Private (disk)
+#pragma mark Notifications
+
+- (void)didReceiveMemoryWarning:(NSNotification*)notification
+{
+    [_memoryCaches enumerateKeysAndObjectsUsingBlock:^(id key, NSCache *cache, BOOL *stop) {
+        [cache removeAllObjects];
+    }];
+}
+
+@end
+
+@implementation HNKCache(Disk)
 
 - (void)calculateDiskSizeOfFormat:(HNKCacheFormat*)format
 {
@@ -591,15 +618,6 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
             [self saveImage:image key:key format:format];
         }
     }
-}
-
-#pragma mark Notifications
-
-- (void)didReceiveMemoryWarning:(NSNotification*)notification
-{
-    [_memoryCaches enumerateKeysAndObjectsUsingBlock:^(id key, NSCache *cache, BOOL *stop) {
-        [cache removeAllObjects];
-    }];
 }
 
 @end
