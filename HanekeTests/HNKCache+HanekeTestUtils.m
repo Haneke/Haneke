@@ -32,4 +32,12 @@
     return entity;
 }
 
+- (HNKCacheFormat*)registerFormatWithSize:(CGSize)size
+{
+    HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"format"];
+    format.size = size;
+    [self registerFormat:format];
+    return format;
+}
+
 @end

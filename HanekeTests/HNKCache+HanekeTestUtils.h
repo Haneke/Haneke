@@ -24,4 +24,6 @@
 
 + (id)entityWithKey:(NSString*)key data:(NSData*)data image:(UIImage*)image;
 
+- (HNKCacheFormat*)registerFormatWithSize:(CGSize)size;
+
 @end
