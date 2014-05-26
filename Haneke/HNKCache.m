@@ -47,7 +47,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
 - (void)removeFileForKey:(NSString*)key format:(HNKCacheFormat*)format;
 
-- (void)saveImage:(UIImage*)image key:(NSString*)key format:(HNKCacheFormat*)format;
+- (void)setDiskImage:(UIImage*)image forKey:(NSString*)key format:(HNKCacheFormat*)format;
 
 - (void)updateAccessDateOfImage:(UIImage*)image key:(NSString*)key format:(HNKCacheFormat*)format;
 
@@ -200,7 +200,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     image = [self imageFromOriginal:originalImage key:key format:format];
     [self setMemoryImage:image forKey:key format:format];
     dispatch_async(format.diskQueue, ^{
-        [self saveImage:image key:key format:format];
+        [self setDiskImage:image forKey:key format:format];
     });
     return image;
 }
@@ -232,7 +232,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
                 completionBlock(image, error);
             });
             dispatch_async(format.diskQueue, ^{
-                [self saveImage:image key:key format:format];
+                [self setDiskImage:image forKey:key format:format];
             });
         });
     }];
@@ -324,7 +324,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     
     [self setMemoryImage:image forKey:key format:format];
     dispatch_async(format.diskQueue, ^{
-        [self saveImage:image key:key format:format];
+        [self setDiskImage:image forKey:key format:format];
     });
 }
 
@@ -563,16 +563,17 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     [self removeFileAtPath:path format:format];
 }
 
-- (void)saveImage:(UIImage*)image key:(NSString*)key format:(HNKCacheFormat*)format
+- (void)setDiskImage:(UIImage*)image forKey:(NSString*)key format:(HNKCacheFormat*)format
 {
-    if (format.diskCapacity == 0) return;
-    
-    NSString *path = [self pathForKey:key format:format];
     if (image)
     {
+        if (format.diskCapacity == 0) return;
+        
         const BOOL hasAlpha = [image hnk_hasAlpha];
         NSData *imageData = hasAlpha ? UIImagePNGRepresentation(image) : UIImageJPEGRepresentation(image, format.compressionQuality);
+
         NSError *error;
+        NSString *path = [self pathForKey:key format:format];
         if (![imageData writeToFile:path options:kNilOptions error:&error])
         {
             NSLog(@"Failed to write to file %@", error);
@@ -583,6 +584,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     }
     else
     {
+        NSString *path = [self pathForKey:key format:format];
         [self removeFileAtPath:path format:format];
     }
 }
@@ -602,7 +604,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
         }
         else
         { // The image was removed from disk cache but is still in the memory cache
-            [self saveImage:image key:key format:format];
+            [self setDiskImage:image forKey:key format:format];
         }
     }
 }
