@@ -50,6 +50,27 @@
     [_cache removeImagesOfFormatNamed:_diskFormat.name];
 }
 
+- (void)testSetDiskImage_JPEG
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(1, 1)];
+    [_cache setDiskImage:image forKey:@"test.jpg" format:_diskFormat];
+    
+    NSData *data = UIImageJPEGRepresentation(image, _diskFormat.compressionQuality);
+    XCTAssertEqual(_diskFormat.diskSize, data.length, @"");
+}
+
+- (void)testSetDiskImage_PNG
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(1, 1) opaque:NO];
+    NSData *PNGData = UIImagePNGRepresentation(image);
+    NSData *JPEGData = UIImageJPEGRepresentation(image, _diskFormat.compressionQuality);
+    XCTAssertNotEqual(JPEGData.length, PNGData.length, @"");
+    
+    [_cache setDiskImage:image forKey:@"test.jpg" format:_diskFormat];
+    
+    XCTAssertEqual(_diskFormat.diskSize, PNGData.length, @"");
+}
+
 - (void)testSetDiskImage_LongKey
 {
     NSMutableString *key = [NSMutableString string];
@@ -60,7 +81,27 @@
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(1, 1)];
     [_cache setDiskImage:image forKey:key format:_diskFormat];
     
+    NSData *data = UIImageJPEGRepresentation(image, _diskFormat.compressionQuality);
+    XCTAssertEqual(_diskFormat.diskSize, data.length, @"");
+}
+
+- (void)testSetDiskImage_Nil
+{
+    [_cache setDiskImage:nil forKey:@"test.jpg" format:_diskFormat];
+    
+    XCTAssertEqual(_diskFormat.diskSize, 0, @"");
+}
+
+- (void)testSetDiskImage_NilToRemove
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(1, 1)];
+    NSString *key = @"test.jpg";
+    [_cache setDiskImage:image forKey:key format:_diskFormat];
     XCTAssertTrue(_diskFormat.diskSize > 0, @"");
+    
+    [_cache setDiskImage:nil forKey:key format:_diskFormat];
+    
+    XCTAssertEqual(_diskFormat.diskSize, 0, @"");
 }
 
 @end
