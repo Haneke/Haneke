@@ -77,7 +77,7 @@
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(1, 1) opaque:NO];
     NSData *PNGData = UIImagePNGRepresentation(image);
     NSData *JPEGData = UIImageJPEGRepresentation(image, _diskFormat.compressionQuality);
-    NSString *key = @"test.jpg";
+    NSString *key = @"test.png";
     
     XCTAssertNotEqual(JPEGData.length, PNGData.length, @"");
     
