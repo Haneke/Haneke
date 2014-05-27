@@ -251,6 +251,11 @@ typedef NS_ENUM(NSInteger, HNKPreloadPolicy)
  */
 extern NSString *const HNKErrorDomain;
 
+/**
+ Extended file attribute used to associate a key with the file saved on disk.
+ */
+extern NSString *const HNKExtendedFileAttributeKey;
+
 enum
 {
     HNKErrorEntityMustReturnImageOrData = -200,

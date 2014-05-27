@@ -27,6 +27,14 @@
 
 @end
 
+@interface NSString (hnk_utils)
+
+- (NSString*)hnk_MD5String;
+
+- (NSString*)hnk_valueForExtendedFileAttribute:(NSString*)attribute;
+
+@end
+
 @interface HNKCache_DiskTests : XCTestCase
 
 @end
@@ -53,10 +61,15 @@
 - (void)testSetDiskImage_JPEG
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(1, 1)];
-    [_cache setDiskImage:image forKey:@"test.jpg" format:_diskFormat];
+    NSString *key = @"test.jpg";
+    
+    [_cache setDiskImage:image forKey:key format:_diskFormat];
     
     NSData *data = UIImageJPEGRepresentation(image, _diskFormat.compressionQuality);
     XCTAssertEqual(_diskFormat.diskSize, data.length, @"");
+    NSString *path = [_cache pathForKey:key format:_diskFormat];
+    NSString *extendedFileAttributeKey = [path hnk_valueForExtendedFileAttribute:HNKExtendedFileAttributeKey];
+    XCTAssertEqualObjects(extendedFileAttributeKey, key, @"");
 }
 
 - (void)testSetDiskImage_PNG
@@ -64,11 +77,16 @@
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(1, 1) opaque:NO];
     NSData *PNGData = UIImagePNGRepresentation(image);
     NSData *JPEGData = UIImageJPEGRepresentation(image, _diskFormat.compressionQuality);
+    NSString *key = @"test.jpg";
+    
     XCTAssertNotEqual(JPEGData.length, PNGData.length, @"");
     
-    [_cache setDiskImage:image forKey:@"test.jpg" format:_diskFormat];
+    [_cache setDiskImage:image forKey:key format:_diskFormat];
     
     XCTAssertEqual(_diskFormat.diskSize, PNGData.length, @"");
+    NSString *path = [_cache pathForKey:key format:_diskFormat];
+    NSString *extendedFileAttributeKey = [path hnk_valueForExtendedFileAttribute:HNKExtendedFileAttributeKey];
+    XCTAssertEqualObjects(extendedFileAttributeKey, key, @"");
 }
 
 - (void)testSetDiskImage_LongKey
@@ -83,6 +101,9 @@
     
     NSData *data = UIImageJPEGRepresentation(image, _diskFormat.compressionQuality);
     XCTAssertEqual(_diskFormat.diskSize, data.length, @"");
+    NSString *path = [_cache pathForKey:key format:_diskFormat];
+    NSString *extendedFileAttributeKey = [path hnk_valueForExtendedFileAttribute:HNKExtendedFileAttributeKey];
+    XCTAssertEqualObjects(extendedFileAttributeKey, key, @"");
 }
 
 - (void)testSetDiskImage_Nil

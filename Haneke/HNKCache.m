@@ -20,9 +20,12 @@
 
 #import "HNKCache.h"
 #import <CommonCrypto/CommonDigest.h> // For hnk_MD5String
+#import <sys/xattr.h> // For hnk_setValue:forExtendedFileAttribute:
 @import ImageIO;
 
 NSString *const HNKErrorDomain = @"com.hpique.haneke";
+
+NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
 
 #define hnk_dispatch_sync_main_queue_if_needed(block)\
     if ([NSThread isMainThread])\
@@ -54,6 +57,8 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 @interface NSString (hnk_utils)
 
 - (NSString*)hnk_MD5String;
+- (BOOL)hnk_setValue:(NSString*)value forExtendedFileAttribute:(NSString*)attribute;
+- (NSString*)hnk_valueForExtendedFileAttribute:(NSString*)attribute;
 
 @end
 
@@ -530,13 +535,17 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
             *stop = YES;
             return;
         }
+        
         NSString *path = url.path;
+        NSString *key = [path hnk_valueForExtendedFileAttribute:HNKExtendedFileAttributeKey];
+        if (!key) return;
+
         NSData *data = [NSData dataWithContentsOfFile:path];
         if (!data) return;
+
         UIImage *image = [UIImage hnk_decompressedImageWithData:data];
         if (!image) return;
-        NSString *key = [self keyFromPath:path];
-        // TODO: Long keys (MD5) can't be deduced from path. Maybe use custom attributes file to save the original key?
+        
         block(key, image);
     }];
 }
@@ -567,6 +576,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
         NSString *path = [self pathForKey:key format:format];
         if ([imageData writeToFile:path options:kNilOptions error:&error])
         {
+            [path hnk_setValue:key forExtendedFileAttribute:HNKExtendedFileAttributeKey];
             NSUInteger byteCount = imageData.length;
             format.diskSize += byteCount;
             [self controlDiskCapacityOfFormat:format];
@@ -604,13 +614,6 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 }
 
 #pragma mark Utils
-
-- (NSString*)keyFromPath:(NSString*)path
-{
-    NSString *escapedKey = path.lastPathComponent;
-    NSString *key = CFBridgingRelease(CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault, (CFStringRef)escapedKey, CFSTR(""), kCFStringEncodingUTF8));
-    return key;
-}
 
 - (void)removeFileAtPath:(NSString*)path format:(HNKCacheFormat*)format
 {
@@ -858,6 +861,34 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
         [MD5String appendFormat:@"%02x",result[i]];
     }
     return MD5String;
+}
+
+- (BOOL)hnk_setValue:(NSString*)value forExtendedFileAttribute:(NSString*)attribute
+{
+    const char *attributeC = [attribute UTF8String];
+    const char *path = [self fileSystemRepresentation];
+    const char *valueC = [value UTF8String];
+    const int result = setxattr(path, attributeC, valueC, strlen(valueC), 0, 0);
+    return result == 0;
+}
+
+- (NSString*)hnk_valueForExtendedFileAttribute:(NSString*)attribute
+{
+	const char *attributeC = [attribute UTF8String];
+    const char *path = [self fileSystemRepresentation];
+    
+	const ssize_t length = getxattr(path, attributeC, NULL, 0, 0, 0);
+    
+	if (length <= 0) return nil;
+
+	char *buffer = malloc(length);
+	getxattr(path, attributeC, buffer, length, 0, 0);
+    
+	NSString *value = [[NSString alloc] initWithBytes:buffer length:length encoding:NSUTF8StringEncoding];
+
+	free(buffer);
+    
+	return value;
 }
 
 @end
