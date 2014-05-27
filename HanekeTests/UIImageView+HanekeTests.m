@@ -400,6 +400,7 @@
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
         [_imageView hnk_setImageFromFile:key success:^(UIImage *result) {
             XCTFail(@"");
+            dispatch_semaphore_signal(semaphore);
         } failure:^(NSError *error) {
             XCTAssertNotNil(error);
             XCTAssertEqual(error.code, NSFileReadNoSuchFileError, @"");
@@ -419,6 +420,7 @@
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
         [_imageView hnk_setImageFromFile:path success:^(UIImage *result) {
             XCTFail(@"");
+            dispatch_semaphore_signal(semaphore);
          } failure:^(NSError *error) {
             XCTAssertNotNil(error);
             XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
