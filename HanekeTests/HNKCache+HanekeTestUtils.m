@@ -34,7 +34,10 @@
 
 - (HNKCacheFormat*)registerFormatWithSize:(CGSize)size
 {
-    HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"format"];
+    static NSUInteger FormatIndex = 0;
+    NSString *name = [NSString stringWithFormat:@"format%ld", (long)FormatIndex];
+    FormatIndex++;
+    HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:name];
     format.size = size;
     [self registerFormat:format];
     return format;
