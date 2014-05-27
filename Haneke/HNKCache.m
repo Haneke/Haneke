@@ -19,6 +19,7 @@
 //
 
 #import "HNKCache.h"
+#import <CommonCrypto/CommonDigest.h> // For hnk_MD5String
 @import ImageIO;
 
 NSString *const HNKErrorDomain = @"com.hpique.haneke";
@@ -36,16 +37,23 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 @interface HNKCache(Disk)
 
 - (void)calculateDiskSizeOfFormat:(HNKCacheFormat*)format;
-
 - (void)controlDiskCapacityOfFormat:(HNKCacheFormat*)format;
-
 - (void)enumeratePreloadImagesOfFormat:(HNKCacheFormat*)format usingBlock:(void(^)(NSString *key, UIImage *image))block;
-
 - (NSString*)pathForKey:(NSString*)key format:(HNKCacheFormat*)format;
-
 - (void)setDiskImage:(UIImage*)image forKey:(NSString*)key format:(HNKCacheFormat*)format;
-
 - (void)updateAccessDateOfImage:(UIImage*)image key:(NSString*)key format:(HNKCacheFormat*)format;
+
+@end
+
+@interface NSFileManager (hnk_utils)
+
+- (void)hnk_enumerateContentsOfDirectoryAtPath:(NSString*)path orderedByProperty:(NSString*)property ascending:(BOOL)ascending usingBlock:(void(^)(NSURL *url, NSUInteger idx, BOOL *stop))block;
+
+@end
+
+@interface NSString (hnk_utils)
+
+- (NSString*)hnk_MD5String;
 
 @end
 
@@ -56,12 +64,6 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 - (UIImage *)hnk_imageByScalingToSize:(CGSize)newSize;
 - (BOOL)hnk_hasAlpha;
 + (UIImage *)hnk_decompressedImageWithData:(NSData*)data;
-
-@end
-
-@interface NSFileManager (hnk_utils)
-
-- (void)hnk_enumerateContentsOfDirectoryAtPath:(NSString*)path orderedByProperty:(NSString*)property ascending:(BOOL)ascending usingBlock:(void(^)(NSURL *url, NSUInteger idx, BOOL *stop))block;
 
 @end
 
@@ -80,7 +82,6 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 @property (nonatomic, readonly) NSString *rootDirectory;
 
 @end
-
 
 @implementation HNKCache {
     NSMutableDictionary *_memoryCaches;
@@ -535,14 +536,21 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
         UIImage *image = [UIImage hnk_decompressedImageWithData:data];
         if (!image) return;
         NSString *key = [self keyFromPath:path];
+        // TODO: Long keys (MD5) can't be deduced from path. Maybe use custom attributes file to save the original key?
         block(key, image);
     }];
 }
 
 - (NSString*)pathForKey:(NSString*)key format:(HNKCacheFormat*)format
 {
-    NSString *escapedKey = CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,(CFStringRef)key, NULL, CFSTR("/:"), kCFStringEncodingUTF8));
-    NSString *path = [format.directory stringByAppendingPathComponent:escapedKey];
+    NSString *filename = CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,(CFStringRef)key, NULL, CFSTR("/:"), kCFStringEncodingUTF8));
+    if (filename.length >= NAME_MAX)
+    {
+        NSString *MD5 = [key hnk_MD5String];
+        NSString *pathExtension = key.pathExtension;
+        filename = pathExtension.length > 0 ? [MD5 stringByAppendingPathExtension:pathExtension] : MD5;
+    }
+    NSString *path = [format.directory stringByAppendingPathComponent:filename];
     return path;
 }
 
@@ -833,6 +841,23 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
         return ascending ? [value1 compare:value2] : [value2 compare:value1];
     }];
     [contents enumerateObjectsUsingBlock:block];
+}
+
+@end
+
+@implementation NSString(hnk_utils)
+
+- (NSString*)hnk_MD5String
+{
+    NSData *data = [self dataUsingEncoding:NSUTF8StringEncoding];
+    unsigned char result[CC_MD5_DIGEST_LENGTH];
+    CC_MD5(data.bytes, (CC_LONG)data.length, result);
+    NSMutableString *MD5String = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
+    for (int i = 0; i < CC_MD5_DIGEST_LENGTH; i++)
+    {
+        [MD5String appendFormat:@"%02x",result[i]];
+    }
+    return MD5String;
 }
 
 @end
