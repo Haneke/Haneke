@@ -49,6 +49,7 @@
 - (void)tearDown
 {
     [super tearDown];
+    [_imageView hnk_cancelImageRequest];
     [OHHTTPStubs removeAllStubs];
     
     HNKCacheFormat *format = _imageView.hnk_cacheFormat;
