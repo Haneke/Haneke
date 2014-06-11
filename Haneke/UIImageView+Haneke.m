@@ -148,6 +148,8 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
             
             if (error)
             {
+                if (error.code == NSURLErrorCancelled) return;
+                
                 HanekeLog(@"Request %@ failed with error %@", absoluteString, error);
                 dispatch_async(dispatch_get_main_queue(), ^
                 {
