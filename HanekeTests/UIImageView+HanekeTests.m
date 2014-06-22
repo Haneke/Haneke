@@ -419,7 +419,7 @@
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
         [_imageView hnk_setImageFromFile:path success:^(UIImage *result) {
-            XCTFail(@"");
+            XCTFail(@"hnk_setImageFromFile succeded with invalid data");
             dispatch_semaphore_signal(semaphore);
          } failure:^(NSError *error) {
             XCTAssertNotNil(error);
