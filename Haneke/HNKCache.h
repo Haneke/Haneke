@@ -134,6 +134,8 @@
 
 @optional
 
+- (void)cancelRetreive;
+
 /**
  Return the original image associated with the entity, or nil to use cacheOriginalData instead. The cache will always call this method in the main queue.
  @warning If the entity doesn't implement this method it must implement `cacheOriginalData`.
