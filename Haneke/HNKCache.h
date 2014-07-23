@@ -140,6 +140,8 @@
  */
 @property (nonatomic, readonly) NSString *cacheKey;
 
+- (void)retrieveImageWithCompletionBlock:(void(^)(UIImage *image, NSError *error))completionBlock;
+
 @optional
 
 /**
