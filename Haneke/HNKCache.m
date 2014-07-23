@@ -158,55 +158,6 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
 
 #pragma mark Getting images
 
-- (UIImage*)imageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName error:(NSError *__autoreleasing *)errorPtr
-{
-    HNKCacheFormat *format = _formats[formatName];
-    NSAssert(format, @"Unknown format %@", formatName);
-    format.requestCount++;
-    
-    NSString *key = entity.cacheKey;
-    UIImage *image = [self memoryImageForKey:key format:format];
-    if (image)
-    {
-        HanekeLog(@"Memory cache hit: %@/%@", formatName, key.lastPathComponent);
-        dispatch_async(format.diskQueue, ^{
-            [self updateAccessDateOfImage:image key:key format:format];
-        });
-        return image;
-    }
-    HanekeLog(@"Memory cache miss: %@/%@", formatName, key.lastPathComponent);
-    
-    NSString *path = [self pathForKey:key format:format];
-    __block NSData *imageData;
-    dispatch_sync(format.diskQueue, ^{
-        imageData = [NSData dataWithContentsOfFile:path];
-    });
-    if (imageData)
-    {
-        image = [UIImage hnk_decompressedImageWithData:imageData];
-        if (image)
-        {
-            HanekeLog(@"Disk cache hit: %@/%@", formatName, key.lastPathComponent);
-            dispatch_async(format.diskQueue, ^{
-                [self updateAccessDateOfImage:image key:key format:format];
-            });
-            [self setMemoryImage:image forKey:key format:format];
-            return image;
-        }
-    }
-    HanekeLog(@"Disk cache miss: %@/%@", formatName, key.lastPathComponent);
-    
-    UIImage *originalImage = [self imageFromEntity:entity error:errorPtr];
-    if (!originalImage) return nil;
-    
-    image = [self imageFromOriginal:originalImage key:key format:format];
-    [self setMemoryImage:image forKey:key format:format];
-    dispatch_async(format.diskQueue, ^{
-        [self setDiskImage:image forKey:key format:format];
-    });
-    return image;
-}
-
 - (BOOL)retrieveImageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock
 {
     NSString *key = entity.cacheKey;

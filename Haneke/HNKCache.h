@@ -66,16 +66,6 @@
 ///---------------------------------------------
 
 /**
- Synchronously retrieves the image for the given entity conforming to the given format from memory or disk cache, or creates it if it doesn't exist.
- @param entity Entity that represents the original image. If an image for the given entity and format doesn't exist in the cache, the entity will be asked to provide the original data or image to create it.
- @param formatName Name of the format in which the image is desired. The format must have been previously registered with the cache. If an image for the given key and format doesn't exist in the cache, it will be created based on the format. If by creating the image the format disk capacity is surpassed, least recently used images of the format will be removed until it isn't.
- @param errorPtr If an error occurs, upon return contains an NSError object that describes the problem.
- @return An image for the given entity conforming to the given format, or nil if an error ocurred.
- @discussion The image will be returned synchronously but the disk cache will be updated in background.
- */
-- (UIImage*)imageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName error:(NSError*__autoreleasing *)errorPtr;
-
-/**
  Retrieves an image from the cache, or creates one if it doesn't exist. If the image exists in the memory cache, the completion block will be executed synchronously. If the image has to be retreived from the disk cache or has to be created, the completion block will be executed asynchronously.
  @param entity Entity that represents the original image. If the image doesn't exist in the cache, the entity will be asked to provide the original data or image to create it. Any calls to the entity will be done in the main queue.
  @param formatName Name of the format in which the image is desired. The format must have been previously registered with the cache. If the image doesn't exist in the cache, it will be created based on the format. If by creating the image the format disk capacity is surpassed, least recently used images of the format will be removed until it isn't.

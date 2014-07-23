@@ -74,79 +74,100 @@
     XCTAssertTrue(format.diskSize == 0, @"");
 }
 
-- (void)testImageForEntity_OpaqueImage
+- (void)testRetrieveImageForEntity_OpaqueImage
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
     id entity = [HNKCache entityWithKey:@"1" data:nil image:image];
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
-    NSError *error = nil;
+ 
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_cache retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+            CGSize resultSize = result.size;
+            
+            XCTAssertNotNil(result, @"");
+            XCTAssertNil(error, @"");
+            XCTAssertTrue(CGSizeEqualToSize(resultSize, format.size), @"");
+            XCTAssertFalse(result.hnk_hasAlpha, @"");
+
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
     
-    UIImage *result = [_cache imageForEntity:entity formatName:format.name error:&error];
-    CGSize resultSize = result.size;
-    
-    XCTAssertNotNil(result, @"");
-    XCTAssertNil(error, @"");
-    XCTAssertTrue(CGSizeEqualToSize(resultSize, format.size), @"");
-    XCTAssertFalse(result.hnk_hasAlpha, @"");
 }
 
-- (void)testImageForEntity_ImageWithAlpha
+- (void)testRetrieveImageForEntity_ImageWithAlpha
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10) opaque:NO];
     id entity = [HNKCache entityWithKey:@"1" data:nil image:image];
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
-    NSError *error = nil;
     
-    UIImage *result = [_cache imageForEntity:entity formatName:format.name error:&error];
-    CGSize resultSize = result.size;
-    
-    XCTAssertNotNil(result, @"");
-    XCTAssertNil(error, @"");
-    XCTAssertTrue(CGSizeEqualToSize(resultSize, format.size), @"");
-    XCTAssertTrue(result.hnk_hasAlpha, @"");
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_cache retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+            CGSize resultSize = result.size;
+            
+            XCTAssertNotNil(result, @"");
+            XCTAssertNil(error, @"");
+            XCTAssertTrue(CGSizeEqualToSize(resultSize, format.size), @"");
+            XCTAssertTrue(result.hnk_hasAlpha, @"");
+            
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
 }
 
-- (void)testImageForEntity_ImplementingCacheOriginalImage
+- (void)testRetrieveImageForEntity_ImplementingCacheOriginalImage
 {
     id<HNKCacheEntity> entity = [HNKTestCacheEntityImplementingCacheOriginalImage new];
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
-    NSError *error = nil;
 
-    UIImage *result = [_cache imageForEntity:entity formatName:format.name error:&error];
-    CGSize resultSize = result.size;
-    
-    XCTAssertNotNil(result, @"");
-    XCTAssertNil(error, @"");
-    XCTAssertTrue(CGSizeEqualToSize(resultSize, format.size), @"");
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_cache retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+            CGSize resultSize = result.size;
+            
+            XCTAssertNotNil(result, @"");
+            XCTAssertNil(error, @"");
+            XCTAssertTrue(CGSizeEqualToSize(resultSize, format.size), @"");
+            
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
 }
 
-- (void)testImageForEntity_ImplementingCacheOriginalData
+- (void)testRetrieveImageForEntity_ImplementingCacheOriginalData
 {
     id<HNKCacheEntity> entity = [HNKTestCacheEntityImplementingCacheOriginalData new];
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
-    NSError *error = nil;
 
-    UIImage *result = [_cache imageForEntity:entity formatName:format.name error:&error];
-    CGSize resultSize = result.size;
-    
-    XCTAssertNotNil(result, @"");
-    XCTAssertNil(error, @"");
-    XCTAssertTrue(CGSizeEqualToSize(resultSize, format.size), @"");
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_cache retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+            CGSize resultSize = result.size;
+            
+            XCTAssertNotNil(result, @"");
+            XCTAssertNil(error, @"");
+            XCTAssertTrue(CGSizeEqualToSize(resultSize, format.size), @"");
+            
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
 }
 
-- (void)testImageForEntity_ImplementingNone
+- (void)testRetrieveImageForEntity_ImplementingNone
 {
     id entity = [HNKTestCacheEntityImplementingNone new];
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
-    NSError *error = nil;
-
-    UIImage *result = [_cache imageForEntity:entity formatName:format.name error:&error];
     
-    XCTAssertNil(result, @"");
-    XCTAssertNotNil(error, @"");
-    XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
-    XCTAssertEqual(error.code, HNKErrorEntityMustReturnImageOrData, @"");
-    XCTAssertNotNil(error.userInfo[NSLocalizedDescriptionKey], @"");
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_cache retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+            
+            XCTAssertNil(result, @"");
+            XCTAssertNotNil(error, @"");
+            XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
+            XCTAssertEqual(error.code, HNKErrorEntityMustReturnImageOrData, @"");
+            XCTAssertNotNil(error.userInfo[NSLocalizedDescriptionKey], @"");
+            
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
 }
 
 - (void)testImageForEntity_Data
@@ -154,15 +175,19 @@
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
     NSData *data = UIImagePNGRepresentation(image);
     id entity = [HNKCache entityWithKey:@"1" data:data image:nil];
-    HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
-    NSError *error = nil;
-
-    UIImage *result = [_cache imageForEntity:entity formatName:format.name error:&error];
-    CGSize resultSize = result.size;
     
-    XCTAssertNotNil(result, @"");
-    XCTAssertNil(error, @"");
-    XCTAssertTrue(CGSizeEqualToSize(resultSize, format.size), @"");
+    HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_cache retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+            CGSize resultSize = result.size;
+            
+            XCTAssertNotNil(result, @"");
+            XCTAssertNil(error, @"");
+            XCTAssertTrue(CGSizeEqualToSize(resultSize, format.size), @"");
+            
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
 }
 
 - (void)testImageForEntity_InvalidData
@@ -170,15 +195,19 @@
     NSData *data = [NSData data];
     id entity = [HNKCache entityWithKey:@"1" data:data image:nil];
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
-    NSError *error = nil;
-    
-    UIImage *result = [_cache imageForEntity:entity formatName:format.name error:&error];
-    
-    XCTAssertNil(result, @"");
-    XCTAssertNotNil(error, @"");
-    XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
-    XCTAssertEqual(error.code, HNKErrorEntityCannotReadImageFromData, @"");
-    XCTAssertNotNil(error.userInfo[NSLocalizedDescriptionKey], @"");
+
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_cache retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+            
+            XCTAssertNil(result, @"");
+            XCTAssertNotNil(error, @"");
+            XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
+            XCTAssertEqual(error.code, HNKErrorEntityCannotReadImageFromData, @"");
+            XCTAssertNotNil(error.userInfo[NSLocalizedDescriptionKey], @"");
+            
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
 }
 
 - (void)testImageForEntity_PreResizeBlock
@@ -195,8 +224,14 @@
         return preResizeImage;
     };
     
-    UIImage *result = [_cache imageForEntity:entity formatName:format.name error:nil];
-    XCTAssertEqualObjects(result, preResizeImage, @"");
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_cache retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+            
+            XCTAssertEqualObjects(result, preResizeImage, @"");
+            
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
 }
 
 - (void)testImageForEntity_PostResizeBlock
@@ -213,8 +248,14 @@
         return postResizeImage;
     };
     
-    UIImage *result = [_cache imageForEntity:entity formatName:format.name error:nil];
-    XCTAssertEqualObjects(result, postResizeImage, @"");
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_cache retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+            
+            XCTAssertEqualObjects(result, postResizeImage, @"");
+            
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
 }
 
 - (void)testRetrieveImageForEntity_MemoryCacheHit
@@ -360,8 +401,14 @@
     [_cache removeAllImages];
     
     id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:nil];
-    image = [_cache imageForEntity:entity formatName:format.name error:nil];
-    XCTAssertNil(image, @"");
+    
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_cache retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+            XCTAssertNil(result, @"");
+            
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
 }
 
 - (void)testRemoveAllImages_TwoFormats
@@ -382,10 +429,23 @@
     [_cache removeAllImages];
     
     id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:nil];
-    image = [_cache imageForEntity:entity formatName:format1.name error:nil];
-    XCTAssertNil(image, @"");
-    image = [_cache imageForEntity:entity formatName:format2.name error:nil];
-    XCTAssertNil(image, @"");
+
+    
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_cache retrieveImageForEntity:entity formatName:format1.name completionBlock:^(UIImage *result, NSError *error) {
+            XCTAssertNil(result, @"");
+            
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
+    
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_cache retrieveImageForEntity:entity formatName:format2.name completionBlock:^(UIImage *result, NSError *error) {
+            XCTAssertNil(result, @"");
+            
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
 }
 
 - (void)testRemoveImagesFromEntity_Images
@@ -407,13 +467,16 @@
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(2, 2)];
     static NSString *key = @"test";
     [_cache setImage:image forKey:key formatName:format.name];
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:image];
-    UIImage *cachedImage = [_cache imageForEntity:entity formatName:format.name error:nil];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidReceiveMemoryWarningNotification object:nil];
 
-    UIImage *result = [_cache imageForEntity:entity formatName:format.name error:nil];
-    XCTAssertNotEqualObjects(result, cachedImage, @"");
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_cache retrieveImageForKey:key formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+            XCTAssertNil(result, @"");
+            
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
 }
 
 @end
@@ -421,6 +484,9 @@
 @implementation HNKTestCacheEntity
 
 - (NSString*)cacheKey { return @"1"; };
+
+- (void)retrieveImageWithCompletionBlock:(void(^)(UIImage *image, NSError *error))completionBlock { }
+
 
 @end
 
