@@ -170,23 +170,24 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             HNKCacheFormat *format = _formats[formatName];
 
-            NSError *error = nil;
-            UIImage *originalImage = [self imageFromEntity:entity error:&error];
-            if (!originalImage)
-            {
-                dispatch_sync(dispatch_get_main_queue(), ^{
-                    completionBlock(nil, error);
+            [self retrieveImageFromEntity:entity completionBlock:^(UIImage *originalImage, NSError *error) {
+                if (!originalImage)
+                {
+                    dispatch_sync(dispatch_get_main_queue(), ^{
+                        completionBlock(nil, error);
+                    });
+                    return;
+                }
+                
+                UIImage *image = [self imageFromOriginal:originalImage key:key format:format];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self setMemoryImage:image forKey:key format:format];
+                    completionBlock(image, error);
                 });
-                return;
-            }
-            UIImage *image = [self imageFromOriginal:originalImage key:key format:format];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self setMemoryImage:image forKey:key format:format];
-                completionBlock(image, error);
-            });
-            dispatch_async(format.diskQueue, ^{
-                [self setDiskImage:image forKey:key format:format];
-            });
+                dispatch_async(format.diskQueue, ^{
+                    [self setDiskImage:image forKey:key format:format];
+                });
+            }];
         });
     }];
 }
@@ -335,45 +336,45 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
 
 #pragma mark Private (utils)
 
-- (UIImage*)imageFromEntity:(id<HNKCacheEntity>)entity error:(NSError*__autoreleasing *)errorPtr
+- (void)retrieveImageFromEntity:(id<HNKCacheEntity>)entity completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock;
 {
     __block UIImage *image = nil;
     hnk_dispatch_sync_main_queue_if_needed(^{
         image = [entity respondsToSelector:@selector(cacheOriginalImage)] ? entity.cacheOriginalImage : nil;
     });
-    if (!image)
+    if (image)
     {
-        __block NSData *data = nil;
-        hnk_dispatch_sync_main_queue_if_needed(^{
-            data = [entity respondsToSelector:@selector(cacheOriginalData)] ? entity.cacheOriginalData : nil;
-        });
-        if (!data)
-        {
-            NSString *key = entity.cacheKey;
-            NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Invalid entity %@: Must return non-nil object in either cacheOriginalImage or cacheOriginalData", @""), key.lastPathComponent];
-            HanekeLog(@"%@", errorDescription);
-            if (errorPtr != NULL)
-            {
-                NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
-                *errorPtr = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorEntityMustReturnImageOrData userInfo:userInfo];
-            }
-            return nil;
-        }
-        image = [UIImage hnk_decompressedImageWithData:data];
-        if (!image)
-        {
-            NSString *key = entity.cacheKey;
-            NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Invalid entity %@: Cannot read image from data", @""), key.lastPathComponent];
-            HanekeLog(@"%@", errorDescription);
-            if (errorPtr != NULL)
-            {
-                NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
-                *errorPtr = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorEntityCannotReadImageFromData userInfo:userInfo];
-            }
-            return nil;
-        }
+        completionBlock(image, nil);
+        return;
     }
-    return image;
+    
+    __block NSData *data = nil;
+    hnk_dispatch_sync_main_queue_if_needed(^{
+        data = [entity respondsToSelector:@selector(cacheOriginalData)] ? entity.cacheOriginalData : nil;
+    });
+    if (!data)
+    {
+        NSString *key = entity.cacheKey;
+        NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Invalid entity %@: Must return non-nil object in either cacheOriginalImage or cacheOriginalData", @""), key.lastPathComponent];
+        HanekeLog(@"%@", errorDescription);
+        NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
+        NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorEntityMustReturnImageOrData userInfo:userInfo];
+        completionBlock(nil, error);
+        return;
+    }
+    
+    image = [UIImage hnk_decompressedImageWithData:data];
+    if (image)
+    {
+        completionBlock(image, nil);
+    }
+
+    NSString *key = entity.cacheKey;
+    NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Invalid entity %@: Cannot read image from data", @""), key.lastPathComponent];
+    HanekeLog(@"%@", errorDescription);
+    NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
+    NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorEntityCannotReadImageFromData userInfo:userInfo];
+    completionBlock(nil, error);
 }
 
 - (UIImage*)imageFromOriginal:(UIImage*)original key:(NSString*)key format:(HNKCacheFormat*)format
