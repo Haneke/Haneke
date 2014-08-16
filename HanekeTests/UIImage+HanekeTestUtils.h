@@ -26,6 +26,8 @@
 
 + (UIImage*)hnk_imageWithColor:(UIColor*)color size:(CGSize)size opaque:(BOOL)opaque;
 
++ (UIImage*)hnk_imageGradientFromColor:(UIColor*)fromColor toColor:(UIColor*)toColor size:(CGSize)size;
+
 - (BOOL)hnk_isEqualToImage:(UIImage*)image;
 
 @end

@@ -9,6 +9,19 @@
 #import <XCTest/XCTest.h>
 #import "UIImage+HanekeTestUtils.h"
 #import "HNKCache.h"
+@import ImageIO;
+@import MobileCoreServices;
+
+typedef NS_ENUM(NSInteger, HNKExifOrientation) {
+    HNKExifOrientationUp = 1,
+    HNKExifOrientationDown = 3,
+    HNKExifOrientationLeft = 8,
+    HNKExifOrientationRight = 6,
+    HNKExifOrientationUpMirrored = 2,
+    HNKExifOrientationDownMirrored = 4,
+    HNKExifOrientationLeftMirrored = 5,
+    HNKExifOrientationRightMirrored= 7,
+};
 
 // Implemented in HNKCache
 
@@ -94,11 +107,51 @@
     CGColorSpaceRelease(colorSpaceRef);
 }
 
+- (void)testDecompressedImageWithData_OrientationUp
+{
+    [self _testDecompressedImageWithOrientation:HNKExifOrientationUp];
+}
+
+- (void)testDecompressedImageWithData_OrientationDown
+{
+    [self _testDecompressedImageWithOrientation:HNKExifOrientationDown];
+}
+
+- (void)testDecompressedImageWithData_OrientationLeft
+{
+    [self _testDecompressedImageWithOrientation:HNKExifOrientationLeft];
+}
+
+- (void)testDecompressedImageWithData_OrientationRight
+{
+    [self _testDecompressedImageWithOrientation:HNKExifOrientationRight];
+}
+
+- (void)testDecompressedImageWithData_OrientationUpMirrored
+{
+    [self _testDecompressedImageWithOrientation:HNKExifOrientationUpMirrored];
+}
+
+- (void)testDecompressedImageWithData_OrientationDownMirrored
+{
+    [self _testDecompressedImageWithOrientation:HNKExifOrientationDownMirrored];
+}
+
+- (void)testDecompressedImageWithData_OrientationLeftMirrored
+{
+    [self _testDecompressedImageWithOrientation:HNKExifOrientationLeftMirrored];
+}
+
+- (void)testDecompressedImageWithData_OrientationRightMirrored
+{
+    [self _testDecompressedImageWithOrientation:HNKExifOrientationRightMirrored];
+}
+
 #pragma mark Utils
 
 - (void)_testDecompressedImageWithDataUsingColor:(UIColor*)color colorSpace:(CGColorSpaceRef)colorSpace alphaInfo:(CGImageAlphaInfo)alphaInfo bitsPerComponent:(size_t)bitsPerComponent
 {
-    const CGSize size = CGSizeMake(10, 10);
+    const CGSize size = CGSizeMake(10, 20);
     const CGBitmapInfo bitmapInfo = alphaInfo | kCGBitmapByteOrderDefault;
     const CGContextRef context = CGBitmapContextCreate(NULL,
                                                        size.width,
@@ -120,6 +173,28 @@
     XCTAssertTrue([decompressedImage hnk_isEqualToImage:image], @"");
     
     CGImageRelease(imageRef);
+}
+
+- (void)_testDecompressedImageWithOrientation:(HNKExifOrientation)orientation
+{
+    // Create a gradient image to truly test orientation
+    UIImage *gradientImage = [UIImage hnk_imageGradientFromColor:[UIColor redColor]
+                                                         toColor:[UIColor greenColor]
+                                                            size:CGSizeMake(10, 20)];
+
+    // Use TIFF because PNG doesn't store EXIF orientation
+    NSDictionary *exifProperties = @{(__bridge NSString*)kCGImagePropertyOrientation : @(orientation)};
+    NSMutableData *data = [NSMutableData data];
+    CGImageDestinationRef imageDestinationRef = CGImageDestinationCreateWithData((__bridge  CFMutableDataRef)(data), kUTTypeTIFF, 1, NULL);
+    CGImageDestinationAddImage(imageDestinationRef, gradientImage.CGImage, (__bridge CFDictionaryRef)exifProperties);
+    CGImageDestinationFinalize(imageDestinationRef);
+    CFRelease(imageDestinationRef);
+    
+    UIImage *image = [UIImage imageWithData:data scale:[UIScreen mainScreen].scale];
+    
+    UIImage *decompressedImage = [UIImage hnk_decompressedImageWithData:data];
+    
+    XCTAssertTrue([decompressedImage hnk_isEqualToImage:image], @"");
 }
 
 @end
