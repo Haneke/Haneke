@@ -3,8 +3,11 @@ before_install:
   - gem install cocoapods
 before_script:
   - brew update
-  - brew upgrade xctool
+  - brew upgrade xctool || true
   - pod install
 script: 
   - xctool -workspace Haneke.xcworkspace -scheme 'Haneke' -configuration Release -sdk iphonesimulator test
   - xctool -workspace Haneke.xcworkspace -scheme 'HanekeDemo' -configuration Release -sdk iphonesimulator
+branches:
+  only:
+    - master
