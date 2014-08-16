@@ -14,7 +14,7 @@
 
 @interface UIImage (Tests)
 
-+ (UIImage *)hnk_decompressedImageWithCGImage:(CGImageRef)imageRef;
++ (UIImage *)hnk_decompressedImageWithData:(NSData*)data;
 
 @end
 
@@ -24,70 +24,70 @@
 
 @implementation UIImageHanekeUtilsTests
 
-- (void)testDecompressedImageWithCGImage_UIGraphicsContext_OpaqueYES
+- (void)testDecompressedImageWithData_UIGraphicsContext_OpaqueYES
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10) opaque:YES];
-    CGImageRef imageRef = image.CGImage;
+    NSData *data = UIImagePNGRepresentation(image);
     
-    UIImage *decompressedImage = [UIImage hnk_decompressedImageWithCGImage:imageRef];
+    UIImage *decompressedImage = [UIImage hnk_decompressedImageWithData:data];
     
-    XCTAssertTrue([decompressedImage hnk_isEqualToCGImage:imageRef], @"");
+    XCTAssertTrue([decompressedImage hnk_isEqualToImage:image], @"");
 }
 
-- (void)testDecompressedImageWithCGImage_UIGraphicsContext_OpaqueNO
+- (void)testDecompressedImageWithData_UIGraphicsContext_OpaqueNO
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10) opaque:NO];
-    CGImageRef imageRef = image.CGImage;
+    NSData *data = UIImagePNGRepresentation(image);
     
-    UIImage *decompressedImage = [UIImage hnk_decompressedImageWithCGImage:imageRef];
+    UIImage *decompressedImage = [UIImage hnk_decompressedImageWithData:data];
     
-    XCTAssertTrue([decompressedImage hnk_isEqualToCGImage:imageRef], @"");
+    XCTAssertTrue([decompressedImage hnk_isEqualToImage:image], @"");
 }
 
-- (void)testDecompressedImageWithCGImage_RGBA
+- (void)testDecompressedImageWithData_RGBA
 {
     const CGColorSpaceRef colorSpaceRef = CGColorSpaceCreateDeviceRGB();
-    [self _testDecompressedImageWithCGImageUsingColor:[UIColor colorWithRed:255 green:0 blue:0 alpha:0.5]
+    [self _testDecompressedImageWithDataUsingColor:[UIColor colorWithRed:255 green:0 blue:0 alpha:0.5]
                                            colorSpace:colorSpaceRef
                                             alphaInfo:kCGImageAlphaPremultipliedLast
                                      bitsPerComponent:8];
     CGColorSpaceRelease(colorSpaceRef);
 }
 
-- (void)testDecompressedImageWithCGImage_ARGB
+- (void)testDecompressedImageWithData_ARGB
 {
     const CGColorSpaceRef colorSpaceRef = CGColorSpaceCreateDeviceRGB();
-    [self _testDecompressedImageWithCGImageUsingColor:[UIColor colorWithRed:255 green:0 blue:0 alpha:0.5]
+    [self _testDecompressedImageWithDataUsingColor:[UIColor colorWithRed:255 green:0 blue:0 alpha:0.5]
                                            colorSpace:colorSpaceRef
                                             alphaInfo:kCGImageAlphaPremultipliedFirst
                                      bitsPerComponent:8];
     CGColorSpaceRelease(colorSpaceRef);
 }
 
-- (void)testDecompressedImageWithCGImage_RGBX
+- (void)testDecompressedImageWithData_RGBX
 {
     const CGColorSpaceRef colorSpaceRef = CGColorSpaceCreateDeviceRGB();
-    [self _testDecompressedImageWithCGImageUsingColor:[UIColor redColor]
+    [self _testDecompressedImageWithDataUsingColor:[UIColor redColor]
                                            colorSpace:colorSpaceRef
                                             alphaInfo:kCGImageAlphaNoneSkipLast
                                      bitsPerComponent:8];
     CGColorSpaceRelease(colorSpaceRef);
 }
 
-- (void)testDecompressedImageWithCGImage_XRGB
+- (void)testDecompressedImageWithData_XRGB
 {
     const CGColorSpaceRef colorSpaceRef = CGColorSpaceCreateDeviceRGB();
-    [self _testDecompressedImageWithCGImageUsingColor:[UIColor redColor]
+    [self _testDecompressedImageWithDataUsingColor:[UIColor redColor]
                                            colorSpace:colorSpaceRef
                                             alphaInfo:kCGImageAlphaNoneSkipFirst
                                      bitsPerComponent:8];
     CGColorSpaceRelease(colorSpaceRef);
 }
 
-- (void)testDecompressedImageWithCGImage_Gray_kCGImageAlphaNone
+- (void)testDecompressedImageWithData_Gray_kCGImageAlphaNone
 {
     const CGColorSpaceRef colorSpaceRef = CGColorSpaceCreateDeviceGray();
-    [self _testDecompressedImageWithCGImageUsingColor:[UIColor grayColor]
+    [self _testDecompressedImageWithDataUsingColor:[UIColor grayColor]
                                            colorSpace:colorSpaceRef
                                             alphaInfo:kCGImageAlphaNone
                                      bitsPerComponent:8];
@@ -96,7 +96,7 @@
 
 #pragma mark Utils
 
-- (void)_testDecompressedImageWithCGImageUsingColor:(UIColor*)color colorSpace:(CGColorSpaceRef)colorSpace alphaInfo:(CGImageAlphaInfo)alphaInfo bitsPerComponent:(size_t)bitsPerComponent
+- (void)_testDecompressedImageWithDataUsingColor:(UIColor*)color colorSpace:(CGColorSpaceRef)colorSpace alphaInfo:(CGImageAlphaInfo)alphaInfo bitsPerComponent:(size_t)bitsPerComponent
 {
     const CGSize size = CGSizeMake(10, 10);
     const CGBitmapInfo bitmapInfo = alphaInfo | kCGBitmapByteOrderDefault;
@@ -112,9 +112,12 @@
     const CGImageRef imageRef = CGBitmapContextCreateImage(context);
     CGContextRelease(context);
     
-    UIImage *decompressedImage = [UIImage hnk_decompressedImageWithCGImage:imageRef];
+    UIImage *image = [UIImage imageWithCGImage:imageRef scale:[UIScreen mainScreen].scale orientation:UIImageOrientationUp];
+    NSData *data = UIImagePNGRepresentation(image);
     
-    XCTAssertTrue([decompressedImage hnk_isEqualToCGImage:imageRef], @"");
+    UIImage *decompressedImage = [UIImage hnk_decompressedImageWithData:data];
+    
+    XCTAssertTrue([decompressedImage hnk_isEqualToImage:image], @"");
     
     CGImageRelease(imageRef);
 }

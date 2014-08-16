@@ -38,9 +38,8 @@
     return image;
 }
 
-- (BOOL)hnk_isEqualToCGImage:(CGImageRef)imageRef
+- (BOOL)hnk_isEqualToImage:(UIImage*)image
 {
-    UIImage *image = [UIImage imageWithCGImage:imageRef scale:[UIScreen mainScreen].scale orientation:UIImageOrientationUp];
     NSData *data = [image hnk_normalizedData];
     NSData *originalData = [self hnk_normalizedData];
     return [originalData isEqualToData:data];
