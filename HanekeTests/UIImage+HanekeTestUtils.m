@@ -38,9 +38,32 @@
     return image;
 }
 
-- (BOOL)hnk_isEqualToCGImage:(CGImageRef)imageRef
++ (UIImage*)hnk_imageGradientFromColor:(UIColor*)fromColor toColor:(UIColor*)toColor size:(CGSize)size
 {
-    UIImage *image = [UIImage imageWithCGImage:imageRef scale:[UIScreen mainScreen].scale orientation:UIImageOrientationUp];
+    UIGraphicsBeginImageContextWithOptions(size, NO /* opaque */, 0 /* scale */);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
+    
+    const size_t gradientNumberOfLocations = 2;
+    const CGFloat gradientLocations[2] = { 0.0, 1.0 };
+    CGFloat r1, g1, b1, a1;
+    [fromColor getRed:&r1 green:&g1 blue:&b1 alpha:&a1];
+    CGFloat r2, g2, b2, a2;
+    [toColor getRed:&r2 green:&g2 blue:&b2 alpha:&a2];
+    const CGFloat gradientComponents[8] = {r1, g1, b1, a1, r2, g2, b2, a2};
+    CGGradientRef gradient = CGGradientCreateWithColorComponents (colorspace, gradientComponents, gradientLocations, gradientNumberOfLocations);
+    
+    CGContextDrawLinearGradient(context, gradient, CGPointMake(0, 0), CGPointMake(0, size.height), 0);
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    CGGradientRelease(gradient);
+    CGColorSpaceRelease(colorspace);
+    return image;
+}
+
+- (BOOL)hnk_isEqualToImage:(UIImage*)image
+{
     NSData *data = [image hnk_normalizedData];
     NSData *originalData = [self hnk_normalizedData];
     return [originalData isEqualToData:data];
