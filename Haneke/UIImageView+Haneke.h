@@ -20,6 +20,7 @@
 
 #import <UIKit/UIKit.h>
 #import "HNKCache.h"
+#import "HNKImageViewEntity.h"
 
 @interface UIImageView (Haneke)
 
@@ -178,8 +179,3 @@
 @property (nonatomic, strong) HNKCacheFormat *hnk_cacheFormat;
 
 @end
-
-enum
-{
-    HNKErrorImageFromURLMissingData = -400,
-};

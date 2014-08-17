@@ -19,4 +19,5 @@
 //
 
 #import "HNKCache.h"
+#import "HNKImageViewEntity.h"
 #import "UIImageView+Haneke.h"
