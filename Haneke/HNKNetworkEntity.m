@@ -56,7 +56,7 @@
                 NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Request %@ received %ld out of %ld bytes", @""), _URL.absoluteString, (long)dataLength, (long)expectedContentLength];
                 HanekeLog(@"%@", errorDescription);
                 NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription , NSURLErrorKey : _URL};
-                NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKNetworkEntityLMissingData userInfo:userInfo];
+                NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKNetworkEntityMissingData userInfo:userInfo];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     completionBlock(nil, error);
                 });
