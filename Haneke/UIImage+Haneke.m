@@ -13,26 +13,17 @@
 
 + (UIImage*)hnk_decompressedImageWithData:(NSData*)data
 {
-    const CGImageSourceRef sourceRef = CGImageSourceCreateWithData((__bridge CFDataRef)data, NULL);
-    
     // Ideally we would simply use kCGImageSourceShouldCacheImmediately but as of iOS 7.1 it locks on copyImageBlockSetJPEG which makes it dangerous.
-    // CGImageRef imageRef = CGImageSourceCreateImageAtIndex(source, 0, (__bridge CFDictionaryRef)@{(id)kCGImageSourceShouldCacheImmediately: @YES});
+    // const CGImageSourceRef sourceRef = CGImageSourceCreateWithData((__bridge CFDataRef)data, NULL);
+    // CGImageRef imageRef = CGImageSourceCreateImageAtIndex(sourceRef, 0, (__bridge CFDictionaryRef)@{(id)kCGImageSourceShouldCacheImmediately: @YES});
     
-    UIImage *image = nil;
-    const CGImageRef imageRef = CGImageSourceCreateImageAtIndex(sourceRef, 0, NULL);
-    if (imageRef)
-    {
-        image = [UIImage hnk_decompressedImageWithCGImage:imageRef];
-        CGImageRelease(imageRef);
-    }
-    CFRelease(sourceRef);
+    // We use UIImage instead of CGImageRef directly because UIImage takes orientation into account for us.
+    // We ignore scale because we want to draw the image in its original resolution.
+    UIImage *originalImage = [UIImage imageWithData:data];
+    if (!originalImage) return nil;
     
-    return image;
-}
-
-+ (UIImage*)hnk_decompressedImageWithCGImage:(CGImageRef)imageRef
-{
-    const CGBitmapInfo originalBitmapInfo = CGImageGetBitmapInfo(imageRef);
+    CGImageRef originalImageRef = originalImage.CGImage;
+    const CGBitmapInfo originalBitmapInfo = CGImageGetBitmapInfo(originalImageRef);
     
     // See: http://stackoverflow.com/questions/23723564/which-cgimagealphainfo-should-we-use
     const uint32_t alphaInfo = (originalBitmapInfo & kCGBitmapAlphaInfoMask);
@@ -52,37 +43,42 @@
         case kCGImageAlphaLast:
         case kCGImageAlphaFirst:
         { // Unsupported
-            return [UIImage imageWithCGImage:imageRef scale:[UIScreen mainScreen].scale orientation:UIImageOrientationUp];
+            return originalImage;
         }
             break;
     }
     
     const CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    const CGSize imageSize = CGSizeMake(CGImageGetWidth(imageRef), CGImageGetHeight(imageRef));
+    const CGSize imageSize = originalImage.size;
     const CGContextRef context = CGBitmapContextCreate(NULL,
                                                        imageSize.width,
                                                        imageSize.height,
-                                                       CGImageGetBitsPerComponent(imageRef),
+                                                       CGImageGetBitsPerComponent(originalImageRef),
                                                        0,
                                                        colorSpace,
                                                        bitmapInfo);
     CGColorSpaceRelease(colorSpace);
     
     UIImage *image;
+    if (!context) return originalImage;
+    
+    const CGRect imageRect = CGRectMake(0, 0, imageSize.width, imageSize.height);
+    UIGraphicsPushContext(context);
+    
+    // Flip coordinate system. See: http://stackoverflow.com/questions/506622/cgcontextdrawimage-draws-image-upside-down-when-passed-uiimage-cgimage
+    CGContextTranslateCTM(context, 0, imageSize.height);
+    CGContextScaleCTM(context, 1.0, -1.0);
+    
+    // drawInRect takes into account image orientation, unlike CGContextDrawImage.
+    [originalImage drawInRect:imageRect];
+    UIGraphicsPopContext();
+    const CGImageRef decompressedImageRef = CGBitmapContextCreateImage(context);
+    CGContextRelease(context);
+    
     const CGFloat scale = [UIScreen mainScreen].scale;
-    if (context)
-    {
-        const CGRect imageRect = CGRectMake(0, 0, imageSize.width, imageSize.height);
-        CGContextDrawImage(context, imageRect, imageRef);
-        const CGImageRef decompressedImageRef = CGBitmapContextCreateImage(context);
-        CGContextRelease(context);
-        image = [UIImage imageWithCGImage:decompressedImageRef scale:scale orientation:UIImageOrientationUp];
-        CGImageRelease(decompressedImageRef);
-    }
-    else
-    {
-        image = [UIImage imageWithCGImage:imageRef scale:scale orientation:UIImageOrientationUp];
-    }
+    image = [UIImage imageWithCGImage:decompressedImageRef scale:scale orientation:UIImageOrientationUp];
+    CGImageRelease(decompressedImageRef);
+    
     return image;
 }
 
