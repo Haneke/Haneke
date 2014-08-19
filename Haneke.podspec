@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'Haneke'
-  s.version = '0.1.1'
+  s.version = '0.1.2'
   s.license = 'Apache 2.0'
   s.summary = 'A lightweight zero-config image cache for iOS.'
   s.description = <<-DESC
