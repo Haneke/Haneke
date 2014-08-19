@@ -1,5 +1,5 @@
 //
-//  UIImageHanekeUtilsTests.m
+//  UIImage+HanekeTests.m
 //  Haneke
 //
 //  Created by Hermés Piqué on 18/05/14.
@@ -7,8 +7,8 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "UIImage+Haneke.h"
 #import "UIImage+HanekeTestUtils.h"
-#import "HNKCache.h"
 @import ImageIO;
 @import MobileCoreServices;
 
@@ -23,19 +23,11 @@ typedef NS_ENUM(NSInteger, HNKExifOrientation) {
     HNKExifOrientationRightMirrored= 7,
 };
 
-// Implemented in HNKCache
-
-@interface UIImage (Tests)
-
-+ (UIImage *)hnk_decompressedImageWithData:(NSData*)data;
+@interface UIImage_HanekeTests : XCTestCase
 
 @end
 
-@interface UIImageHanekeUtilsTests : XCTestCase
-
-@end
-
-@implementation UIImageHanekeUtilsTests
+@implementation UIImage_HanekeTests
 
 - (void)testDecompressedImageWithData_UIGraphicsContext_OpaqueYES
 {
