@@ -29,22 +29,6 @@
 
 @end
 
-@interface HNKTestCacheEntity : NSObject<HNKCacheEntity>
-
-@end
-
-@interface HNKTestCacheEntityImplementingCacheOriginalImage : HNKTestCacheEntity
-
-@end
-
-@interface HNKTestCacheEntityImplementingCacheOriginalData : HNKTestCacheEntity
-
-@end
-
-@interface HNKTestCacheEntityImplementingNone : HNKTestCacheEntity
-
-@end
-
 @implementation HNKCacheTests {
     HNKCache *_cache;
 }
@@ -77,7 +61,7 @@
 - (void)testRetrieveImageForEntity_OpaqueImage
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
-    id entity = [HNKCache entityWithKey:@"1" data:nil image:image];
+    id entity = [HNKCache entityWithKey:@"1" image:image];
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
  
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
@@ -98,7 +82,7 @@
 - (void)testRetrieveImageForEntity_ImageWithAlpha
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10) opaque:NO];
-    id entity = [HNKCache entityWithKey:@"1" data:nil image:image];
+    id entity = [HNKCache entityWithKey:@"1" image:image];
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
@@ -115,66 +99,10 @@
     }];
 }
 
-- (void)testRetrieveImageForEntity_ImplementingCacheOriginalImage
-{
-    id<HNKCacheEntity> entity = [HNKTestCacheEntityImplementingCacheOriginalImage new];
-    HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
-
-    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_cache retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
-            CGSize resultSize = result.size;
-            
-            XCTAssertNotNil(result, @"");
-            XCTAssertNil(error, @"");
-            XCTAssertTrue(CGSizeEqualToSize(resultSize, format.size), @"");
-            
-            dispatch_semaphore_signal(semaphore);
-        }];
-    }];
-}
-
-- (void)testRetrieveImageForEntity_ImplementingCacheOriginalData
-{
-    id<HNKCacheEntity> entity = [HNKTestCacheEntityImplementingCacheOriginalData new];
-    HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
-
-    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_cache retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
-            CGSize resultSize = result.size;
-            
-            XCTAssertNotNil(result, @"");
-            XCTAssertNil(error, @"");
-            XCTAssertTrue(CGSizeEqualToSize(resultSize, format.size), @"");
-            
-            dispatch_semaphore_signal(semaphore);
-        }];
-    }];
-}
-
-- (void)testRetrieveImageForEntity_ImplementingNone
-{
-    id entity = [HNKTestCacheEntityImplementingNone new];
-    HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
-    
-    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_cache retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
-            
-            XCTAssertNil(result, @"");
-            XCTAssertNotNil(error, @"");
-            XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
-            XCTAssertEqual(error.code, HNKErrorEntityMustReturnImageOrData, @"");
-            XCTAssertNotNil(error.userInfo[NSLocalizedDescriptionKey], @"");
-            
-            dispatch_semaphore_signal(semaphore);
-        }];
-    }];
-}
-
-- (void)testImageForEntity_Data
+- (void)testRetrieveImageForEntity
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
-    NSData *data = UIImagePNGRepresentation(image);
-    id entity = [HNKCache entityWithKey:@"1" data:data image:nil];
+    id entity = [HNKCache entityWithKey:@"1" image:image];
     
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
@@ -190,32 +118,12 @@
     }];
 }
 
-- (void)testImageForEntity_InvalidData
-{
-    NSData *data = [NSData data];
-    id entity = [HNKCache entityWithKey:@"1" data:data image:nil];
-    HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
-
-    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_cache retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
-            
-            XCTAssertNil(result, @"");
-            XCTAssertNotNil(error, @"");
-            XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
-            XCTAssertEqual(error.code, HNKErrorEntityCannotReadImageFromData, @"");
-            XCTAssertNotNil(error.userInfo[NSLocalizedDescriptionKey], @"");
-            
-            dispatch_semaphore_signal(semaphore);
-        }];
-    }];
-}
-
-- (void)testImageForEntity_PreResizeBlock
+- (void)testRetrieveImageForEntity_PreResizeBlock
 {
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
     UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
     NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
-    id entity = [HNKCache entityWithKey:key data:nil image:originalImage];
+    id entity = [HNKCache entityWithKey:key image:originalImage];
     UIImage *preResizeImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:format.size];
 
     format.preResizeBlock = ^UIImage* (NSString *givenKey, UIImage *givenImage) {
@@ -234,12 +142,12 @@
     }];
 }
 
-- (void)testImageForEntity_PostResizeBlock
+- (void)testRetrieveImageForEntity_PostResizeBlock
 {
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
     UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
     NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
-    id entity = [HNKCache entityWithKey:key data:nil image:originalImage];
+    id entity = [HNKCache entityWithKey:key image:originalImage];
     UIImage *postResizeImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:format.size];
     
     format.postResizeBlock = ^UIImage* (NSString *givenKey, UIImage *givenImage) {
@@ -261,7 +169,7 @@
 - (void)testRetrieveImageForEntity_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:@"1" data:nil image:image];
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:@"1" image:image];
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
     NSString *formatName = format.name;
     [_cache setImage:image forKey:entity.cacheKey formatName:formatName];
@@ -277,7 +185,7 @@
 - (void)testRetrieveImageForEntity_MemoryCacheMiss
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:@"1" data:nil image:image];
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:@"1" image:image];
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
     NSString *formatName = format.name;
     
@@ -291,7 +199,7 @@
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
     UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
     NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:originalImage];
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:originalImage];
     NSString *formatName = format.name;
     
     UIImage *preResizeImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:format.size];
@@ -318,7 +226,7 @@
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
     UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
     NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:originalImage];
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:originalImage];
     NSString *formatName = format.name;
     
     UIImage *postResizeImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:format.size];
@@ -387,7 +295,7 @@
 - (void)testRemoveImagesFromEntity_NoImagesNoFormats
 {
     static NSString *key = @"test";
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:nil];
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:nil];
     [_cache removeImagesOfEntity:entity];
 }
 
@@ -400,7 +308,7 @@
     
     [_cache removeAllImages];
     
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:nil];
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:nil];
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
         [_cache retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
@@ -428,7 +336,7 @@
     
     [_cache removeAllImages];
     
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:nil];
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:nil];
 
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
@@ -455,7 +363,7 @@
     static NSString *key = @"test";
     [_cache setImage:image forKey:key formatName:format.name];
     
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:nil];
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:nil];
     [_cache removeImagesOfEntity:entity];
 }
 
@@ -478,39 +386,5 @@
         }];
     }];
 }
-
-@end
-
-@implementation HNKTestCacheEntity
-
-- (NSString*)cacheKey { return @"1"; };
-
-- (void)fetchImageWithCompletionBlock:(void(^)(UIImage *image, NSError *error))completionBlock { }
-
-
-@end
-
-@implementation HNKTestCacheEntityImplementingCacheOriginalImage
-
-- (UIImage*)cacheOriginalImage
-{
-    UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
-    return image;
-}
-
-@end
-
-@implementation HNKTestCacheEntityImplementingCacheOriginalData
-
-- (NSData*)cacheOriginalData
-{
-    UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
-    NSData *data = UIImagePNGRepresentation(image);
-    return data;
-}
-
-@end
-
-@implementation HNKTestCacheEntityImplementingNone
 
 @end

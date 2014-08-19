@@ -172,7 +172,7 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
             [self retrieveImageFromEntity:entity completionBlock:^(UIImage *originalImage, NSError *error) {
                 if (!originalImage)
                 {
-                    dispatch_sync(dispatch_get_main_queue(), ^{
+                    dispatch_async(dispatch_get_main_queue(), ^{
                         completionBlock(nil, error);
                     });
                     return;
@@ -342,7 +342,6 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
         [entity fetchImageWithSuccess:^(UIImage *image) {
             if (image)
             {
-                image = [UIImage hnk_decompressedImageWithImage:image];
                 completionBlock(image, nil);
             }
             else
@@ -351,7 +350,7 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
                 NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Invalid entity %@: Must return non-nil in success block", @""), key.lastPathComponent];
                 HanekeLog(@"%@", errorDescription);
                 NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
-                NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorEntityMustReturnImageOrData userInfo:userInfo];
+                NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorEntityMustReturnImage userInfo:userInfo];
                 completionBlock(nil, error);
                 return;
             }
@@ -366,6 +365,10 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
     UIImage *image = format.preResizeBlock ? format.preResizeBlock(key, original) : original;
     image = [format resizedImageFromImage:image];
     if (format.postResizeBlock) image = format.postResizeBlock(key, image);
+    if (image == original)
+    {
+        image = [UIImage hnk_decompressedImageWithImage:image];
+    }
     return image;
 }
 

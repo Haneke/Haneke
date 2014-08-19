@@ -405,7 +405,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 {
     HNKImageViewEntity *entity = [[HNKImageViewEntity alloc] init];
     entity->_key = key.copy;
-    entity->_data = data;
+    entity->_image = [UIImage imageWithData:data];
     return entity;
 }
 
@@ -414,14 +414,9 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     return _key;
 }
 
-- (UIImage*)cacheOriginalImage
+-(void)fetchImageWithSuccess:(void (^)(UIImage *))successBlock failure:(void (^)(NSError *))failureBlock
 {
-    return _image;
-}
-
-- (NSData*)cacheOriginalData
-{
-    return _data;
+    successBlock(_image);
 }
 
 @end

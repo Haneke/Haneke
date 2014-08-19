@@ -21,15 +21,17 @@
 #import "HNKCache+HanekeTestUtils.h"
 #import <OCMock/OCMock.h>
 
+@interface HNKMockEntity : NSObject<HNKCacheEntity>
+
+- (instancetype)initWithKey:(NSString*)key image:(UIImage*)image;
+
+@end
+
 @implementation HNKCache (HanekeTestUtils)
 
-+ (id)entityWithKey:(NSString*)key data:(NSData*)data image:(UIImage*)image
++ (id)entityWithKey:(NSString*)key image:(UIImage*)image
 {
-    id entity = [OCMockObject mockForProtocol:@protocol(HNKCacheEntity)];
-    [[[entity stub] andReturn:key] cacheKey];
-    [[[entity stub] andReturn:data] cacheOriginalData];
-    [[[entity stub] andReturn:image] cacheOriginalImage];
-    return entity;
+    return [[HNKMockEntity alloc] initWithKey:key image:image];
 }
 
 - (HNKCacheFormat*)registerFormatWithSize:(CGSize)size
@@ -41,6 +43,33 @@
     format.size = size;
     [self registerFormat:format];
     return format;
+}
+
+@end
+
+@implementation HNKMockEntity {
+    NSString *_key;
+    UIImage *_image;
+}
+
+- (instancetype)initWithKey:(NSString*)key image:(UIImage*)image
+{
+    if (self = [super init])
+    {
+        _key = key;
+        _image = image;
+    }
+    return self;
+}
+
+- (NSString*)cacheKey
+{
+    return _key;
+}
+
+- (void)fetchImageWithSuccess:(void (^)(UIImage *))successBlock failure:(void (^)(NSError *))failureBlock
+{
+    successBlock(_image);
 }
 
 @end

@@ -252,8 +252,7 @@ extern NSString *const HNKExtendedFileAttributeKey;
 
 enum
 {
-    HNKErrorEntityMustReturnImageOrData = -200,
-    HNKErrorEntityCannotReadImageFromData = -201,
+    HNKErrorEntityMustReturnImage = -200,
 
     HNKErrorDiskCacheMiss = -300,
     HNKErrorDiskCacheCannotReadFromFile = -301,

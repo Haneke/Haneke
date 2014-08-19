@@ -411,7 +411,7 @@
     XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
 }
 
-- (void)testSetImageFromFileSuccessFailure_CannotReadImageFromData
+- (void)testSetImageFromFileSuccessFailure_InvalidData
 {
     NSString *path = [self fixturePathWithName:@"image.png"];
     NSData *data = [NSData data];
@@ -424,7 +424,7 @@
          } failure:^(NSError *error) {
             XCTAssertNotNil(error);
             XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
-            XCTAssertEqual(error.code, HNKErrorEntityCannotReadImageFromData, @"");
+            XCTAssertEqual(error.code, HNKErrorEntityMustReturnImage, @"");
             dispatch_semaphore_signal(semaphore);
         }];
     }];
@@ -440,7 +440,7 @@
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:image];
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:image];
     [_imageView hnk_setImageFromEntity:entity];
     
     XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
@@ -453,7 +453,7 @@
     NSString *key = @"test";
     HNKCacheFormat *format = _imageView.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:image];
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:image];
     
     [_imageView hnk_setImageFromEntity:entity];
     
@@ -468,7 +468,7 @@
     _imageView.image = previousImage;
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:image];
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:image];
     
     [_imageView hnk_setImageFromEntity:entity];
     
@@ -481,7 +481,7 @@
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     UIImage *placeholderImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:image];
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:image];
     
     [_imageView hnk_setImageFromEntity:entity placeholderImage:placeholderImage];
     
@@ -496,7 +496,7 @@
     NSString *key = @"test";
     HNKCacheFormat *format = _imageView.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:image];
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:image];
     
     [_imageView hnk_setImageFromEntity:entity placeholderImage:placeholderImage];
     
@@ -511,7 +511,7 @@
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     _imageView.image = previousImage;
     NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:image];
+    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:image];
     
     [_imageView hnk_setImageFromEntity:entity placeholderImage:nil];
     
