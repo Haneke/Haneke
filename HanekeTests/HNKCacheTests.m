@@ -485,7 +485,7 @@
 
 - (NSString*)cacheKey { return @"1"; };
 
-- (void)retrieveImageWithCompletionBlock:(void(^)(UIImage *image, NSError *error))completionBlock { }
+- (void)fetchImageWithCompletionBlock:(void(^)(UIImage *image, NSError *error))completionBlock { }
 
 
 @end

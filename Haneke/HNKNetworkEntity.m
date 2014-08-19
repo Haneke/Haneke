@@ -29,7 +29,7 @@
     return _URL.absoluteString;
 }
 
-- (void)retrieveImageWithCompletionBlock:(void(^)(UIImage *image, NSError *error))completionBlock
+- (void)fetchImageWithCompletionBlock:(void(^)(UIImage *image, NSError *error))completionBlock
 {
     _cancelled = NO;
     NSURLSession *session = [NSURLSession sharedSession];
