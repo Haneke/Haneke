@@ -11,16 +11,11 @@
 
 @implementation UIImage (Haneke)
 
-+ (UIImage*)hnk_decompressedImageWithData:(NSData*)data
++ (UIImage*)hnk_decompressedImageWithImage:(UIImage*)originalImage
 {
     // Ideally we would simply use kCGImageSourceShouldCacheImmediately but as of iOS 7.1 it locks on copyImageBlockSetJPEG which makes it dangerous.
     // const CGImageSourceRef sourceRef = CGImageSourceCreateWithData((__bridge CFDataRef)data, NULL);
     // CGImageRef imageRef = CGImageSourceCreateImageAtIndex(sourceRef, 0, (__bridge CFDictionaryRef)@{(id)kCGImageSourceShouldCacheImmediately: @YES});
-    
-    // We use UIImage instead of CGImageRef directly because UIImage takes orientation into account for us.
-    // We ignore scale because we want to draw the image in its original resolution.
-    UIImage *originalImage = [UIImage imageWithData:data];
-    if (!originalImage) return nil;
     
     CGImageRef originalImageRef = originalImage.CGImage;
     const CGBitmapInfo originalBitmapInfo = CGImageGetBitmapInfo(originalImageRef);
@@ -49,10 +44,10 @@
     }
     
     const CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    const CGSize imageSize = originalImage.size;
+    const CGSize pixelSize = CGSizeMake(originalImage.size.width * originalImage.scale, originalImage.size.height * originalImage.scale);
     const CGContextRef context = CGBitmapContextCreate(NULL,
-                                                       imageSize.width,
-                                                       imageSize.height,
+                                                       pixelSize.width,
+                                                       pixelSize.height,
                                                        CGImageGetBitsPerComponent(originalImageRef),
                                                        0,
                                                        colorSpace,
@@ -62,14 +57,14 @@
     UIImage *image;
     if (!context) return originalImage;
     
-    const CGRect imageRect = CGRectMake(0, 0, imageSize.width, imageSize.height);
+    const CGRect imageRect = CGRectMake(0, 0, pixelSize.width, pixelSize.height);
     UIGraphicsPushContext(context);
     
     // Flip coordinate system. See: http://stackoverflow.com/questions/506622/cgcontextdrawimage-draws-image-upside-down-when-passed-uiimage-cgimage
-    CGContextTranslateCTM(context, 0, imageSize.height);
+    CGContextTranslateCTM(context, 0, pixelSize.height);
     CGContextScaleCTM(context, 1.0, -1.0);
     
-    // drawInRect takes into account image orientation, unlike CGContextDrawImage.
+    // UIImage and drawInRect takes into account image orientation, unlike CGContextDrawImage.
     [originalImage drawInRect:imageRect];
     UIGraphicsPopContext();
     const CGImageRef decompressedImageRef = CGBitmapContextCreateImage(context);
