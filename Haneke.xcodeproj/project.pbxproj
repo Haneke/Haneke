@@ -38,6 +38,7 @@
 		87F47BAE18AC123C00F1FB48 /* UIImageView+HanekeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F47BAD18AC123C00F1FB48 /* UIImageView+HanekeTests.m */; };
 		87F47BB618AD436700F1FB48 /* UIImage+HanekeDemo.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F47BB518AD436700F1FB48 /* UIImage+HanekeDemo.m */; };
 		87F47BB918AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F47BB818AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m */; };
+		A0818B7119A3BD7A00F89CCF /* HNKSimpleEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = A0818B7019A3BD7A00F89CCF /* HNKSimpleEntity.m */; };
 		A0ADE32F197FE0C400B75057 /* HNKNetworkEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = A0ADE32E197FE0C400B75057 /* HNKNetworkEntity.m */; };
 		A0ADE3321980275C00B75057 /* UIImage+Haneke.m in Sources */ = {isa = PBXBuildFile; fileRef = A0ADE3311980275C00B75057 /* UIImage+Haneke.m */; };
 		A0ADE335198029AB00B75057 /* HNKDiskEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = A0ADE334198029AB00B75057 /* HNKDiskEntity.m */; };
@@ -110,6 +111,8 @@
 		87F47BB518AD436700F1FB48 /* UIImage+HanekeDemo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+HanekeDemo.m"; sourceTree = "<group>"; };
 		87F47BB718AD4D0400F1FB48 /* HNKDemoCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKDemoCollectionViewCell.h; sourceTree = "<group>"; };
 		87F47BB818AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKDemoCollectionViewCell.m; sourceTree = "<group>"; };
+		A0818B6F19A3BD7A00F89CCF /* HNKSimpleEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKSimpleEntity.h; sourceTree = "<group>"; };
+		A0818B7019A3BD7A00F89CCF /* HNKSimpleEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKSimpleEntity.m; sourceTree = "<group>"; };
 		A0ADE32D197FE0C400B75057 /* HNKNetworkEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKNetworkEntity.h; sourceTree = "<group>"; };
 		A0ADE32E197FE0C400B75057 /* HNKNetworkEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKNetworkEntity.m; sourceTree = "<group>"; };
 		A0ADE3301980275C00B75057 /* UIImage+Haneke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Haneke.h"; sourceTree = "<group>"; };
@@ -192,17 +195,14 @@
 		873E229418AA8C7C00E7919C /* Haneke */ = {
 			isa = PBXGroup;
 			children = (
+				A0818B7219A3BD7D00F89CCF /* Entities */,
 				874875DF18D1D33E00D02E03 /* Haneke.h */,
 				873E22B818AA8CC900E7919C /* HNKCache.h */,
 				873E22B918AA8CC900E7919C /* HNKCache.m */,
 				876E5F1E18AB762600B4EAF6 /* UIImageView+Haneke.h */,
 				876E5F1F18AB762600B4EAF6 /* UIImageView+Haneke.m */,
-				A0ADE32D197FE0C400B75057 /* HNKNetworkEntity.h */,
-				A0ADE32E197FE0C400B75057 /* HNKNetworkEntity.m */,
 				A0ADE3301980275C00B75057 /* UIImage+Haneke.h */,
 				A0ADE3311980275C00B75057 /* UIImage+Haneke.m */,
-				A0ADE333198029AB00B75057 /* HNKDiskEntity.h */,
-				A0ADE334198029AB00B75057 /* HNKDiskEntity.m */,
 			);
 			path = Haneke;
 			sourceTree = "<group>";
@@ -280,6 +280,19 @@
 				87260AB818CCDB7000D3680F /* XCTestCase+HanekeTestUtils.m */,
 			);
 			name = Utils;
+			sourceTree = "<group>";
+		};
+		A0818B7219A3BD7D00F89CCF /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				A0ADE333198029AB00B75057 /* HNKDiskEntity.h */,
+				A0ADE334198029AB00B75057 /* HNKDiskEntity.m */,
+				A0ADE32D197FE0C400B75057 /* HNKNetworkEntity.h */,
+				A0ADE32E197FE0C400B75057 /* HNKNetworkEntity.m */,
+				A0818B6F19A3BD7A00F89CCF /* HNKSimpleEntity.h */,
+				A0818B7019A3BD7A00F89CCF /* HNKSimpleEntity.m */,
+			);
+			name = Entities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -434,6 +447,7 @@
 				A0ADE3321980275C00B75057 /* UIImage+Haneke.m in Sources */,
 				876E5F2018AB762600B4EAF6 /* UIImageView+Haneke.m in Sources */,
 				A0ADE32F197FE0C400B75057 /* HNKNetworkEntity.m in Sources */,
+				A0818B7119A3BD7A00F89CCF /* HNKSimpleEntity.m in Sources */,
 				A0ADE335198029AB00B75057 /* HNKDiskEntity.m in Sources */,
 				873E22BA18AA8CC900E7919C /* HNKCache.m in Sources */,
 				87A6907F18B67B4A00F97E13 /* GTMCodeCoverageApp.m in Sources */,

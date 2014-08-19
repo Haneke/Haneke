@@ -19,15 +19,10 @@
 //
 
 #import "UIImageView+Haneke.h"
+#import "HNKDiskEntity.h"
+#import "HNKSimpleEntity.h"
+#import "HNKNetworkEntity.h"
 #import <objc/runtime.h>
-
-@interface HNKImageViewEntity : NSObject<HNKCacheEntity>
-
-+ (HNKImageViewEntity*)entityWithImage:(UIImage*)image key:(NSString*)key;
-
-+ (HNKImageViewEntity*)entityWithData:(NSData*)data key:(NSString*)key;
-
-@end
 
 static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 {
@@ -77,29 +72,9 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
             return;
         }
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            if ([self hnk_shouldCancelRequestForKey:path formatName:formatName]) return;
-            
-            NSError *error = nil;
-            NSData *originalData = [NSData dataWithContentsOfFile:path options:kNilOptions error:&error];
-            if (!originalData)
-            {
-                HanekeLog(@"Request %@ failed with error %@", path, error);
-                dispatch_sync(dispatch_get_main_queue(), ^{
-                    [self hnk_failWithError:error failure:failureBlock];
-                });
-                return;
-            }
-
-            if ([self hnk_shouldCancelRequestForKey:path formatName:formatName]) return;
-            
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                if ([self hnk_shouldCancelRequestForKey:path formatName:formatName]) return;
-                
-                HNKImageViewEntity *entity = [HNKImageViewEntity entityWithData:originalData key:path];
-                [self hnk_retrieveImageFromEntity:entity success:successBlock failure:failureBlock];
-            });
-        });
+        id<HNKCacheEntity> entity = [[HNKDiskEntity alloc] initWithPath:path];
+        self.hnk_entity = entity;
+        [self hnk_retrieveImageFromEntity:entity success:successBlock failure:failureBlock];
     }];
     animated = YES;
     if (!didSetImage && placeholderImage != nil)
@@ -140,51 +115,10 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
             [self hnk_setImage:image animated:animated success:successBlock];
             return;
         }
-
-        NSURLSession *session = [NSURLSession sharedSession];
-        NSURLSessionDataTask *task = [session dataTaskWithURL:url completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
-        {
-            if ([self hnk_shouldCancelRequestForKey:absoluteString formatName:formatName]) return;
-            
-            if (error)
-            {
-                if (error.code == NSURLErrorCancelled) return;
-                
-                HanekeLog(@"Request %@ failed with error %@", absoluteString, error);
-                dispatch_async(dispatch_get_main_queue(), ^
-                {
-                    [self hnk_failWithError:error failure:failureBlock];
-                });
-                return;
-            }
-            const long long expectedContentLength = response.expectedContentLength;
-            if (expectedContentLength > -1)
-            {
-                const NSUInteger dataLength = data.length;
-                if (dataLength < expectedContentLength)
-                {
-                    NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Request %@ received %ld out of %ld bytes", @""), absoluteString, (long)dataLength, (long)expectedContentLength];
-                    HanekeLog(@"%@", errorDescription);
-                    NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription , NSURLErrorKey : url};
-                    NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorImageFromURLMissingData userInfo:userInfo];
-                    dispatch_async(dispatch_get_main_queue(), ^
-                    {
-                        [self hnk_failWithError:error failure:failureBlock];
-                    });
-                    return;
-                }
-            }
-            
-            dispatch_async(dispatch_get_main_queue(), ^
-            {
-                HNKImageViewEntity *entity = [HNKImageViewEntity entityWithData:data key:absoluteString];
-                [self hnk_retrieveImageFromEntity:entity success:successBlock failure:failureBlock];
-                self.hnk_URLSessionDataTask = nil;
-            });
-            
-        }];
-        self.hnk_URLSessionDataTask = task;
-        [task resume];
+        
+        id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:url];
+        self.hnk_entity = entity;
+        [self hnk_retrieveImageFromEntity:entity success:successBlock failure:failureBlock];
     }];
     animated = YES;
     if (!didSetImage && placeholderImage != nil)
@@ -210,7 +144,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 - (void)hnk_setImage:(UIImage*)originalImage withKey:(NSString*)key placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    HNKImageViewEntity *entity = [HNKImageViewEntity entityWithImage:originalImage key:key];
+    id<HNKCacheEntity> entity = [[HNKSimpleEntity alloc] initWithKey:key image:originalImage];
     [self hnk_setImageFromEntity:entity placeholderImage:placeholderImage success:successBlock failure:failureBlock];
 }
 
@@ -278,8 +212,11 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 - (void)hnk_cancelImageRequest
 {
-    [self.hnk_URLSessionDataTask cancel];
-    self.hnk_URLSessionDataTask = nil;
+    if ([self.hnk_entity respondsToSelector:@selector(cancelFetch)])
+    {
+        [self.hnk_entity cancelFetch];
+    }
+    self.hnk_entity = nil;
     self.hnk_requestedCacheKey = nil;
 }
 
@@ -307,7 +244,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 - (void)hnk_failWithError:(NSError*)error failure:(void (^)(NSError *error))failureBlock
 {
-    self.hnk_URLSessionDataTask = nil;
+    self.hnk_entity = nil;
     self.hnk_requestedCacheKey = nil;
     
     if (failureBlock) failureBlock(error);
@@ -316,7 +253,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 - (void)hnk_setImage:(UIImage*)image animated:(BOOL)animated success:(void (^)(UIImage *image))successBlock
 {
-    self.hnk_URLSessionDataTask = nil;
+    self.hnk_entity = nil;
     self.hnk_requestedCacheKey = nil;
     
     if (successBlock)
@@ -375,48 +312,14 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     objc_setAssociatedObject(self, @selector(hnk_requestedCacheKey), cacheKey, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (NSURLSessionDataTask*)hnk_URLSessionDataTask
+- (id<HNKCacheEntity>)hnk_entity
 {
-    return (NSURLSessionDataTask *)objc_getAssociatedObject(self, @selector(hnk_URLSessionDataTask));
+    return (id<HNKCacheEntity>)objc_getAssociatedObject(self, @selector(hnk_entity));
 }
 
-- (void)setHnk_URLSessionDataTask:(NSURLSessionDataTask*)URLSessionDataTask
+- (void)setHnk_entity:(id<HNKCacheEntity>)entity
 {
-    objc_setAssociatedObject(self, @selector(hnk_URLSessionDataTask), URLSessionDataTask, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-@end
-
-@implementation HNKImageViewEntity {
-    NSString *_key;
-    UIImage *_image;
-    NSData *_data;
-}
-
-+ (HNKImageViewEntity*)entityWithImage:(UIImage*)image key:(NSString*)key
-{
-    HNKImageViewEntity *entity = [[HNKImageViewEntity alloc] init];
-    entity->_key = key.copy;
-    entity->_image = image;
-    return entity;
-}
-
-+ (HNKImageViewEntity*)entityWithData:(NSData*)data key:(NSString*)key
-{
-    HNKImageViewEntity *entity = [[HNKImageViewEntity alloc] init];
-    entity->_key = key.copy;
-    entity->_image = [UIImage imageWithData:data];
-    return entity;
-}
-
-- (NSString*)cacheKey
-{
-    return _key;
-}
-
--(void)fetchImageWithSuccess:(void (^)(UIImage *))successBlock failure:(void (^)(NSError *))failureBlock
-{
-    successBlock(_image);
+    objc_setAssociatedObject(self, @selector(hnk_entity), entity, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 @end

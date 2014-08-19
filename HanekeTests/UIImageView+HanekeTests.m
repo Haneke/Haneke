@@ -28,7 +28,7 @@
 @interface UIImageView(HanekeTest)
 
 @property (nonatomic, strong) NSString *hnk_requestedCacheKey;
-@property (nonatomic, strong) NSString *hnk_URLSessionDataTask;
+@property (nonatomic, strong) NSString *hnk_entity;
 
 @end
 
@@ -555,7 +555,7 @@
     [_imageView hnk_setImageFromURL:url];
     
     XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
-    XCTAssertNil(_imageView.hnk_URLSessionDataTask, @"");
+    XCTAssertNil(_imageView.hnk_entity, @"");
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(image, result, @"");
 }
@@ -572,7 +572,7 @@
     [_imageView hnk_setImageFromURL:url placeholderImage:placeholderImage];
     
     XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
-    XCTAssertNil(_imageView.hnk_URLSessionDataTask, @"");
+    XCTAssertNil(_imageView.hnk_entity, @"");
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(result, image, @"");
 }
@@ -642,7 +642,7 @@
     }];
     
     XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
-    XCTAssertNil(_imageView.hnk_URLSessionDataTask, @"");
+    XCTAssertNil(_imageView.hnk_entity, @"");
     XCTAssertNil(_imageView.image, @"");
 }
 
@@ -659,7 +659,7 @@
     }];
     
     XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
-    XCTAssertNil(_imageView.hnk_URLSessionDataTask, @"");
+    XCTAssertNil(_imageView.hnk_entity, @"");
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(result, image, @"");
 }
@@ -744,7 +744,7 @@
     [_imageView hnk_cancelImageRequest];
 
     XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
-    XCTAssertNil(_imageView.hnk_URLSessionDataTask, @"");
+    XCTAssertNil(_imageView.hnk_entity, @"");
 }
 
 - (void)testCancelImageRequest_AfterRequest
@@ -755,7 +755,7 @@
     [_imageView hnk_cancelImageRequest];
 
     XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
-    XCTAssertNil(_imageView.hnk_URLSessionDataTask, @"");
+    XCTAssertNil(_imageView.hnk_entity, @"");
 
 }
 

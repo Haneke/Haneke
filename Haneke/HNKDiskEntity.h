@@ -7,7 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "HNKCache.h"
 
-@interface HNKDiskEntity : NSObject
+@interface HNKDiskEntity : NSObject<HNKCacheEntity>
+
+- (instancetype)initWithPath:(NSString*)path;
 
 @end

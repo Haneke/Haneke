@@ -63,8 +63,9 @@
             }
         }
         
+        UIImage *image = [UIImage imageWithData:data];
+        
         dispatch_async(dispatch_get_main_queue(), ^{
-            UIImage *image = [UIImage imageWithData:data];
             successBlock(image);
         });
         
@@ -72,11 +73,10 @@
     [_dataTask resume];
 }
 
-- (void)cancelRetrieve
+- (void)cancelFetch
 {
     [_dataTask cancel];
     _cancelled = YES;
 }
-
 
 @end

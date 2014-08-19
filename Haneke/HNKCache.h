@@ -134,18 +134,7 @@
 
 @optional
 
-- (void)cancelRetreive;
-
-/**
- Return the original image associated with the entity, or nil to use cacheOriginalData instead. The cache will always call this method in the main queue.
- @warning If the entity doesn't implement this method it must implement `cacheOriginalData`.
- */
-@property (nonatomic, readonly) UIImage *cacheOriginalImage;
-/**
- Return the original data associated with the entity. The cache will always call this method in the main queue.
- */
-@property (nonatomic, readonly) NSData *cacheOriginalData;
-
+- (void)cancelFetch;
 
 @end
 
