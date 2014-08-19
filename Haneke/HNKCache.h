@@ -130,7 +130,7 @@
  */
 @property (nonatomic, readonly) NSString *cacheKey;
 
-- (void)fetchImageWithCompletionBlock:(void(^)(UIImage *image, NSError *error))completionBlock;
+- (void)fetchImageWithSuccess:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
 
 @optional
 

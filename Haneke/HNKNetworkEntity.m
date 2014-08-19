@@ -7,7 +7,6 @@
 //
 
 #import "HNKNetworkEntity.h"
-#import "UIImage+Haneke.h"
 
 @implementation HNKNetworkEntity {
     NSURL *_URL;
@@ -29,7 +28,7 @@
     return _URL.absoluteString;
 }
 
-- (void)fetchImageWithCompletionBlock:(void(^)(UIImage *image, NSError *error))completionBlock
+- (void)fetchImageWithSuccess:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
 {
     _cancelled = NO;
     NSURLSession *session = [NSURLSession sharedSession];
@@ -43,7 +42,7 @@
             HanekeLog(@"Request %@ failed with error %@", absoluteString, error);
             dispatch_async(dispatch_get_main_queue(), ^
                            {
-                               completionBlock(nil, error);
+                               failureBlock(error);
                            });
             return;
         }
@@ -58,15 +57,15 @@
                 NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription , NSURLErrorKey : _URL};
                 NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKNetworkEntityMissingData userInfo:userInfo];
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    completionBlock(nil, error);
+                    failureBlock(error);
                 });
                 return;
             }
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            UIImage *image = [UIImage hnk_decompressedImageWithData:data];
-            completionBlock(image, nil);
+            UIImage *image = [UIImage imageWithData:data];
+            successBlock(image);
         });
         
     }];

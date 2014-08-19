@@ -219,9 +219,10 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
         if (imageData)
         {
             HanekeLog(@"Disk cache hit: %@/%@", formatName, key.lastPathComponent);
-            UIImage *image = [UIImage hnk_decompressedImageWithData:imageData];
+            UIImage *image = [UIImage imageWithData:imageData];
             if (image)
             {
+                image = [UIImage hnk_decompressedImageWithImage:image];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self setMemoryImage:image forKey:key format:format];
                     completionBlock(image, nil);
@@ -337,43 +338,27 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
 
 - (void)retrieveImageFromEntity:(id<HNKCacheEntity>)entity completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock;
 {
-    __block UIImage *image = nil;
-    hnk_dispatch_sync_main_queue_if_needed(^{
-        image = [entity respondsToSelector:@selector(cacheOriginalImage)] ? entity.cacheOriginalImage : nil;
-    });
-    if (image)
-    {
-        completionBlock(image, nil);
-        return;
-    }
-    
-    __block NSData *data = nil;
-    hnk_dispatch_sync_main_queue_if_needed(^{
-        data = [entity respondsToSelector:@selector(cacheOriginalData)] ? entity.cacheOriginalData : nil;
-    });
-    if (!data)
-    {
-        NSString *key = entity.cacheKey;
-        NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Invalid entity %@: Must return non-nil object in either cacheOriginalImage or cacheOriginalData", @""), key.lastPathComponent];
-        HanekeLog(@"%@", errorDescription);
-        NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
-        NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorEntityMustReturnImageOrData userInfo:userInfo];
-        completionBlock(nil, error);
-        return;
-    }
-    
-    image = [UIImage hnk_decompressedImageWithData:data];
-    if (image)
-    {
-        completionBlock(image, nil);
-    }
-
-    NSString *key = entity.cacheKey;
-    NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Invalid entity %@: Cannot read image from data", @""), key.lastPathComponent];
-    HanekeLog(@"%@", errorDescription);
-    NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
-    NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorEntityCannotReadImageFromData userInfo:userInfo];
-    completionBlock(nil, error);
+    hnk_dispatch_sync_main_queue_if_needed((^{
+        [entity fetchImageWithSuccess:^(UIImage *image) {
+            if (image)
+            {
+                image = [UIImage hnk_decompressedImageWithImage:image];
+                completionBlock(image, nil);
+            }
+            else
+            {
+                NSString *key = entity.cacheKey;
+                NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Invalid entity %@: Must return non-nil in success block", @""), key.lastPathComponent];
+                HanekeLog(@"%@", errorDescription);
+                NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
+                NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorEntityMustReturnImageOrData userInfo:userInfo];
+                completionBlock(nil, error);
+                return;
+            }
+        } failure:^(NSError *error) {
+            completionBlock(nil, error);
+        }];
+    }));
 }
 
 - (UIImage*)imageFromOriginal:(UIImage*)original key:(NSString*)key format:(HNKCacheFormat*)format
@@ -494,8 +479,10 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
         NSData *data = [NSData dataWithContentsOfFile:path];
         if (!data) return;
 
-        UIImage *image = [UIImage hnk_decompressedImageWithData:data];
+        UIImage *image = [UIImage imageWithData:data];
         if (!image) return;
+        
+        image = [UIImage hnk_decompressedImageWithImage:image];
         
         block(key, image);
     }];
