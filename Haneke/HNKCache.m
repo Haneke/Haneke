@@ -222,7 +222,7 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
             UIImage *image = [UIImage imageWithData:imageData];
             if (image)
             {
-                image = [UIImage hnk_decompressedImageWithImage:image];
+                image = [image hnk_decompressedImage];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self setMemoryImage:image forKey:key format:format];
                     completionBlock(image, nil);
@@ -367,7 +367,7 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
     if (format.postResizeBlock) image = format.postResizeBlock(key, image);
     if (image == original)
     {
-        image = [UIImage hnk_decompressedImageWithImage:image];
+        image = [image hnk_decompressedImage];
     }
     return image;
 }
@@ -485,7 +485,7 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
         UIImage *image = [UIImage imageWithData:data];
         if (!image) return;
         
-        image = [UIImage hnk_decompressedImageWithImage:image];
+        image = [image hnk_decompressedImage];
         
         block(key, image);
     }];

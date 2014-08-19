@@ -11,13 +11,13 @@
 
 @implementation UIImage (Haneke)
 
-+ (UIImage*)hnk_decompressedImageWithImage:(UIImage*)originalImage
+- (UIImage *)hnk_decompressedImage;
 {
     // Ideally we would simply use kCGImageSourceShouldCacheImmediately but as of iOS 7.1 it locks on copyImageBlockSetJPEG which makes it dangerous.
     // const CGImageSourceRef sourceRef = CGImageSourceCreateWithData((__bridge CFDataRef)data, NULL);
     // CGImageRef imageRef = CGImageSourceCreateImageAtIndex(sourceRef, 0, (__bridge CFDictionaryRef)@{(id)kCGImageSourceShouldCacheImmediately: @YES});
     
-    CGImageRef originalImageRef = originalImage.CGImage;
+    CGImageRef originalImageRef = self.CGImage;
     const CGBitmapInfo originalBitmapInfo = CGImageGetBitmapInfo(originalImageRef);
     
     // See: http://stackoverflow.com/questions/23723564/which-cgimagealphainfo-should-we-use
@@ -38,13 +38,13 @@
         case kCGImageAlphaLast:
         case kCGImageAlphaFirst:
         { // Unsupported
-            return originalImage;
+            return self;
         }
             break;
     }
     
     const CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    const CGSize pixelSize = CGSizeMake(originalImage.size.width * originalImage.scale, originalImage.size.height * originalImage.scale);
+    const CGSize pixelSize = CGSizeMake(self.size.width * self.scale, self.size.height * self.scale);
     const CGContextRef context = CGBitmapContextCreate(NULL,
                                                        pixelSize.width,
                                                        pixelSize.height,
@@ -55,7 +55,7 @@
     CGColorSpaceRelease(colorSpace);
     
     UIImage *image;
-    if (!context) return originalImage;
+    if (!context) return self;
     
     const CGRect imageRect = CGRectMake(0, 0, pixelSize.width, pixelSize.height);
     UIGraphicsPushContext(context);
@@ -65,7 +65,7 @@
     CGContextScaleCTM(context, 1.0, -1.0);
     
     // UIImage and drawInRect takes into account image orientation, unlike CGContextDrawImage.
-    [originalImage drawInRect:imageRect];
+    [self drawInRect:imageRect];
     UIGraphicsPopContext();
     const CGImageRef decompressedImageRef = CGBitmapContextCreateImage(context);
     CGContextRelease(context);

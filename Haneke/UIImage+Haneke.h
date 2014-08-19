@@ -10,6 +10,6 @@
 
 @interface UIImage (Haneke)
 
-+ (UIImage *)hnk_decompressedImageWithImage:(UIImage*)image;
+- (UIImage *)hnk_decompressedImage;
 
 @end
