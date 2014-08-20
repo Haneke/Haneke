@@ -149,7 +149,7 @@
     XCTAssertEqualObjects(_imageView.image, previousImage, @"");
 }
 
-- (void)testSetImageWithKeyplaceholder_MemoryCacheMiss
+- (void)testSetImageWithKeyPlaceholder_MemoryCacheMiss
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
@@ -161,7 +161,7 @@
     XCTAssertEqualObjects(_imageView.image, placeholder, @"");
 }
 
-- (void)testSetImageWithKeyplaceholder_MemoryCacheHit
+- (void)testSetImageWithKeyPlaceholder_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
@@ -176,7 +176,7 @@
     XCTAssertEqualObjects(image, result, @"");
 }
 
-- (void)testSetImageWithKeyplaceholder_ImageSet_NilPlaceholder_MemoryCacheMiss
+- (void)testSetImageWithKeyPlaceholder_ImageSet_NilPlaceholder_MemoryCacheMiss
 {
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
@@ -197,11 +197,15 @@
     NSString *key = self.name;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
     
+    __block BOOL success = NO;
     [_imageView hnk_setImage:image withKey:key success:^(UIImage *result) {
         XCTAssertEqualObjects(result, image, @"");
+        success = YES;
     } failure:^(NSError *error) {
         XCTFail(@"");
     }];
+    
+    XCTAssertTrue(success, @"");
     XCTAssertNil(_imageView.hnk_entity, @"");
     XCTAssertNil(_imageView.image, @"");
 }
@@ -310,7 +314,7 @@
     XCTAssertEqualObjects(result, image, @"");
 }
 
-- (void)testSetImageFromFileplaceholder_MemoryCacheMiss
+- (void)testSetImageFromFilePlaceholder_MemoryCacheMiss
 {
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *path = [self fixturePathWithName:@"image.png"];
@@ -323,7 +327,7 @@
     XCTAssertEqualObjects(result, placeholder, @"");
 }
 
-- (void)testSetImageFromFileplaceholder_ImageSet_NilPlaceholder_MemoryCacheMiss
+- (void)testSetImageFromFilePlaceholder_ImageSet_NilPlaceholder_MemoryCacheMiss
 {
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     _imageView.image = previousImage;
@@ -415,7 +419,7 @@
 - (void)testSetImageFromFileSuccessFailure_InvalidData
 {
     NSString *path = [self fixturePathWithName:@"image.png"];
-    NSData *data = [NSData data];
+    NSData *data = [@"Hello" dataUsingEncoding:NSUTF8StringEncoding];
     [data writeToFile:path atomically:YES];
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
@@ -563,7 +567,7 @@
     XCTAssertEqualObjects(image, result, @"");
 }
 
-- (void)testSetImageFromURLplaceholder_MemoryCacheHit
+- (void)testSetImageFromURLPlaceholder_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
@@ -579,7 +583,7 @@
     XCTAssertEqualObjects(result, image, @"");
 }
 
-- (void)testSetImageFromURLplaceholder_MemoryCacheMiss
+- (void)testSetImageFromURLPlaceholder_MemoryCacheMiss
 {
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = @"http://imgs.xkcd.com/comics/election.png";
@@ -593,7 +597,7 @@
     XCTAssertEqualObjects(result, placeholder, @"");
 }
 
-- (void)testSetImageFromURLplaceholder_ImageSet_NilPlaceholder_MemoryCacheMiss
+- (void)testSetImageFromURLPlaceholder_ImageSet_NilPlaceholder_MemoryCacheMiss
 {
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     _imageView.image = previousImage;
