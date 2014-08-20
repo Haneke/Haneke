@@ -741,7 +741,7 @@
      }];
 }
 
-#pragma mark cancelImageRequest
+#pragma mark cancelSetImage
 
 - (void)testCancelSetImage_NoRequest
 {
@@ -753,12 +753,16 @@
 - (void)testCancelSetImage_After
 {
     NSURL *url = [NSURL URLWithString:@"http://imgs.xkcd.com/comics/election.png"];
-    [_imageView hnk_setImageFromURL:url];
+    [_imageView hnk_setImageFromURL:url success:^(UIImage *image) {
+        XCTFail(@"Unexpected success");
+    } failure:^(NSError *error) {
+        XCTFail(@"Unexpected success");
+    }];
     
     [_imageView hnk_cancelSetImage];
 
     XCTAssertNil(_imageView.hnk_entity, @"");
-
+    [self hnk_waitFor:0.1];
 }
 
 #pragma mark Utils
