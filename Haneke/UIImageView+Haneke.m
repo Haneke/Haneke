@@ -29,90 +29,90 @@
 
 - (void)hnk_setImageFromFile:(NSString*)path
 {
-    [self hnk_setImageFromFile:path placeholderImage:nil success:nil failure:nil];
+    [self hnk_setImageFromFile:path placeholder:nil success:nil failure:nil];
 }
 
-- (void)hnk_setImageFromFile:(NSString*)path placeholderImage:(UIImage *)placeholderImage
+- (void)hnk_setImageFromFile:(NSString*)path placeholder:(UIImage *)placeholder
 {
-    [self hnk_setImageFromFile:path placeholderImage:placeholderImage success:nil failure:nil];
+    [self hnk_setImageFromFile:path placeholder:placeholder success:nil failure:nil];
 }
 
 - (void)hnk_setImageFromFile:(NSString*)path success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *))failureBlock
 {
-    [self hnk_setImageFromFile:path placeholderImage:nil success:successBlock failure:failureBlock];
+    [self hnk_setImageFromFile:path placeholder:nil success:successBlock failure:failureBlock];
 }
 
-- (void)hnk_setImageFromFile:(NSString*)path placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (void)hnk_setImageFromFile:(NSString*)path placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     id<HNKCacheEntity> entity = [[HNKDiskEntity alloc] initWithPath:path];
-    [self hnk_setImageFromEntity:entity placeholderImage:placeholderImage success:successBlock failure:failureBlock];
+    [self hnk_setImageFromEntity:entity placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
 - (void)hnk_setImageFromURL:(NSURL*)url
 {
-    [self hnk_setImageFromURL:url placeholderImage:nil success:nil failure:nil];
+    [self hnk_setImageFromURL:url placeholder:nil success:nil failure:nil];
 }
 
-- (void)hnk_setImageFromURL:(NSURL*)url placeholderImage:(UIImage *)placeholderImage
+- (void)hnk_setImageFromURL:(NSURL*)url placeholder:(UIImage *)placeholder
 {
-    [self hnk_setImageFromURL:url placeholderImage:placeholderImage success:nil failure:nil];
+    [self hnk_setImageFromURL:url placeholder:placeholder success:nil failure:nil];
 }
 
 - (void)hnk_setImageFromURL:(NSURL*)url success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    [self hnk_setImageFromURL:url placeholderImage:nil success:successBlock failure:failureBlock];
+    [self hnk_setImageFromURL:url placeholder:nil success:successBlock failure:failureBlock];
 }
 
-- (void)hnk_setImageFromURL:(NSURL*)url placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (void)hnk_setImageFromURL:(NSURL*)url placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:url];
-    [self hnk_setImageFromEntity:entity placeholderImage:placeholderImage success:successBlock failure:failureBlock];
+    [self hnk_setImageFromEntity:entity placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
 - (void)hnk_setImage:(UIImage*)originalImage withKey:(NSString*)key
 {
-    [self hnk_setImage:originalImage withKey:key placeholderImage:nil success:nil failure:nil];
+    [self hnk_setImage:originalImage withKey:key placeholder:nil success:nil failure:nil];
 }
 
-- (void)hnk_setImage:(UIImage*)originalImage withKey:(NSString*)key placeholderImage:(UIImage*)placeholderImage
+- (void)hnk_setImage:(UIImage*)originalImage withKey:(NSString*)key placeholder:(UIImage*)placeholder
 {
-    [self hnk_setImage:originalImage withKey:key placeholderImage:placeholderImage success:nil failure:nil];
+    [self hnk_setImage:originalImage withKey:key placeholder:placeholder success:nil failure:nil];
 }
 
 - (void)hnk_setImage:(UIImage*)originalImage withKey:(NSString*)key success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    [self hnk_setImage:originalImage withKey:key placeholderImage:nil success:successBlock failure:failureBlock];
+    [self hnk_setImage:originalImage withKey:key placeholder:nil success:successBlock failure:failureBlock];
 }
 
-- (void)hnk_setImage:(UIImage*)originalImage withKey:(NSString*)key placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (void)hnk_setImage:(UIImage*)originalImage withKey:(NSString*)key placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     id<HNKCacheEntity> entity = [[HNKSimpleEntity alloc] initWithKey:key image:originalImage];
-    [self hnk_setImageFromEntity:entity placeholderImage:placeholderImage success:successBlock failure:failureBlock];
+    [self hnk_setImageFromEntity:entity placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
 - (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity
 {
-    [self hnk_setImageFromEntity:entity placeholderImage:nil success:nil failure:nil];
+    [self hnk_setImageFromEntity:entity placeholder:nil success:nil failure:nil];
 }
 
-- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity placeholderImage:(UIImage*)placeholderImage
+- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity placeholder:(UIImage*)placeholder
 {
-    [self hnk_setImageFromEntity:entity placeholderImage:placeholderImage success:nil failure:nil];
+    [self hnk_setImageFromEntity:entity placeholder:placeholder success:nil failure:nil];
 }
 
 - (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    [self hnk_setImageFromEntity:entity placeholderImage:nil success:successBlock failure:failureBlock];
+    [self hnk_setImageFromEntity:entity placeholder:nil success:successBlock failure:failureBlock];
 }
 
-- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     [self hnk_cancelSetImage];
     self.hnk_entity = entity;
     const BOOL didSetImage = [self hnk_retrieveImageFromEntity:entity success:successBlock failure:failureBlock];
-    if (!didSetImage && placeholderImage != nil)
+    if (!didSetImage && placeholder != nil)
     {
-        self.image = placeholderImage;
+        self.image = placeholder;
     }
 }
 

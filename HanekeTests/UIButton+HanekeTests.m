@@ -99,6 +99,29 @@
     [self _testSetImageWithKey_MemoryCacheHit_state:UIControlStateSelected];
 }
 
+- (void)testSetImageWithKey_MemoryCacheMiss
+{
+    NSString *key = self.name;
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
+    
+    [_sut hnk_setImage:image withKey:key forState:UIControlStateNormal];
+    
+    XCTAssertEqualObjects(_sut.hnk_imageEntity.cacheKey, key,  @"");
+    XCTAssertNil([_sut imageForState:UIControlStateNormal], @"");
+}
+
+- (void)testSetImageWithKeyplaceholder_MemoryCacheMiss
+{
+    NSString *key = self.name;
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 20)];
+    UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
+    
+    [_sut hnk_setImage:image withKey:key forState:UIControlStateNormal placeholder:placeholder];
+    
+    XCTAssertEqualObjects(_sut.hnk_imageEntity.cacheKey, key,  @"");
+    XCTAssertEqualObjects([_sut imageForState:UIControlStateNormal], placeholder, @"");
+}
+
 #pragma mark setBackgroundImageWithKey
 
 - (void)testSetBackgroundImageWithKey_MemoryCacheHit_UIControlStateNormal

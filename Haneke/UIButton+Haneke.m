@@ -31,70 +31,70 @@
 
 - (void)hnk_setImageFromURL:(NSURL*)URL forState:(UIControlState)state
 {
-    [self hnk_setImageFromURL:URL forState:state placeholderImage:nil];
+    [self hnk_setImageFromURL:URL forState:state placeholder:nil];
 }
 
-- (void)hnk_setImageFromURL:(NSURL*)URL forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage
+- (void)hnk_setImageFromURL:(NSURL*)URL forState:(UIControlState)state placeholder:(UIImage*)placeholder
 {
-    [self hnk_setImageFromURL:URL forState:state placeholderImage:placeholderImage success:nil failure:nil];
+    [self hnk_setImageFromURL:URL forState:state placeholder:placeholder success:nil failure:nil];
 }
 
-- (void)hnk_setImageFromURL:(NSURL*)URL forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (void)hnk_setImageFromURL:(NSURL*)URL forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
-    [self hnk_setImageFromEntity:entity forState:state placeholderImage:placeholderImage success:successBlock failure:failureBlock];
+    [self hnk_setImageFromEntity:entity forState:state placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
 - (void)hnk_setImageFromFile:(NSString*)path forState:(UIControlState)state
 {
-    [self hnk_setImageFromFile:path forState:state placeholderImage:nil];
+    [self hnk_setImageFromFile:path forState:state placeholder:nil];
 }
 
-- (void)hnk_setImageFromFile:(NSString*)path forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage
+- (void)hnk_setImageFromFile:(NSString*)path forState:(UIControlState)state placeholder:(UIImage*)placeholder
 {
-    [self hnk_setImageFromFile:path forState:state placeholderImage:placeholderImage success:nil failure:nil];
+    [self hnk_setImageFromFile:path forState:state placeholder:placeholder success:nil failure:nil];
 }
 
-- (void)hnk_setImageFromFile:(NSString*)path forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (void)hnk_setImageFromFile:(NSString*)path forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     id<HNKCacheEntity> entity = [[HNKDiskEntity alloc] initWithPath:path];
-    [self hnk_setImageFromEntity:entity forState:state placeholderImage:placeholderImage success:successBlock failure:failureBlock];
+    [self hnk_setImageFromEntity:entity forState:state placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
 - (void)hnk_setImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state
 {
-    [self hnk_setImage:image withKey:key forState:state placeholderImage:nil];
+    [self hnk_setImage:image withKey:key forState:state placeholder:nil];
 }
 
-- (void)hnk_setImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage
+- (void)hnk_setImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state placeholder:(UIImage*)placeholder
 {
-    [self hnk_setImage:image withKey:key forState:state placeholderImage:placeholderImage success:nil failure:nil];
+    [self hnk_setImage:image withKey:key forState:state placeholder:placeholder success:nil failure:nil];
 }
 
-- (void)hnk_setImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (void)hnk_setImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     id<HNKCacheEntity> entity = [[HNKSimpleEntity alloc] initWithKey:key image:image];
-    [self hnk_setImageFromEntity:entity forState:state placeholderImage:placeholderImage success:successBlock failure:failureBlock];
+    [self hnk_setImageFromEntity:entity forState:state placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
 - (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity forState:(UIControlState)state
 {
-    [self hnk_setImageFromEntity:entity forState:state placeholderImage:nil];
+    [self hnk_setImageFromEntity:entity forState:state placeholder:nil];
 }
 
-- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage
+- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity forState:(UIControlState)state placeholder:(UIImage*)placeholder
 {
-    [self hnk_setImageFromEntity:entity forState:state placeholderImage:placeholderImage success:nil failure:nil];
+    [self hnk_setImageFromEntity:entity forState:state placeholder:placeholder success:nil failure:nil];
 }
 
-- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     [self hnk_cancelSetImage];
     self.hnk_imageEntity = entity;
     const BOOL didSetImage = [self hnk_fetchImageFromEntity:entity forState:state success:successBlock failure:failureBlock];
-    if (!didSetImage && placeholderImage != nil)
+    if (!didSetImage && placeholder != nil)
     {
-        [self setImage:placeholderImage forState:state];
+        [self setImage:placeholder forState:state];
     }
 }
 
@@ -200,60 +200,60 @@
 
 - (void)hnk_setBackgroundImageFromURL:(NSURL*)URL forState:(UIControlState)state
 {
-    [self hnk_setBackgroundImageFromURL:URL forState:state placeholderImage:nil];
+    [self hnk_setBackgroundImageFromURL:URL forState:state placeholder:nil];
 }
 
-- (void)hnk_setBackgroundImageFromURL:(NSURL*)URL forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage
+- (void)hnk_setBackgroundImageFromURL:(NSURL*)URL forState:(UIControlState)state placeholder:(UIImage*)placeholder
 {
-    [self hnk_setBackgroundImageFromURL:URL forState:state placeholderImage:placeholderImage success:nil failure:nil];
+    [self hnk_setBackgroundImageFromURL:URL forState:state placeholder:placeholder success:nil failure:nil];
 }
 
-- (void)hnk_setBackgroundImageFromURL:(NSURL*)URL forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (void)hnk_setBackgroundImageFromURL:(NSURL*)URL forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
-    [self hnk_setBackgroundImageFromEntity:entity forState:state placeholderImage:placeholderImage success:successBlock failure:failureBlock];
+    [self hnk_setBackgroundImageFromEntity:entity forState:state placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
 - (void)hnk_setBackgroundImageFromFile:(NSString*)path forState:(UIControlState)state
 {
-    [self hnk_setBackgroundImageFromFile:path forState:state placeholderImage:nil];
+    [self hnk_setBackgroundImageFromFile:path forState:state placeholder:nil];
 }
 
-- (void)hnk_setBackgroundImageFromFile:(NSString*)path forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage
+- (void)hnk_setBackgroundImageFromFile:(NSString*)path forState:(UIControlState)state placeholder:(UIImage*)placeholder
 {
-    [self hnk_setBackgroundImageFromFile:path forState:state placeholderImage:placeholderImage success:nil failure:nil];
+    [self hnk_setBackgroundImageFromFile:path forState:state placeholder:placeholder success:nil failure:nil];
 }
 
-- (void)hnk_setBackgroundImageFromFile:(NSString*)path forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (void)hnk_setBackgroundImageFromFile:(NSString*)path forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     id<HNKCacheEntity> entity = [[HNKDiskEntity alloc] initWithPath:path];
-    [self hnk_setBackgroundImageFromEntity:entity forState:state placeholderImage:placeholderImage success:successBlock failure:failureBlock];
+    [self hnk_setBackgroundImageFromEntity:entity forState:state placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
-- (void)hnk_setBackgroundImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (void)hnk_setBackgroundImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     id<HNKCacheEntity> entity = [[HNKSimpleEntity alloc] initWithKey:key image:image];
-    [self hnk_setBackgroundImageFromEntity:entity forState:state placeholderImage:placeholderImage success:successBlock failure:failureBlock];
+    [self hnk_setBackgroundImageFromEntity:entity forState:state placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
 - (void)hnk_setBackgroundImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state
 {
-    [self hnk_setBackgroundImage:image withKey:key forState:state placeholderImage:nil];
+    [self hnk_setBackgroundImage:image withKey:key forState:state placeholder:nil];
 }
 
-- (void)hnk_setBackgroundImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage
+- (void)hnk_setBackgroundImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state placeholder:(UIImage*)placeholder
 {
-    [self hnk_setBackgroundImage:image withKey:key forState:state placeholderImage:placeholderImage success:nil failure:nil];
+    [self hnk_setBackgroundImage:image withKey:key forState:state placeholder:placeholder success:nil failure:nil];
 }
 
-- (void)hnk_setBackgroundImageFromEntity:(id<HNKCacheEntity>)entity forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (void)hnk_setBackgroundImageFromEntity:(id<HNKCacheEntity>)entity forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     [self hnk_cancelSetBackgroundImage];
     self.hnk_backgroundImageEntity = entity;
     const BOOL didSetImage = [self hnk_fetchBackgroundImageFromEntity:entity forState:state success:successBlock failure:failureBlock];
-    if (!didSetImage && placeholderImage != nil)
+    if (!didSetImage && placeholder != nil)
     {
-        [self setBackgroundImage:placeholderImage forState:state];
+        [self setBackgroundImage:placeholder forState:state];
     }
 }
 
