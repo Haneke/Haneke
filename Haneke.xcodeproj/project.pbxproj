@@ -40,7 +40,6 @@
 		87F47BB918AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F47BB818AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m */; };
 		A0818B7119A3BD7A00F89CCF /* HNKSimpleEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = A0818B7019A3BD7A00F89CCF /* HNKSimpleEntity.m */; };
 		A0ADE32F197FE0C400B75057 /* HNKNetworkEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = A0ADE32E197FE0C400B75057 /* HNKNetworkEntity.m */; };
-		A0ADE3321980275C00B75057 /* UIImage+Haneke.m in Sources */ = {isa = PBXBuildFile; fileRef = A0ADE3311980275C00B75057 /* UIImage+Haneke.m */; };
 		A0ADE335198029AB00B75057 /* HNKDiskEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = A0ADE334198029AB00B75057 /* HNKDiskEntity.m */; };
 		F579C6CF15D748008CE26327 /* libPods-HanekeTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C900C201A56F408D8DD8854E /* libPods-HanekeTests.a */; };
 /* End PBXBuildFile section */
@@ -115,8 +114,6 @@
 		A0818B7019A3BD7A00F89CCF /* HNKSimpleEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKSimpleEntity.m; sourceTree = "<group>"; };
 		A0ADE32D197FE0C400B75057 /* HNKNetworkEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKNetworkEntity.h; sourceTree = "<group>"; };
 		A0ADE32E197FE0C400B75057 /* HNKNetworkEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKNetworkEntity.m; sourceTree = "<group>"; };
-		A0ADE3301980275C00B75057 /* UIImage+Haneke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Haneke.h"; sourceTree = "<group>"; };
-		A0ADE3311980275C00B75057 /* UIImage+Haneke.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Haneke.m"; sourceTree = "<group>"; };
 		A0ADE333198029AB00B75057 /* HNKDiskEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKDiskEntity.h; sourceTree = "<group>"; };
 		A0ADE334198029AB00B75057 /* HNKDiskEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKDiskEntity.m; sourceTree = "<group>"; };
 		C900C201A56F408D8DD8854E /* libPods-HanekeTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-HanekeTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -201,8 +198,6 @@
 				873E22B918AA8CC900E7919C /* HNKCache.m */,
 				876E5F1E18AB762600B4EAF6 /* UIImageView+Haneke.h */,
 				876E5F1F18AB762600B4EAF6 /* UIImageView+Haneke.m */,
-				A0ADE3301980275C00B75057 /* UIImage+Haneke.h */,
-				A0ADE3311980275C00B75057 /* UIImage+Haneke.m */,
 			);
 			path = Haneke;
 			sourceTree = "<group>";
@@ -444,7 +439,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A0ADE3321980275C00B75057 /* UIImage+Haneke.m in Sources */,
 				876E5F2018AB762600B4EAF6 /* UIImageView+Haneke.m in Sources */,
 				A0ADE32F197FE0C400B75057 /* HNKNetworkEntity.m in Sources */,
 				A0818B7119A3BD7A00F89CCF /* HNKSimpleEntity.m in Sources */,

@@ -7,7 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "UIImage+Haneke.h"
+#import "HNKCache.h"
 #import "UIImage+HanekeTestUtils.h"
 @import ImageIO;
 @import MobileCoreServices;
@@ -22,6 +22,12 @@ typedef NS_ENUM(NSInteger, HNKExifOrientation) {
     HNKExifOrientationLeftMirrored = 5,
     HNKExifOrientationRightMirrored= 7,
 };
+
+@interface UIImage (Haneke)
+
+- (UIImage *)hnk_decompressedImage;
+
+@end
 
 @interface UIImage_HanekeTests : XCTestCase
 
