@@ -78,7 +78,7 @@
 
 - (void)setHnk_imageCacheFormat:(HNKCacheFormat *)cacheFormat
 {
-    [self hnk_registerFormat:cacheFormat];
+    [HNKCache registerSharedFormat:cacheFormat];
     objc_setAssociatedObject(self, @selector(hnk_imageCacheFormat), cacheFormat, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     self.contentMode = (UIViewContentMode)cacheFormat.scaleMode;
 }
@@ -96,7 +96,7 @@
     const CGSize imageSize = imageRect.size;
     
     HNKScaleMode scaleMode = self.hnk_scaleMode;
-    format = [self hnk_sharedFormatWithSize:imageSize scaleMode:scaleMode];
+    format = [HNKCache sharedFormatWithSize:imageSize scaleMode:scaleMode];
     return format;
 }
 
@@ -227,7 +227,7 @@
 
 - (void)setHnk_backgroundImageCacheFormat:(HNKCacheFormat *)cacheFormat
 {
-    [self hnk_registerFormat:cacheFormat];
+    [HNKCache registerSharedFormat:cacheFormat];
     objc_setAssociatedObject(self, @selector(hnk_backgroundImageCacheFormat), cacheFormat, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
@@ -242,7 +242,7 @@
     const CGRect backgroundRect = [self backgroundRectForBounds:bounds];
     const CGSize imageSize = backgroundRect.size;
     
-    format = [self hnk_sharedFormatWithSize:imageSize scaleMode:HNKScaleModeFill];
+    format = [HNKCache sharedFormatWithSize:imageSize scaleMode:HNKScaleModeFill];
     return format;
 }
 

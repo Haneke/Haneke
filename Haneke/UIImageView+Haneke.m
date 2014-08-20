@@ -118,7 +118,7 @@
 
 - (void)setHnk_cacheFormat:(HNKCacheFormat *)cacheFormat
 {
-    [self hnk_registerFormat:cacheFormat];
+    [HNKCache registerSharedFormat:cacheFormat];
     objc_setAssociatedObject(self, @selector(hnk_cacheFormat), cacheFormat, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     self.contentMode = (UIViewContentMode)cacheFormat.scaleMode;
 }
@@ -131,7 +131,7 @@
     CGSize viewSize = self.bounds.size;
     NSAssert(viewSize.width > 0 && viewSize.height > 0, @"%s: UImageView size is zero. Set its frame, call sizeToFit or force layout first.", __PRETTY_FUNCTION__);
     HNKScaleMode scaleMode = self.hnk_scaleMode;
-    format = [self hnk_sharedFormatWithSize:viewSize scaleMode:scaleMode];
+    format = [HNKCache sharedFormatWithSize:viewSize scaleMode:scaleMode];
     return format;
 }
 

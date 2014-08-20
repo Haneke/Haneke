@@ -20,3 +20,4 @@
 
 #import "HNKCache.h"
 #import "UIImageView+Haneke.h"
+#import "UIButton+Haneke.h"

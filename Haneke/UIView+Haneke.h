@@ -13,8 +13,12 @@
 
 @property (nonatomic, readonly) HNKScaleMode hnk_scaleMode;
 
-- (void)hnk_registerFormat:(HNKCacheFormat*)format;
+@end
 
-- (HNKCacheFormat*)hnk_sharedFormatWithSize:(CGSize)size scaleMode:(HNKScaleMode)scaleMode;
+@interface HNKCache(UIView)
+
++ (void)registerSharedFormat:(HNKCacheFormat*)format;
+
++ (HNKCacheFormat*)sharedFormatWithSize:(CGSize)size scaleMode:(HNKScaleMode)scaleMode;
 
 @end

@@ -84,13 +84,6 @@
     XCTAssertEqual(result.scaleMode, HNKScaleModeAspectFill, @"");
 }
 
-- (void)testCacheFormat_AnotherUIViewContentMode
-{
-    _imageView.contentMode = UIViewContentModeCenter;
-    HNKCacheFormat *result = _imageView.hnk_cacheFormat;
-    XCTAssertEqual(result.scaleMode, HNKScaleModeFill, @"");
-}
-
 - (void)testSetCacheFormat_Nil
 {
     _imageView.hnk_cacheFormat = nil;

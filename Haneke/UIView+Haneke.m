@@ -46,11 +46,15 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
         case UIViewContentModeTopRight:
         case UIViewContentModeBottomLeft:
         case UIViewContentModeBottomRight:
-            return HNKScaleModeFill;
+            return HNKScaleModeNone;
     }
 }
 
-- (void)hnk_registerFormat:(HNKCacheFormat*)format
+@end
+
+@implementation HNKCache(UIView)
+
++ (void)registerSharedFormat:(HNKCacheFormat*)format
 {
     HNKCache *cache = [HNKCache sharedCache];
     if (cache.formats[format.name] != format)
@@ -59,7 +63,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     }
 }
 
-- (HNKCacheFormat*)hnk_sharedFormatWithSize:(CGSize)size scaleMode:(HNKScaleMode)scaleMode
++ (HNKCacheFormat*)sharedFormatWithSize:(CGSize)size scaleMode:(HNKScaleMode)scaleMode
 {
     NSString *scaleModeName = NSStringFromHNKScaleMode(scaleMode);
     NSString *name = [NSString stringWithFormat:@"auto-%ldx%ld-%@", (long)size.width, (long)size.height, scaleModeName];
