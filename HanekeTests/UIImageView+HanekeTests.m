@@ -126,7 +126,7 @@
 - (void)testSetImageWithKey_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    NSString *key = self.name;
     HNKCacheFormat *format = _imageView.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
     

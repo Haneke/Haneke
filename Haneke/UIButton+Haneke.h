@@ -37,13 +37,21 @@
 
 - (void)hnk_setImageFromFile:(NSString*)path forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
 
+- (void)hnk_setImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state;
+
+- (void)hnk_setImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage;
+
 - (void)hnk_setImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
+
+- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity forState:(UIControlState)state;
+
+- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage;
 
 - (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
 
 - (void)hnk_cancelSetImage;
 
-@property (nonatomic, strong) HNKCacheFormat *hnk_imageCacheFormat;
+@property (nonatomic, strong) HNKCacheFormat *hnk_imageFormat;
 
 #pragma mark Setting the background image
 
@@ -59,12 +67,16 @@
 
 - (void)hnk_setBackgroundImageFromFile:(NSString*)path forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
 
+- (void)hnk_setBackgroundImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state;
+
+- (void)hnk_setBackgroundImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage;
+
 - (void)hnk_setBackgroundImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
 
 - (void)hnk_setBackgroundImageFromEntity:(id<HNKCacheEntity>)entity forState:(UIControlState)state placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
 
 - (void)hnk_cancelSetBackgroundImage;
 
-@property (nonatomic, strong) HNKCacheFormat *hnk_backgroundImageCacheFormat;
+@property (nonatomic, strong) HNKCacheFormat *hnk_backgroundImageFormat;
 
 @end
