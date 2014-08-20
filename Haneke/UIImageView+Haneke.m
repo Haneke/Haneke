@@ -58,29 +58,8 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 - (void)hnk_setImageFromFile:(NSString*)path placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    [self hnk_cancelImageRequest];
-    self.hnk_requestedCacheKey = path;
-    HNKCacheFormat *format = self.hnk_cacheFormat;
-    NSString *formatName = format.name;
-    __block BOOL animated = NO;
-    const BOOL didSetImage = [[HNKCache sharedCache] retrieveImageForKey:path formatName:format.name completionBlock:^(UIImage *image, NSError *error) {
-        if ([self hnk_shouldCancelRequestForKey:path formatName:formatName]) return;
-        
-        if (image)
-        {
-            [self hnk_setImage:image animated:animated success:successBlock];
-            return;
-        }
-        
-        id<HNKCacheEntity> entity = [[HNKDiskEntity alloc] initWithPath:path];
-        self.hnk_entity = entity;
-        [self hnk_retrieveImageFromEntity:entity success:successBlock failure:failureBlock];
-    }];
-    animated = YES;
-    if (!didSetImage && placeholderImage != nil)
-    {
-        self.image = placeholderImage;
-    }
+    id<HNKCacheEntity> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    [self hnk_setImageFromEntity:entity placeholderImage:placeholderImage success:successBlock failure:failureBlock];
 }
 
 - (void)hnk_setImageFromURL:(NSURL*)url
@@ -100,31 +79,8 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 - (void)hnk_setImageFromURL:(NSURL*)url placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    [self hnk_cancelImageRequest];
-    NSString *absoluteString = url.absoluteString;
-    self.hnk_requestedCacheKey = absoluteString;
-    HNKCacheFormat *format = self.hnk_cacheFormat;
-    NSString *formatName = format.name;
-    __block BOOL animated = NO;
-    const BOOL didSetImage = [[HNKCache sharedCache] retrieveImageForKey:absoluteString formatName:format.name completionBlock:^(UIImage *image, NSError *error)
-    {
-        if ([self hnk_shouldCancelRequestForKey:absoluteString formatName:formatName]) return;
-        
-        if (image)
-        {
-            [self hnk_setImage:image animated:animated success:successBlock];
-            return;
-        }
-        
-        id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:url];
-        self.hnk_entity = entity;
-        [self hnk_retrieveImageFromEntity:entity success:successBlock failure:failureBlock];
-    }];
-    animated = YES;
-    if (!didSetImage && placeholderImage != nil)
-    {
-        self.image = placeholderImage;
-    }
+    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:url];
+    [self hnk_setImageFromEntity:entity placeholderImage:placeholderImage success:successBlock failure:failureBlock];
 }
 
 - (void)hnk_setImage:(UIImage*)originalImage withKey:(NSString*)key
@@ -166,7 +122,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 - (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     [self hnk_cancelImageRequest];
-    self.hnk_requestedCacheKey = entity.cacheKey;
+    self.hnk_entity = entity;
     const BOOL didSetImage = [self hnk_retrieveImageFromEntity:entity success:successBlock failure:failureBlock];
     if (!didSetImage && placeholderImage != nil)
     {
@@ -217,7 +173,6 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
         [self.hnk_entity cancelFetch];
     }
     self.hnk_entity = nil;
-    self.hnk_requestedCacheKey = nil;
 }
 
 #pragma mark Private
@@ -245,16 +200,13 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 - (void)hnk_failWithError:(NSError*)error failure:(void (^)(NSError *error))failureBlock
 {
     self.hnk_entity = nil;
-    self.hnk_requestedCacheKey = nil;
     
     if (failureBlock) failureBlock(error);
 }
 
-
 - (void)hnk_setImage:(UIImage*)image animated:(BOOL)animated success:(void (^)(UIImage *image))successBlock
 {
     self.hnk_entity = nil;
-    self.hnk_requestedCacheKey = nil;
     
     if (successBlock)
     {
@@ -294,23 +246,13 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 
 - (BOOL)hnk_shouldCancelRequestForKey:(NSString*)key formatName:(NSString*)formatName
 {
-    if ([self.hnk_requestedCacheKey isEqualToString:key]) return NO;
+    if ([self.hnk_entity.cacheKey isEqualToString:key]) return NO;
     
     HanekeLog(@"Cancelled request due to view reuse: %@/%@", formatName, key.lastPathComponent);
     return YES;
 }
 
 #pragma mark Properties (Private)
-
-- (NSString*)hnk_requestedCacheKey
-{
-    return (NSString *)objc_getAssociatedObject(self, @selector(hnk_requestedCacheKey));
-}
-
-- (void)setHnk_requestedCacheKey:(NSString*)cacheKey
-{
-    objc_setAssociatedObject(self, @selector(hnk_requestedCacheKey), cacheKey, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
 
 - (id<HNKCacheEntity>)hnk_entity
 {

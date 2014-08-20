@@ -22,13 +22,14 @@
 #import "UIImageView+Haneke.h"
 #import "UIImage+HanekeTestUtils.h"
 #import "HNKCache+HanekeTestUtils.h"
+#import "HNKNetworkEntity.h"
+#import "HNKDiskEntity.h"
 #import "XCTestCase+HanekeTestUtils.h"
 #import <OHHTTPStubs/OHHTTPStubs.h>
 
 @interface UIImageView(HanekeTest)
 
-@property (nonatomic, strong) NSString *hnk_requestedCacheKey;
-@property (nonatomic, strong) NSString *hnk_entity;
+@property (nonatomic, strong) id<HNKCacheEntity> hnk_entity;
 
 @end
 
@@ -125,7 +126,7 @@
 
     [_imageView hnk_setImage:image withKey:key];
 
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
+    XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, key,  @"");
     XCTAssertNil(_imageView.image, @"");
 }
 
@@ -138,7 +139,7 @@
     
     [_imageView hnk_setImage:image withKey:key];
 
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
+    XCTAssertNil(_imageView.hnk_entity,  @"");
     XCTAssertEqualObjects(_imageView.image, image, @"");
 }
 
@@ -151,7 +152,7 @@
     
     [_imageView hnk_setImage:image withKey:key];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
+    XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, key,  @"");
     XCTAssertEqualObjects(_imageView.image, previousImage, @"");
 }
 
@@ -163,7 +164,7 @@
     
     [_imageView hnk_setImage:image withKey:key placeholderImage:placeholderImage];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
+    XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, key,  @"");
     XCTAssertEqualObjects(_imageView.image, placeholderImage, @"");
 }
 
@@ -177,7 +178,7 @@
     
     [_imageView hnk_setImage:image withKey:key placeholderImage:placeholderImage];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
+    XCTAssertNil(_imageView.hnk_entity, @"");
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(image, result, @"");
 }
@@ -191,7 +192,7 @@
     
     [_imageView hnk_setImage:image withKey:key];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
+    XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, key,  @"");
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(result, previousImage, @"");
 }
@@ -208,7 +209,7 @@
     } failure:^(NSError *error) {
         XCTFail(@"");
     }];
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
+    XCTAssertNil(_imageView.hnk_entity, @"");
     XCTAssertNil(_imageView.image, @"");
 }
 
@@ -223,7 +224,7 @@
         XCTFail(@"");
     }];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
+    XCTAssertNil(_imageView.hnk_entity, @"");
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(result, image, @"");
 }
@@ -235,7 +236,7 @@
 
     [_imageView hnk_setImage:image withKey:key success:nil failure:nil];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
+    XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, key,  @"");
     XCTAssertNil(_imageView.image, @"");
 }
 
@@ -248,7 +249,7 @@
 
     [_imageView hnk_setImage:image withKey:key success:nil failure:nil];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
+    XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, key,  @"");
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(result, previousImage, @"");
 }
@@ -261,8 +262,10 @@
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     [UIImagePNGRepresentation(image) writeToFile:path atomically:YES];
 
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
     [_imageView hnk_setImageFromFile:path];
+
+    HNKDiskEntity *entity = [[HNKDiskEntity alloc] initWithPath:path];
+    XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, entity.cacheKey,  @"");
     XCTAssertNil(_imageView.image, @"");
     
     [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
@@ -278,7 +281,8 @@
     
     [_imageView hnk_setImageFromFile:path];
 
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, path,  @"");
+    HNKDiskEntity *entity = [[HNKDiskEntity alloc] initWithPath:path];
+    XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, entity.cacheKey,  @"");
     XCTAssertEqualObjects(_imageView.image, previousImage, @"");
     
     [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
@@ -293,7 +297,7 @@
     
     [_imageView hnk_setImageFromFile:key];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
+    XCTAssertNil(_imageView.hnk_entity, @"");
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(image, result, @"");
 }
@@ -308,7 +312,7 @@
     
     [_imageView hnk_setImageFromFile:key placeholderImage:placeholderImage];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
+    XCTAssertNil(_imageView.hnk_entity, @"");
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(result, image, @"");
 }
@@ -316,11 +320,12 @@
 - (void)testSetImageFromFilePlaceholderImage_MemoryCacheMiss
 {
     UIImage *placeholderImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    NSString *key = [self fixturePathWithName:@"image.png"];
+    NSString *path = [self fixturePathWithName:@"image.png"];
 
-    [_imageView hnk_setImageFromFile:key placeholderImage:placeholderImage];
+    [_imageView hnk_setImageFromFile:path placeholderImage:placeholderImage];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
+    HNKDiskEntity *entity = [[HNKDiskEntity alloc] initWithPath:path];
+    XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, entity.cacheKey,  @"");
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(result, placeholderImage, @"");
 }
@@ -329,11 +334,12 @@
 {
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     _imageView.image = previousImage;
-    NSString *key = [self fixturePathWithName:@"image.png"];
+    NSString *path = [self fixturePathWithName:@"image.png"];
     
-    [_imageView hnk_setImageFromFile:key placeholderImage:nil];
+    [_imageView hnk_setImageFromFile:path placeholderImage:nil];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
+    HNKDiskEntity *entity = [[HNKDiskEntity alloc] initWithPath:path];
+    XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, entity.cacheKey,  @"");
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(result, previousImage, @"");
 }
@@ -350,7 +356,7 @@
     } failure:^(NSError *error) {
         XCTFail(@"");
     }];
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
+    XCTAssertNil(_imageView.hnk_entity, @"");
     XCTAssertNil(_imageView.image, @"");
 }
 
@@ -365,18 +371,19 @@
         XCTFail(@"");
     }];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
+    XCTAssertNil(_imageView.hnk_entity, @"");
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(result, image, @"");
 }
 
 - (void)testSetImageFromFileSuccessFailure_MemoryCacheMiss
 {
-    NSString *key = [self fixturePathWithName:@"image.png"];
+    NSString *path = [self fixturePathWithName:@"image.png"];
     
-    [_imageView hnk_setImageFromFile:key success:nil failure:nil];
+    [_imageView hnk_setImageFromFile:path success:nil failure:nil];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
+    HNKDiskEntity *entity = [[HNKDiskEntity alloc] initWithPath:path];
+    XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, entity.cacheKey,  @"");
     XCTAssertNil(_imageView.image, @"");
 }
 
@@ -384,11 +391,12 @@
 {
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     _imageView.image = previousImage;
-    NSString *key = [self fixturePathWithName:@"image.png"];
+    NSString *path = [self fixturePathWithName:@"image.png"];
     
-    [_imageView hnk_setImageFromFile:key success:nil failure:nil];
+    [_imageView hnk_setImageFromFile:path success:nil failure:nil];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
+    HNKDiskEntity *entity = [[HNKDiskEntity alloc] initWithPath:path];
+    XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, entity.cacheKey,  @"");
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(result, previousImage, @"");
 }
@@ -408,7 +416,7 @@
         }];
     }];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
+    XCTAssertNil(_imageView.hnk_entity, @"");
 }
 
 - (void)testSetImageFromFileSuccessFailure_InvalidData
@@ -427,9 +435,10 @@
             XCTAssertEqual(error.code, HNKErrorEntityMustReturnImage, @"");
             dispatch_semaphore_signal(semaphore);
         }];
+
+        HNKDiskEntity *entity = [[HNKDiskEntity alloc] initWithPath:path];
+        XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, entity.cacheKey,  @"");
     }];
-    
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
     
     [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
 }
@@ -443,7 +452,7 @@
     id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:image];
     [_imageView hnk_setImageFromEntity:entity];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
+    XCTAssertEqualObjects(_imageView.hnk_entity, entity,  @"");
     XCTAssertNil(_imageView.image, @"");
 }
 
@@ -457,7 +466,7 @@
     
     [_imageView hnk_setImageFromEntity:entity];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
+    XCTAssertNil(_imageView.hnk_entity, @"");
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(image, result, @"");
 }
@@ -472,7 +481,7 @@
     
     [_imageView hnk_setImageFromEntity:entity];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
+    XCTAssertEqualObjects(_imageView.hnk_entity, entity,  @"");
     XCTAssertEqualObjects(_imageView.image, previousImage, @"");
 }
 
@@ -485,7 +494,7 @@
     
     [_imageView hnk_setImageFromEntity:entity placeholderImage:placeholderImage];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
+    XCTAssertEqualObjects(_imageView.hnk_entity, entity,  @"");
     XCTAssertEqualObjects(_imageView.image, placeholderImage, @"");
 }
 
@@ -500,7 +509,7 @@
     
     [_imageView hnk_setImageFromEntity:entity placeholderImage:placeholderImage];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
+    XCTAssertNil(_imageView.hnk_entity, @"");
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(image, result, @"");
 }
@@ -515,7 +524,7 @@
     
     [_imageView hnk_setImageFromEntity:entity placeholderImage:nil];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
+    XCTAssertEqualObjects(_imageView.hnk_entity, entity,  @"");
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(result, previousImage, @"");
 }
@@ -528,7 +537,8 @@
     
     [_imageView hnk_setImageFromURL:url];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, url.absoluteString,  @"");
+    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:url];
+    XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, entity.cacheKey,  @"");
     XCTAssertNil(_imageView.image, @"");
 }
 
@@ -540,7 +550,8 @@
 
     [_imageView hnk_setImageFromURL:url];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, url.absoluteString,  @"");
+    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:url];
+    XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, entity.cacheKey,  @"");
     XCTAssertEqualObjects(_imageView.image, previousImage, @"");
 }
 
@@ -554,7 +565,6 @@
     
     [_imageView hnk_setImageFromURL:url];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
     XCTAssertNil(_imageView.hnk_entity, @"");
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(image, result, @"");
@@ -571,7 +581,6 @@
     
     [_imageView hnk_setImageFromURL:url placeholderImage:placeholderImage];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
     XCTAssertNil(_imageView.hnk_entity, @"");
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(result, image, @"");
@@ -585,7 +594,8 @@
     
     [_imageView hnk_setImageFromURL:url placeholderImage:placeholderImage];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, url.absoluteString,  @"");
+    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:url];
+    XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, entity.cacheKey,  @"");
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(result, placeholderImage, @"");
 }
@@ -599,7 +609,8 @@
     
     [_imageView hnk_setImageFromURL:url placeholderImage:nil];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, url.absoluteString,  @"");
+    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:url];
+    XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, entity.cacheKey,  @"");
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(result, previousImage, @"");
 }
@@ -610,7 +621,8 @@
     
     [_imageView hnk_setImageFromURL:url success:nil failure:nil];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, url.absoluteString,  @"");
+    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:url];
+    XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, entity.cacheKey,  @"");
     XCTAssertNil(_imageView.image, @"");
 }
 
@@ -622,7 +634,8 @@
     
     [_imageView hnk_setImageFromURL:url success:nil failure:nil];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, url.absoluteString,  @"");
+    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:url];
+    XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, entity.cacheKey,  @"");
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(result, previousImage, @"");
 }
@@ -641,7 +654,6 @@
         XCTFail(@"");
     }];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
     XCTAssertNil(_imageView.hnk_entity, @"");
     XCTAssertNil(_imageView.image, @"");
 }
@@ -658,7 +670,6 @@
         XCTFail(@"");
     }];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
     XCTAssertNil(_imageView.hnk_entity, @"");
     UIImage *result = _imageView.image;
     XCTAssertEqualObjects(result, image, @"");
@@ -743,7 +754,6 @@
 {
     [_imageView hnk_cancelImageRequest];
 
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
     XCTAssertNil(_imageView.hnk_entity, @"");
 }
 
@@ -754,7 +764,6 @@
     
     [_imageView hnk_cancelImageRequest];
 
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
     XCTAssertNil(_imageView.hnk_entity, @"");
 
 }
