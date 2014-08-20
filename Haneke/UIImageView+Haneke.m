@@ -22,22 +22,8 @@
 #import "HNKDiskEntity.h"
 #import "HNKSimpleEntity.h"
 #import "HNKNetworkEntity.h"
+#import "UIView+Haneke.h"
 #import <objc/runtime.h>
-
-static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
-{
-    switch (scaleMode) {
-        case HNKScaleModeFill:
-            return @"fill";
-        case HNKScaleModeAspectFill:
-            return @"aspectfill";
-        case HNKScaleModeAspectFit:
-            return @"aspectfit";
-        case HNKScaleModeNone:
-            return @"scalenone";
-    }
-    return nil;
-}
 
 @implementation UIImageView (Haneke)
 
@@ -130,15 +116,11 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     }
 }
 
-- (void)setHnk_cacheFormat:(HNKCacheFormat *)hnk_cacheFormat
+- (void)setHnk_cacheFormat:(HNKCacheFormat *)cacheFormat
 {
-    HNKCache *cache = [HNKCache sharedCache];
-    if (cache.formats[hnk_cacheFormat.name] != hnk_cacheFormat)
-    {
-        [[HNKCache sharedCache] registerFormat:hnk_cacheFormat];
-    }
-    objc_setAssociatedObject(self, @selector(hnk_cacheFormat), hnk_cacheFormat, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    self.contentMode = (UIViewContentMode)hnk_cacheFormat.scaleMode;
+    [self hnk_registerFormat:cacheFormat];
+    objc_setAssociatedObject(self, @selector(hnk_cacheFormat), cacheFormat, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    self.contentMode = (UIViewContentMode)cacheFormat.scaleMode;
 }
 
 - (HNKCacheFormat*)hnk_cacheFormat
@@ -149,20 +131,7 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     CGSize viewSize = self.bounds.size;
     NSAssert(viewSize.width > 0 && viewSize.height > 0, @"%s: UImageView size is zero. Set its frame, call sizeToFit or force layout first.", __PRETTY_FUNCTION__);
     HNKScaleMode scaleMode = self.hnk_scaleMode;
-    NSString *scaleModeName = NSStringFromHNKScaleMode(scaleMode);
-    NSString *name = [NSString stringWithFormat:@"auto-%ldx%ld-%@", (long)viewSize.width, (long)viewSize.height, scaleModeName];
-    HNKCache *cache = [HNKCache sharedCache];
-    format = cache.formats[name];
-    if (!format)
-    {
-        format = [[HNKCacheFormat alloc] initWithName:name];
-        format.size = viewSize;
-        format.diskCapacity = 10 * 1024 * 1024;
-        format.allowUpscaling = YES;
-        format.compressionQuality = 0.75;
-        format.scaleMode = scaleMode;
-        [cache registerFormat:format];
-    }
+    format = [self hnk_sharedFormatWithSize:viewSize scaleMode:scaleMode];
     return format;
 }
 
@@ -218,29 +187,6 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
         [UIView transitionWithView:self duration:duration options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
             self.image = image;
         } completion:nil];
-    }
-}
-
-- (HNKScaleMode)hnk_scaleMode
-{
-    switch (self.contentMode) {
-        case UIViewContentModeScaleToFill:
-            return HNKScaleModeFill;
-        case UIViewContentModeScaleAspectFit:
-            return HNKScaleModeAspectFit;
-        case UIViewContentModeScaleAspectFill:
-            return HNKScaleModeAspectFill;
-        case UIViewContentModeRedraw:
-        case UIViewContentModeCenter:
-        case UIViewContentModeTop:
-        case UIViewContentModeBottom:
-        case UIViewContentModeLeft:
-        case UIViewContentModeRight:
-        case UIViewContentModeTopLeft:
-        case UIViewContentModeTopRight:
-        case UIViewContentModeBottomLeft:
-        case UIViewContentModeBottomRight:
-            return HNKScaleModeFill;
     }
 }
 
