@@ -178,8 +178,3 @@
 @property (nonatomic, strong) HNKCacheFormat *hnk_cacheFormat;
 
 @end
-
-enum
-{
-    HNKErrorImageFromURLMissingData = -400,
-};

@@ -432,7 +432,7 @@
          } failure:^(NSError *error) {
             XCTAssertNotNil(error);
             XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
-            XCTAssertEqual(error.code, HNKErrorEntityMustReturnImage, @"");
+            XCTAssertEqual(error.code, HNKDiskEntityInvalidDataError, @"");
             dispatch_semaphore_signal(semaphore);
         }];
 
@@ -743,7 +743,7 @@
          } failure:^(NSError *error) {
              dispatch_semaphore_signal(semaphore);
              XCTAssertNotNil(error, @"");
-             XCTAssertEqual(HNKErrorImageFromURLMissingData, error.code, @"");
+             XCTAssertEqual(HNKNetworkEntityMissingDataError, error.code, @"");
          }];
      }];
 }

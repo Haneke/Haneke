@@ -11,7 +11,8 @@
 
 enum
 {
-    HNKNetworkEntityMissingData = -400,
+    HNKNetworkEntityInvalidDataError = -400,
+    HNKNetworkEntityMissingDataError = -401,
 };
 
 @interface HNKNetworkEntity : NSObject<HNKCacheEntity>

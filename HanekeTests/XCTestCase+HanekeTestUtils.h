@@ -24,4 +24,6 @@
 
 - (void)hnk_testAsyncBlock:(void(^)(dispatch_semaphore_t))block;
 
+- (void)hnk_waitFor:(NSTimeInterval)timeInterval;
+
 @end

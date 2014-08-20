@@ -31,14 +31,19 @@
     static const NSInteger MaxIterations = 400;
     while (i < MaxIterations && dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW))
     {
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
-                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:IterationDelay]];
+        [self hnk_waitFor:IterationDelay];
         i++;
     }
     if (i >= MaxIterations)
     {
         XCTFail(@"Async unit test took too long to complete.");
     }
+}
+
+- (void)hnk_waitFor:(NSTimeInterval)timeInterval
+{
+    [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                             beforeDate:[NSDate dateWithTimeIntervalSinceNow:timeInterval]];
 }
 
 @end

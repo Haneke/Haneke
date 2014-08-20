@@ -48,6 +48,18 @@
         
         UIImage *image = [UIImage imageWithData:data];
         
+        if (!image)
+        {
+            NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Failed to load image from data at path %@", @""), _path];
+            HanekeLog(@"%@", errorDescription);
+            NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription , NSFilePathErrorKey : _path};
+            NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKDiskEntityInvalidDataError userInfo:userInfo];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                failureBlock(error);
+            });
+            return;
+        }
+        
         dispatch_async(dispatch_get_main_queue(), ^{
             if (_cancelled) return;
             

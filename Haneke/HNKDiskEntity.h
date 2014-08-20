@@ -9,6 +9,11 @@
 #import <Foundation/Foundation.h>
 #import "HNKCache.h"
 
+enum
+{
+    HNKDiskEntityInvalidDataError = -500,
+};
+
 @interface HNKDiskEntity : NSObject<HNKCacheEntity>
 
 - (instancetype)initWithPath:(NSString*)path;
