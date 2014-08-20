@@ -39,7 +39,7 @@
 
 - (void)prepareForReuse
 {
-    [self.imageView hnk_cancelImageRequest];
+    [self.imageView hnk_cancelSetImage];
     self.imageView.image = nil;
 }
 

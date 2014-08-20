@@ -107,7 +107,7 @@
 
 - (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity placeholderImage:(UIImage*)placeholderImage success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    [self hnk_cancelImageRequest];
+    [self hnk_cancelSetImage];
     self.hnk_entity = entity;
     const BOOL didSetImage = [self hnk_retrieveImageFromEntity:entity success:successBlock failure:failureBlock];
     if (!didSetImage && placeholderImage != nil)
@@ -135,7 +135,7 @@
     return format;
 }
 
-- (void)hnk_cancelImageRequest
+- (void)hnk_cancelSetImage
 {
     if ([self.hnk_entity respondsToSelector:@selector(cancelFetch)])
     {

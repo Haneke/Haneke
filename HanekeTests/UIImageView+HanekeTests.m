@@ -50,7 +50,7 @@
 - (void)tearDown
 {
     [super tearDown];
-    [_imageView hnk_cancelImageRequest];
+    [_imageView hnk_cancelSetImage];
     [OHHTTPStubs removeAllStubs];
     
     HNKCacheFormat *format = _imageView.hnk_cacheFormat;
@@ -750,19 +750,19 @@
 
 #pragma mark cancelImageRequest
 
-- (void)testCancelImageRequest_NoRequest
+- (void)testCancelSetImage_NoRequest
 {
-    [_imageView hnk_cancelImageRequest];
+    [_imageView hnk_cancelSetImage];
 
     XCTAssertNil(_imageView.hnk_entity, @"");
 }
 
-- (void)testCancelImageRequest_AfterRequest
+- (void)testCancelSetImage_After
 {
     NSURL *url = [NSURL URLWithString:@"http://imgs.xkcd.com/comics/election.png"];
     [_imageView hnk_setImageFromURL:url];
     
-    [_imageView hnk_cancelImageRequest];
+    [_imageView hnk_cancelSetImage];
 
     XCTAssertNil(_imageView.hnk_entity, @"");
 

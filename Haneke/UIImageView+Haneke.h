@@ -168,7 +168,7 @@
  Cancels the current image request, if any. 
  @discussion It is recommended to call this from [UITableViewCell prepareForReuse] or [UICollectionViewCell prepareForReuse], or as soon as you don't need the image view anymore.
  **/
-- (void)hnk_cancelImageRequest;
+- (void)hnk_cancelSetImage;
 
 /**
  The cache format used by the image view. 
