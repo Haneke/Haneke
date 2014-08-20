@@ -65,6 +65,18 @@
         
         UIImage *image = [UIImage imageWithData:data];
         
+        if (!image)
+        {
+            NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Failed to load image from data at URL %@", @""), _URL];
+            HanekeLog(@"%@", errorDescription);
+            NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription , NSURLErrorKey : _URL};
+            NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKNetworkEntityInvalidDataError userInfo:userInfo];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                failureBlock(error);
+            });
+            return;
+        }
+        
         dispatch_async(dispatch_get_main_queue(), ^{
             successBlock(image);
         });
