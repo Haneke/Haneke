@@ -122,7 +122,7 @@
 {
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
     UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    NSString *key = self.name;
     id entity = [HNKCache entityWithKey:key image:originalImage];
     UIImage *preResizeImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:format.size];
 
@@ -146,7 +146,7 @@
 {
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
     UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    NSString *key = self.name;
     id entity = [HNKCache entityWithKey:key image:originalImage];
     UIImage *postResizeImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:format.size];
     
@@ -198,7 +198,7 @@
 {
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
     UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    NSString *key = self.name;
     id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:originalImage];
     NSString *formatName = format.name;
     
@@ -225,7 +225,7 @@
 {
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
     UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    NSString *key = self.name;
     id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:originalImage];
     NSString *formatName = format.name;
     
@@ -253,7 +253,7 @@
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
     NSString *formatName = format.name;
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    NSString *key = self.name;
     [_cache setImage:image forKey:key formatName:formatName];
     
     BOOL result = [_cache retrieveImageForKey:key formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {
@@ -268,7 +268,7 @@
 {
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
     NSString *formatName = format.name;
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    NSString *key = self.name;
     
     BOOL result = [_cache retrieveImageForKey:key formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {}];
     

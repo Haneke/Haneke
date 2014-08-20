@@ -115,8 +115,8 @@
 - (void)testSetImageWithKey_MemoryCacheMiss
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
-
+    NSString *key = self.name;
+    
     [_imageView hnk_setImage:image withKey:key];
 
     XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, key,  @"");
@@ -141,7 +141,7 @@
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     _imageView.image = previousImage;
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    NSString *key = self.name;
     
     [_imageView hnk_setImage:image withKey:key];
     
@@ -153,7 +153,7 @@
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     UIImage *placeholderImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    NSString *key = self.name;
     
     [_imageView hnk_setImage:image withKey:key placeholderImage:placeholderImage];
     
@@ -165,7 +165,7 @@
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     UIImage *placeholderImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    NSString *key = self.name;
     HNKCacheFormat *format = _imageView.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
     
@@ -181,7 +181,7 @@
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     _imageView.image = previousImage;
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    NSString *key = self.name;
     
     [_imageView hnk_setImage:image withKey:key];
     
@@ -194,7 +194,7 @@
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     HNKCacheFormat *format = _imageView.hnk_cacheFormat;
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    NSString *key = self.name;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
     
     [_imageView hnk_setImage:image withKey:key success:^(UIImage *result) {
@@ -209,7 +209,7 @@
 - (void)testSetImageWithKeySuccessFailure_SuccessNil_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    NSString *key = self.name;
     HNKCacheFormat *format = _imageView.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
     
@@ -224,7 +224,7 @@
 
 - (void)testSetImageWithKeySuccessFailure_MemoryCacheMiss
 {
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    NSString *key = self.name;
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
 
     [_imageView hnk_setImage:image withKey:key success:nil failure:nil];
@@ -237,7 +237,7 @@
 {
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     _imageView.image = previousImage;
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    NSString *key = self.name;
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
 
     [_imageView hnk_setImage:image withKey:key success:nil failure:nil];
@@ -441,7 +441,7 @@
 - (void)testSetImageFromEntity_MemoryCacheMiss
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    NSString *key = self.name;
     id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:image];
     [_imageView hnk_setImageFromEntity:entity];
     
@@ -469,7 +469,7 @@
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     _imageView.image = previousImage;
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    NSString *key = self.name;
     id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:image];
     
     [_imageView hnk_setImageFromEntity:entity];
@@ -482,7 +482,7 @@
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     UIImage *placeholderImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    NSString *key = self.name;
     id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:image];
     
     [_imageView hnk_setImageFromEntity:entity placeholderImage:placeholderImage];
@@ -512,7 +512,7 @@
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     _imageView.image = previousImage;
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    NSString *key = self.name;
     id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:image];
     
     [_imageView hnk_setImageFromEntity:entity placeholderImage:nil];
