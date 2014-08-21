@@ -7,6 +7,9 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "HNKDiskEntity.h"
+#import "HNKNetworkEntity.h"
+#import "HNKSimpleEntity.h"
 #import "UIView+Haneke.h"
 #import "UIButton+Haneke.h"
 #import "UIImage+HanekeTestUtils.h"
@@ -26,12 +29,18 @@
 
 @implementation UIButton_HanekeTests {
     UIButton *_sut;
+    NSString *_directory;
 }
 
 - (void)setUp
 {
     [super setUp];
     _sut = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 100, 20)];
+    
+    _directory = NSHomeDirectory();
+    _directory = [_directory stringByAppendingPathComponent:@"io.haneke"];
+    _directory = [_directory stringByAppendingPathComponent:NSStringFromClass(self.class)];
+    [[NSFileManager defaultManager] createDirectoryAtPath:_directory withIntermediateDirectories:YES attributes:nil error:nil];
 }
 
 - (void)tearDown
@@ -45,6 +54,10 @@
 
     HNKCacheFormat *backgroundImageFormat = _sut.hnk_backgroundImageFormat;
     [[HNKCache sharedCache] removeImagesOfFormatNamed:backgroundImageFormat.name];
+    
+    NSString *directory = NSHomeDirectory();
+    directory = [directory stringByAppendingPathComponent:@"io.haneke"];
+    [[NSFileManager defaultManager] removeItemAtPath:directory error:nil];
     
     [super tearDown];
 }
@@ -318,6 +331,183 @@
     XCTAssertEqualObjects([_sut imageForState:state], previousImage, @"");
 }
 
+#pragma mark setImageFromFile
+
+- (void)testSetImageFromFile_MemoryCacheHit_UIControlStateNormal
+{
+    NSString *path = [_directory stringByAppendingPathComponent:self.name];
+    id<HNKCacheEntity> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
+    HNKCacheFormat *format = _sut.hnk_imageFormat;
+    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    const UIControlState state = UIControlStateNormal;
+    
+    [_sut hnk_setImageFromFile:path forState:state];
+    
+    XCTAssertNil(_sut.hnk_imageEntity,  @"");
+    XCTAssertEqualObjects([_sut imageForState:state], image, @"");
+}
+
+- (void)testSetImageFromFilePlaceholder_MemoryCacheMiss_UIControlStateSelected
+{
+    NSString *path = [_directory stringByAppendingPathComponent:self.name];
+    id<HNKCacheEntity> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
+    const UIControlState state = UIControlStateSelected;
+    
+    [_sut hnk_setImageFromFile:path forState:state placeholder:placeholder];
+    
+    XCTAssertEqualObjects(_sut.hnk_imageEntity.cacheKey, entity.cacheKey,  @"");
+    XCTAssertEqualObjects([_sut imageForState:state], placeholder, @"");
+}
+
+- (void)testSetImageFromFilePlaceholderSuccessFailure_MemoryCacheHit
+{
+    NSString *path = [_directory stringByAppendingPathComponent:self.name];
+    id<HNKCacheEntity> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
+    HNKCacheFormat *format = _sut.hnk_imageFormat;
+    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    const UIControlState state = UIControlStateNormal;
+    
+    __block BOOL success = NO;
+    [_sut hnk_setImageFromFile:path forState:state placeholder:nil success:^(UIImage *result) {
+        XCTAssertEqualObjects(result, image, @"");
+        success = YES;
+    } failure:^(NSError *error) {
+        XCTFail(@"");
+    }];
+    
+    XCTAssertTrue(success, @"");
+    XCTAssertNil(_sut.hnk_imageEntity, @"");
+    XCTAssertNil([_sut imageForState:state], @"");
+}
+
+#pragma mark setImageFromURL
+
+- (void)testSetImageFromURL_MemoryCacheHit_UIControlStateNormal
+{
+    NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
+    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
+    HNKCacheFormat *format = _sut.hnk_imageFormat;
+    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    const UIControlState state = UIControlStateNormal;
+    
+    [_sut hnk_setImageFromURL:URL forState:state];
+    
+    XCTAssertNil(_sut.hnk_imageEntity,  @"");
+    XCTAssertEqualObjects([_sut imageForState:state], image, @"");
+}
+
+- (void)testSetImageFromURLPlaceholder_MemoryCacheMiss_UIControlStateSelected
+{
+    NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
+    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
+    UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
+    const UIControlState state = UIControlStateSelected;
+    
+    [_sut hnk_setImageFromURL:URL forState:state placeholder:placeholder];
+    
+    XCTAssertEqualObjects(_sut.hnk_imageEntity.cacheKey, entity.cacheKey,  @"");
+    XCTAssertEqualObjects([_sut imageForState:state], placeholder, @"");
+}
+
+- (void)testSetImageFromURLPlaceholderSuccessFailure_MemoryCacheHit
+{
+    NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
+    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
+    HNKCacheFormat *format = _sut.hnk_imageFormat;
+    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    const UIControlState state = UIControlStateNormal;
+    
+    __block BOOL success = NO;
+    [_sut hnk_setImageFromURL:URL forState:state placeholder:nil success:^(UIImage *result) {
+        XCTAssertEqualObjects(result, image, @"");
+        success = YES;
+    } failure:^(NSError *error) {
+        XCTFail(@"");
+    }];
+    
+    XCTAssertTrue(success, @"");
+    XCTAssertNil(_sut.hnk_imageEntity, @"");
+    XCTAssertNil([_sut imageForState:state], @"");
+}
+
+#pragma mark setImageFromEntity
+
+- (void)testSetImageFromEntity_MemoryCacheHit_UIControlStateNormal
+{
+    id<HNKCacheEntity> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
+    HNKCacheFormat *format = _sut.hnk_imageFormat;
+    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    const UIControlState state = UIControlStateNormal;
+    
+    [_sut hnk_setImageFromEntity:entity forState:state];
+    
+    XCTAssertNil(_sut.hnk_imageEntity,  @"");
+    XCTAssertEqualObjects([_sut imageForState:state], image, @"");
+}
+
+- (void)testSetImageFromEntityLPlaceholder_MemoryCacheMiss_UIControlStateSelected
+{
+    id<HNKCacheEntity> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
+    UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
+    const UIControlState state = UIControlStateSelected;
+    
+    [_sut hnk_setImageFromEntity:entity forState:state placeholder:placeholder];
+    
+    XCTAssertEqualObjects(_sut.hnk_imageEntity, entity,  @"");
+    XCTAssertEqualObjects([_sut imageForState:state], placeholder, @"");
+}
+
+- (void)testSetImageFromEntityPlaceholderSuccessFailure_MemoryCacheHit
+{
+    id<HNKCacheEntity> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
+    HNKCacheFormat *format = _sut.hnk_imageFormat;
+    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    const UIControlState state = UIControlStateNormal;
+    
+    __block BOOL success = NO;
+    [_sut hnk_setImageFromEntity:entity forState:state placeholder:nil success:^(UIImage *result) {
+        XCTAssertEqualObjects(result, image, @"");
+        success = YES;
+    } failure:^(NSError *error) {
+        XCTFail(@"");
+    }];
+    
+    XCTAssertTrue(success, @"");
+    XCTAssertNil(_sut.hnk_imageEntity, @"");
+    XCTAssertNil([_sut imageForState:state], @"");
+}
+
+#pragma mark cancelSetImage
+
+- (void)testCancelSetImage_NoRequest
+{
+    [_sut hnk_cancelSetImage];
+    
+    XCTAssertNil(_sut.hnk_imageEntity, @"");
+}
+
+- (void)testCancelSetImage_After
+{
+    NSURL *url = [NSURL URLWithString:@"http://imgs.xkcd.com/comics/election.png"];
+    [_sut hnk_setImageFromURL:url forState:UIControlStateHighlighted placeholder:nil success:^(UIImage *image) {
+        XCTFail(@"Unexpected success");
+    } failure:^(NSError *error) {
+        XCTFail(@"Unexpected success");
+    }];
+    
+    [_sut hnk_cancelSetImage];
+    
+    XCTAssertNil(_sut.hnk_imageEntity, @"");
+    [self hnk_waitFor:0.1];
+}
+
 #pragma mark backgroundImageFormat
 
 - (void)testBackgroundImageFormat
@@ -520,6 +710,183 @@
     
     XCTAssertEqualObjects(_sut.hnk_backgroundImageEntity.cacheKey, key,  @"");
     XCTAssertEqualObjects([_sut backgroundImageForState:state], previousImage, @"");
+}
+
+#pragma mark setBackgroundImageFromFile
+
+- (void)testSetBackgroundImageFromFile_MemoryCacheHit_UIControlStateNormal
+{
+    NSString *path = [_directory stringByAppendingPathComponent:self.name];
+    id<HNKCacheEntity> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
+    HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
+    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    const UIControlState state = UIControlStateNormal;
+    
+    [_sut hnk_setBackgroundImageFromFile:path forState:state];
+    
+    XCTAssertNil(_sut.hnk_backgroundImageEntity,  @"");
+    XCTAssertEqualObjects([_sut backgroundImageForState:state], image, @"");
+}
+
+- (void)testSetBackgroundImageFromFilePlaceholder_MemoryCacheMiss_UIControlStateSelected
+{
+    NSString *path = [_directory stringByAppendingPathComponent:self.name];
+    id<HNKCacheEntity> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
+    const UIControlState state = UIControlStateSelected;
+    
+    [_sut hnk_setBackgroundImageFromFile:path forState:state placeholder:placeholder];
+    
+    XCTAssertEqualObjects(_sut.hnk_backgroundImageEntity.cacheKey, entity.cacheKey,  @"");
+    XCTAssertEqualObjects([_sut backgroundImageForState:state], placeholder, @"");
+}
+
+- (void)testSetBackgroundImageFromFilePlaceholderSuccessFailure_MemoryCacheHit
+{
+    NSString *path = [_directory stringByAppendingPathComponent:self.name];
+    id<HNKCacheEntity> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
+    HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
+    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    const UIControlState state = UIControlStateNormal;
+    
+    __block BOOL success = NO;
+    [_sut hnk_setBackgroundImageFromFile:path forState:state placeholder:nil success:^(UIImage *result) {
+        XCTAssertEqualObjects(result, image, @"");
+        success = YES;
+    } failure:^(NSError *error) {
+        XCTFail(@"");
+    }];
+    
+    XCTAssertTrue(success, @"");
+    XCTAssertNil(_sut.hnk_backgroundImageEntity, @"");
+    XCTAssertNil([_sut backgroundImageForState:state], @"");
+}
+
+#pragma mark setBackgroundImageFromURL
+
+- (void)testSetBackgroundImageFromURL_MemoryCacheHit_UIControlStateNormal
+{
+    NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
+    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
+    HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
+    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    const UIControlState state = UIControlStateNormal;
+    
+    [_sut hnk_setBackgroundImageFromURL:URL forState:state];
+    
+    XCTAssertNil(_sut.hnk_backgroundImageEntity,  @"");
+    XCTAssertEqualObjects([_sut backgroundImageForState:state], image, @"");
+}
+
+- (void)testSetBackgroundImageFromURLPlaceholder_MemoryCacheMiss_UIControlStateSelected
+{
+    NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
+    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
+    UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
+    const UIControlState state = UIControlStateSelected;
+    
+    [_sut hnk_setBackgroundImageFromURL:URL forState:state placeholder:placeholder];
+    
+    XCTAssertEqualObjects(_sut.hnk_backgroundImageEntity.cacheKey, entity.cacheKey,  @"");
+    XCTAssertEqualObjects([_sut backgroundImageForState:state], placeholder, @"");
+}
+
+- (void)testSetBackgroundImageFromURLPlaceholderSuccessFailure_MemoryCacheHit
+{
+    NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
+    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
+    HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
+    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    const UIControlState state = UIControlStateNormal;
+    
+    __block BOOL success = NO;
+    [_sut hnk_setBackgroundImageFromURL:URL forState:state placeholder:nil success:^(UIImage *result) {
+        XCTAssertEqualObjects(result, image, @"");
+        success = YES;
+    } failure:^(NSError *error) {
+        XCTFail(@"");
+    }];
+    
+    XCTAssertTrue(success, @"");
+    XCTAssertNil(_sut.hnk_backgroundImageEntity, @"");
+    XCTAssertNil([_sut backgroundImageForState:state], @"");
+}
+
+#pragma mark setBackgroundImageFromEntity
+
+- (void)testSetBackgroundImageFromEntity_MemoryCacheHit_UIControlStateNormal
+{
+    id<HNKCacheEntity> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
+    HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
+    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    const UIControlState state = UIControlStateNormal;
+    
+    [_sut hnk_setBackgroundImageFromEntity:entity forState:state];
+    
+    XCTAssertNil(_sut.hnk_backgroundImageEntity,  @"");
+    XCTAssertEqualObjects([_sut backgroundImageForState:state], image, @"");
+}
+
+- (void)testSetBackgroundImageFromEntityLPlaceholder_MemoryCacheMiss_UIControlStateSelected
+{
+    id<HNKCacheEntity> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
+    UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
+    const UIControlState state = UIControlStateSelected;
+    
+    [_sut hnk_setBackgroundImageFromEntity:entity forState:state placeholder:placeholder];
+    
+    XCTAssertEqualObjects(_sut.hnk_backgroundImageEntity, entity,  @"");
+    XCTAssertEqualObjects([_sut backgroundImageForState:state], placeholder, @"");
+}
+
+- (void)testSetBackgroundImageFromEntityPlaceholderSuccessFailure_MemoryCacheHit
+{
+    id<HNKCacheEntity> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
+    HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
+    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    const UIControlState state = UIControlStateNormal;
+    
+    __block BOOL success = NO;
+    [_sut hnk_setBackgroundImageFromEntity:entity forState:state placeholder:nil success:^(UIImage *result) {
+        XCTAssertEqualObjects(result, image, @"");
+        success = YES;
+    } failure:^(NSError *error) {
+        XCTFail(@"");
+    }];
+    
+    XCTAssertTrue(success, @"");
+    XCTAssertNil(_sut.hnk_backgroundImageEntity, @"");
+    XCTAssertNil([_sut backgroundImageForState:state], @"");
+}
+
+#pragma mark cancelSetBackgroundImage
+
+- (void)testCancelSetBackgroundImage_NoRequest
+{
+    [_sut hnk_cancelSetBackgroundImage];
+    
+    XCTAssertNil(_sut.hnk_backgroundImageEntity, @"");
+}
+
+- (void)testCancelSetBackgroundImage_After
+{
+    NSURL *url = [NSURL URLWithString:@"http://imgs.xkcd.com/comics/election.png"];
+    [_sut hnk_setBackgroundImageFromURL:url forState:UIControlStateHighlighted placeholder:nil success:^(UIImage *image) {
+        XCTFail(@"Unexpected success");
+    } failure:^(NSError *error) {
+        XCTFail(@"Unexpected success");
+    }];
+    
+    [_sut hnk_cancelSetBackgroundImage];
+    
+    XCTAssertNil(_sut.hnk_backgroundImageEntity, @"");
+    [self hnk_waitFor:0.1];
 }
 
 #pragma mark Helpers
