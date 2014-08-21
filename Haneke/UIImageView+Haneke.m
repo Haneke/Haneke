@@ -37,11 +37,6 @@
     [self hnk_setImageFromFile:path placeholder:placeholder success:nil failure:nil];
 }
 
-- (void)hnk_setImageFromFile:(NSString*)path success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *))failureBlock
-{
-    [self hnk_setImageFromFile:path placeholder:nil success:successBlock failure:failureBlock];
-}
-
 - (void)hnk_setImageFromFile:(NSString*)path placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     id<HNKCacheEntity> entity = [[HNKDiskEntity alloc] initWithPath:path];
@@ -58,11 +53,6 @@
     [self hnk_setImageFromURL:url placeholder:placeholder success:nil failure:nil];
 }
 
-- (void)hnk_setImageFromURL:(NSURL*)url success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
-{
-    [self hnk_setImageFromURL:url placeholder:nil success:successBlock failure:failureBlock];
-}
-
 - (void)hnk_setImageFromURL:(NSURL*)url placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:url];
@@ -77,11 +67,6 @@
 - (void)hnk_setImage:(UIImage*)originalImage withKey:(NSString*)key placeholder:(UIImage*)placeholder
 {
     [self hnk_setImage:originalImage withKey:key placeholder:placeholder success:nil failure:nil];
-}
-
-- (void)hnk_setImage:(UIImage*)originalImage withKey:(NSString*)key success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
-{
-    [self hnk_setImage:originalImage withKey:key placeholder:nil success:successBlock failure:failureBlock];
 }
 
 - (void)hnk_setImage:(UIImage*)originalImage withKey:(NSString*)key placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
