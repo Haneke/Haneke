@@ -157,10 +157,10 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
 
 #pragma mark Getting images
 
-- (BOOL)retrieveImageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock
+- (BOOL)fetchImageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock
 {
     NSString *key = entity.cacheKey;
-    return [self retrieveImageForKey:key formatName:formatName completionBlock:^(UIImage *image, NSError *error) {
+    return [self fetchImageForKey:key formatName:formatName completionBlock:^(UIImage *image, NSError *error) {
         if (image)
         {
             completionBlock(image, error);
@@ -169,7 +169,7 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             HNKCacheFormat *format = _formats[formatName];
 
-            [self retrieveImageFromEntity:entity completionBlock:^(UIImage *originalImage, NSError *error) {
+            [self fetchImageFromEntity:entity completionBlock:^(UIImage *originalImage, NSError *error) {
                 if (!originalImage)
                 {
                     dispatch_async(dispatch_get_main_queue(), ^{
@@ -191,7 +191,7 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
     }];
 }
 
-- (BOOL)retrieveImageForKey:(NSString*)key formatName:(NSString *)formatName completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock
+- (BOOL)fetchImageForKey:(NSString*)key formatName:(NSString *)formatName completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock
 {
     HNKCacheFormat *format = _formats[formatName];
     NSAssert(format, @"Unknown format %@", formatName);
@@ -336,7 +336,7 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
 
 #pragma mark Private (utils)
 
-- (void)retrieveImageFromEntity:(id<HNKCacheEntity>)entity completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock;
+- (void)fetchImageFromEntity:(id<HNKCacheEntity>)entity completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock;
 {
     hnk_dispatch_sync_main_queue_if_needed((^{
         [entity fetchImageWithSuccess:^(UIImage *image) {

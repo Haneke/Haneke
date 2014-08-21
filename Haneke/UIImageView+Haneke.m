@@ -94,7 +94,7 @@
 {
     [self hnk_cancelSetImage];
     self.hnk_entity = entity;
-    const BOOL didSetImage = [self hnk_retrieveImageFromEntity:entity success:successBlock failure:failureBlock];
+    const BOOL didSetImage = [self hnk_fetchImageForEntity:entity success:successBlock failure:failureBlock];
     if (!didSetImage && placeholder != nil)
     {
         self.image = placeholder;
@@ -131,11 +131,11 @@
 
 #pragma mark Private
 
-- (BOOL)hnk_retrieveImageFromEntity:(id<HNKCacheEntity>)entity success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (BOOL)hnk_fetchImageForEntity:(id<HNKCacheEntity>)entity success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     HNKCacheFormat *format = self.hnk_cacheFormat;
     __block BOOL animated = NO;
-    const BOOL didSetImage = [[HNKCache sharedCache] retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *image, NSError *error) {
+    const BOOL didSetImage = [[HNKCache sharedCache] fetchImageForEntity:entity formatName:format.name completionBlock:^(UIImage *image, NSError *error) {
         
         // Cancel set image?
         if (![self.hnk_entity.cacheKey isEqualToString:entity.cacheKey])

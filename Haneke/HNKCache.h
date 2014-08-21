@@ -72,7 +72,7 @@
  @param completionBlock The block to be called with the requested image. Always called from the main queue. Will be called synchronously if the image exists in the memory cache, or asynchronously if the image has to be retreived from the disk cache or has to be created.
  @return YES if image exists in the memory cache (and thus, the completion block was called synchronously), NO otherwise.
  */
-- (BOOL)retrieveImageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock;
+- (BOOL)fetchImageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock;
 
 /**
  Retrieves an image from the cache. If the image exists in the memory cache, the completion block will be executed synchronously. If the image has to be retreived from the disk cache, the completion block will be executed asynchronously.
@@ -81,7 +81,7 @@
  @param completionBlock Block to be called with the requested image. Always called from the main queue. Will be called synchronously if the image exists in the memory cache, or asynchronously if the image exists in the disk cache.
  @return YES if image exists in the memory cache (and thus, the completion block was called synchronously), NO otherwise.
  */
-- (BOOL)retrieveImageForKey:(NSString*)key formatName:(NSString *)formatName completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock;
+- (BOOL)fetchImageForKey:(NSString*)key formatName:(NSString *)formatName completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock;
 
 #pragma mark Setting images
 ///---------------------------------------------

@@ -58,14 +58,14 @@
     XCTAssertTrue(format.diskSize == 0, @"");
 }
 
-- (void)testRetrieveImageForEntity_OpaqueImage
+- (void)testFetchImageForEntity_OpaqueImage
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
     id entity = [HNKCache entityWithKey:@"1" image:image];
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
  
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_cache retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+        [_cache fetchImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
             CGSize resultSize = result.size;
             
             XCTAssertNotNil(result, @"");
@@ -79,14 +79,14 @@
     
 }
 
-- (void)testRetrieveImageForEntity_ImageWithAlpha
+- (void)testFetchImageForEntity_ImageWithAlpha
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10) opaque:NO];
     id entity = [HNKCache entityWithKey:@"1" image:image];
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_cache retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+        [_cache fetchImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
             CGSize resultSize = result.size;
             
             XCTAssertNotNil(result, @"");
@@ -99,14 +99,14 @@
     }];
 }
 
-- (void)testRetrieveImageForEntity
+- (void)testFetchImageForEntity
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
     id entity = [HNKCache entityWithKey:@"1" image:image];
     
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_cache retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+        [_cache fetchImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
             CGSize resultSize = result.size;
             
             XCTAssertNotNil(result, @"");
@@ -118,7 +118,7 @@
     }];
 }
 
-- (void)testRetrieveImageForEntity_PreResizeBlock
+- (void)testFetchImageForEntity_PreResizeBlock
 {
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
     UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
@@ -133,7 +133,7 @@
     };
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_cache retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+        [_cache fetchImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
             
             XCTAssertEqualObjects(result, preResizeImage, @"");
             
@@ -142,7 +142,7 @@
     }];
 }
 
-- (void)testRetrieveImageForEntity_PostResizeBlock
+- (void)testFetchImageForEntity_PostResizeBlock
 {
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
     UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
@@ -157,7 +157,7 @@
     };
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_cache retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+        [_cache fetchImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
             
             XCTAssertEqualObjects(result, postResizeImage, @"");
             
@@ -166,7 +166,7 @@
     }];
 }
 
-- (void)testRetrieveImageForEntity_MemoryCacheHit
+- (void)testFetchImageForEntity_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
     id<HNKCacheEntity> entity = [HNKCache entityWithKey:@"1" image:image];
@@ -174,7 +174,7 @@
     NSString *formatName = format.name;
     [_cache setImage:image forKey:entity.cacheKey formatName:formatName];
 
-    BOOL result = [_cache retrieveImageForEntity:entity formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {
+    BOOL result = [_cache fetchImageForEntity:entity formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {
         XCTAssertEqualObjects(resultImage, image, @"");
         XCTAssertNil(error);
     }];
@@ -182,19 +182,19 @@
     XCTAssertTrue(result, @"");
 }
 
-- (void)testRetrieveImageForEntity_MemoryCacheMiss
+- (void)testFetchImageForEntity_MemoryCacheMiss
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
     id<HNKCacheEntity> entity = [HNKCache entityWithKey:@"1" image:image];
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
     NSString *formatName = format.name;
     
-    BOOL result = [_cache retrieveImageForEntity:entity formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {}];
+    BOOL result = [_cache fetchImageForEntity:entity formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {}];
     
     XCTAssertFalse(result, @"");
 }
 
-- (void)testRetrieveImageForEntity_PreResizeBlock_MemoryCacheMiss
+- (void)testFetchImageForEntity_PreResizeBlock_MemoryCacheMiss
 {
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
     UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
@@ -211,7 +211,7 @@
     };
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        BOOL result = [_cache retrieveImageForEntity:entity formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {
+        BOOL result = [_cache fetchImageForEntity:entity formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {
             XCTAssertEqualObjects(resultImage, preResizeImage, @"");
             XCTAssertNil(error);
             dispatch_semaphore_signal(semaphore);
@@ -221,7 +221,7 @@
     }];
 }
 
-- (void)testRetrieveImageForEntity_PostResizeBlock_MemoryCacheMiss
+- (void)testFetchImageForEntity_PostResizeBlock_MemoryCacheMiss
 {
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
     UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
@@ -238,7 +238,7 @@
     };
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        BOOL result = [_cache retrieveImageForEntity:entity formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {
+        BOOL result = [_cache fetchImageForEntity:entity formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {
             XCTAssertEqualObjects(resultImage, postResizeImage, @"");
             XCTAssertNil(error);
             dispatch_semaphore_signal(semaphore);
@@ -248,7 +248,7 @@
     }];
 }
 
-- (void)testRetrieveImageForKey_MemoryCacheHit
+- (void)testFetchImageForKey_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
@@ -256,7 +256,7 @@
     NSString *key = self.name;
     [_cache setImage:image forKey:key formatName:formatName];
     
-    BOOL result = [_cache retrieveImageForKey:key formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {
+    BOOL result = [_cache fetchImageForKey:key formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {
         XCTAssertEqualObjects(resultImage, image, @"");
         XCTAssertNil(error);
     }];
@@ -264,13 +264,13 @@
     XCTAssertTrue(result, @"");
 }
 
-- (void)testRetrieveImageForKey_MemoryCacheMiss
+- (void)testFetchImageForKey_MemoryCacheMiss
 {
     HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
     NSString *formatName = format.name;
     NSString *key = self.name;
     
-    BOOL result = [_cache retrieveImageForKey:key formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {}];
+    BOOL result = [_cache fetchImageForKey:key formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {}];
     
     XCTAssertFalse(result, @"");
 }
@@ -311,7 +311,7 @@
     id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:nil];
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_cache retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+        [_cache fetchImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
             XCTAssertNil(result, @"");
             
             dispatch_semaphore_signal(semaphore);
@@ -340,7 +340,7 @@
 
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_cache retrieveImageForEntity:entity formatName:format1.name completionBlock:^(UIImage *result, NSError *error) {
+        [_cache fetchImageForEntity:entity formatName:format1.name completionBlock:^(UIImage *result, NSError *error) {
             XCTAssertNil(result, @"");
             
             dispatch_semaphore_signal(semaphore);
@@ -348,7 +348,7 @@
     }];
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_cache retrieveImageForEntity:entity formatName:format2.name completionBlock:^(UIImage *result, NSError *error) {
+        [_cache fetchImageForEntity:entity formatName:format2.name completionBlock:^(UIImage *result, NSError *error) {
             XCTAssertNil(result, @"");
             
             dispatch_semaphore_signal(semaphore);
@@ -379,7 +379,7 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidReceiveMemoryWarningNotification object:nil];
 
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_cache retrieveImageForKey:key formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+        [_cache fetchImageForKey:key formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
             XCTAssertNil(result, @"");
             
             dispatch_semaphore_signal(semaphore);

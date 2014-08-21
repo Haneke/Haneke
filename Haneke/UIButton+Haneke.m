@@ -146,7 +146,7 @@
 {
     HNKCacheFormat *format = self.hnk_imageFormat;
     __block BOOL animated = NO;
-    const BOOL didSetImage = [[HNKCache sharedCache] retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *image, NSError *error) {
+    const BOOL didSetImage = [[HNKCache sharedCache] fetchImageForEntity:entity formatName:format.name completionBlock:^(UIImage *image, NSError *error) {
         if ([self hnk_shouldCancelSetImageForKey:entity.cacheKey]) return;
         
         if (image)
@@ -307,7 +307,7 @@
 {
     HNKCacheFormat *format = self.hnk_backgroundImageFormat;
     __block BOOL animated = NO;
-    const BOOL didSetImage = [[HNKCache sharedCache] retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *image, NSError *error) {
+    const BOOL didSetImage = [[HNKCache sharedCache] fetchImageForEntity:entity formatName:format.name completionBlock:^(UIImage *image, NSError *error) {
         if ([self hnk_shouldCancelSetBackgroundImageForKey:entity.cacheKey]) return;
         
         if (image)
