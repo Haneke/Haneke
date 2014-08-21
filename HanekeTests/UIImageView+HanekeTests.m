@@ -191,7 +191,7 @@
     XCTAssertEqualObjects(result, previousImage, @"");
 }
 
-- (void)testSetImageWithKeySuccessFailure_MemoryCacheHit
+- (void)testSetImageWithKeyPlaceholderSuccessFailure_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     HNKCacheFormat *format = _imageView.hnk_cacheFormat;
@@ -199,7 +199,7 @@
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
     
     __block BOOL success = NO;
-    [_imageView hnk_setImage:image withKey:key success:^(UIImage *result) {
+    [_imageView hnk_setImage:image withKey:key placeholder:nil success:^(UIImage *result) {
         XCTAssertEqualObjects(result, image, @"");
         success = YES;
     } failure:^(NSError *error) {
@@ -211,14 +211,14 @@
     XCTAssertNil(_imageView.image, @"");
 }
 
-- (void)testSetImageWithKeySuccessFailure_SuccessNil_MemoryCacheHit
+- (void)testSetImageWithKeyPlaceholderSuccessFailure_SuccessNil_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     NSString *key = self.name;
     HNKCacheFormat *format = _imageView.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
     
-    [_imageView hnk_setImage:image withKey:key success:nil failure:^(NSError *error) {
+    [_imageView hnk_setImage:image withKey:key placeholder:nil success:nil failure:^(NSError *error) {
         XCTFail(@"");
     }];
     
@@ -227,25 +227,25 @@
     XCTAssertEqualObjects(result, image, @"");
 }
 
-- (void)testSetImageWithKeySuccessFailure_MemoryCacheMiss
+- (void)testSetImageWithKeyPlaceholderSuccessFailure_MemoryCacheMiss
 {
     NSString *key = self.name;
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
 
-    [_imageView hnk_setImage:image withKey:key success:nil failure:nil];
+    [_imageView hnk_setImage:image withKey:key placeholder:nil success:nil failure:nil];
     
     XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, key,  @"");
     XCTAssertNil(_imageView.image, @"");
 }
 
-- (void)testSetImageWithKeySuccessFailure_ImageSet_MemoryCacheMiss
+- (void)testSetImageWithKeyPlaceholderSuccessFailure_ImageSet_MemoryCacheMiss
 {
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     _imageView.image = previousImage;
     NSString *key = self.name;
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
 
-    [_imageView hnk_setImage:image withKey:key success:nil failure:nil];
+    [_imageView hnk_setImage:image withKey:key placeholder:nil success:nil failure:nil];
     
     XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, key,  @"");
     UIImage *result = _imageView.image;
