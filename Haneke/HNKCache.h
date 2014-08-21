@@ -66,13 +66,14 @@
 ///---------------------------------------------
 
 /**
- Retrieves an image from the cache, or creates one if it doesn't exist. If the image exists in the memory cache, the completion block will be executed synchronously. If the image has to be retreived from the disk cache or has to be created, the completion block will be executed asynchronously.
- @param entity Entity that represents the original image. If the image doesn't exist in the cache, the entity will be asked to provide the original data or image to create it. Any calls to the entity will be done in the main queue.
- @param formatName Name of the format in which the image is desired. The format must have been previously registered with the cache. If the image doesn't exist in the cache, it will be created based on the format. If by creating the image the format disk capacity is surpassed, least recently used images of the format will be removed until it isn't.
- @param completionBlock The block to be called with the requested image. Always called from the main queue. Will be called synchronously if the image exists in the memory cache, or asynchronously if the image has to be retreived from the disk cache or has to be created.
- @return YES if image exists in the memory cache (and thus, the completion block was called synchronously), NO otherwise.
+ Retrieves an image from the cache, or creates one if it doesn't exist. If the image exists in the memory cache, the success block will be executed synchronously. If the image has to be retreived from the disk cache or has to be created, the success block will be executed asynchronously.
+ @param entity Entity that represents the original image. If the image doesn't exist in the cache, the entity will be asked to provide the original image to create it. Any calls to the entity will be done in the main queue.
+ @param formatName Name of the format in which the image is desired. The format must have been previously registered with the cache. If the image doesn't exist in the cache, it will be created based on the format. If by creating the image the format disk capacity is surpassed, the least recently used images of the format will be removed until it isn't.
+ @param successBlock Block to be called with the requested image. Always called from the main queue. Will be called synchronously if the image exists in the memory cache, or asynchronously if the image has to be retreived from the disk cache or has to be created.
+ @param failureBlock Block to be called if the image is not in the cache and the entity fails to provide the original. Called asynchronously from the main queue.
+ @return YES if image exists in the memory cache (and thus, the success block was called synchronously), NO otherwise.
  */
-- (BOOL)fetchImageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock;
+- (BOOL)fetchImageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
 
 /**
  Retrieves an image from the cache. If the image exists in the memory cache, the completion block will be executed synchronously. If the image has to be retreived from the disk cache, the completion block will be executed asynchronously.

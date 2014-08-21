@@ -147,19 +147,16 @@
     HNKCacheFormat *format = self.hnk_imageFormat;
     __block BOOL animated = NO;
     __weak UIButton *weakSelf = self;
-    const BOOL didSetImage = [[HNKCache sharedCache] fetchImageForEntity:entity formatName:format.name completionBlock:^(UIImage *image, NSError *error) {
+    const BOOL didSetImage = [[HNKCache sharedCache] fetchImageForEntity:entity formatName:format.name success:^(UIImage *image) {
+        if ([weakSelf hnk_shouldCancelSetImageForKey:entity.cacheKey]) return;
+
+        [weakSelf hnk_setImage:image forState:state animated:animated success:successBlock];
+    } failure:^(NSError *error) {
         if ([weakSelf hnk_shouldCancelSetImageForKey:entity.cacheKey]) return;
         
-        if (image)
-        {
-            [weakSelf hnk_setImage:image forState:state animated:animated success:successBlock];
-        }
-        else
-        {
-            weakSelf.hnk_imageEntity = nil;
-            
-            if (failureBlock) failureBlock(error);
-        }
+        weakSelf.hnk_imageEntity = nil;
+        
+        if (failureBlock) failureBlock(error);
     }];
     animated = YES;
     return didSetImage;
@@ -309,19 +306,16 @@
     HNKCacheFormat *format = self.hnk_backgroundImageFormat;
     __block BOOL animated = NO;
     __weak UIButton *weakSelf = self;
-    const BOOL didSetImage = [[HNKCache sharedCache] fetchImageForEntity:entity formatName:format.name completionBlock:^(UIImage *image, NSError *error) {
+    const BOOL didSetImage = [[HNKCache sharedCache] fetchImageForEntity:entity formatName:format.name success:^(UIImage *image) {
         if ([weakSelf hnk_shouldCancelSetBackgroundImageForKey:entity.cacheKey]) return;
+
+        [weakSelf hnk_setBackgroundImage:image forState:state animated:animated success:successBlock];
+    } failure:^(NSError *error) {
+        if ([weakSelf hnk_shouldCancelSetBackgroundImageForKey:entity.cacheKey]) return;
+
+        weakSelf.hnk_backgroundImageEntity = nil;
         
-        if (image)
-        {
-            [weakSelf hnk_setBackgroundImage:image forState:state animated:animated success:successBlock];
-        }
-        else
-        {
-            weakSelf.hnk_backgroundImageEntity = nil;
-            
-            if (failureBlock) failureBlock(error);
-        }
+        if (failureBlock) failureBlock(error);
     }];
     animated = YES;
     return didSetImage;

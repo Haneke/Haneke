@@ -131,25 +131,16 @@
     HNKCacheFormat *format = self.hnk_cacheFormat;
     __block BOOL animated = NO;
     __weak UIImageView *weakSelf = self;
-    const BOOL didSetImage = [[HNKCache sharedCache] fetchImageForEntity:entity formatName:format.name completionBlock:^(UIImage *image, NSError *error) {
+    const BOOL didSetImage = [[HNKCache sharedCache] fetchImageForEntity:entity formatName:format.name success:^(UIImage *image) {
+        if ([weakSelf hnk_shouldCancelForKey:entity.cacheKey]) return;
         
-        // Cancel set image?
-        if (![weakSelf.hnk_entity.cacheKey isEqualToString:entity.cacheKey])
-        {
-            HanekeLog(@"Cancelled set image for key %@", entity.cacheKey.lastPathComponent);
-            return;
-        }
+        [weakSelf hnk_setImage:image animated:animated success:successBlock];
+    } failure:^(NSError *error) {
+        if ([weakSelf hnk_shouldCancelForKey:entity.cacheKey]) return;
         
-        if (image)
-        {
-            [weakSelf hnk_setImage:image animated:animated success:successBlock];
-        }
-        else
-        {
-            weakSelf.hnk_entity = nil;
-            
-            if (failureBlock) failureBlock(error);
-        }
+        weakSelf.hnk_entity = nil;
+        
+        if (failureBlock) failureBlock(error);
     }];
     animated = YES;
     return didSetImage;
@@ -170,6 +161,14 @@
             self.image = image;
         } completion:nil];
     }
+}
+
+- (BOOL)hnk_shouldCancelForKey:(NSString*)key
+{
+    if ([self.hnk_entity.cacheKey isEqualToString:key]) return NO;
+    
+    HanekeLog(@"Cancelled set image for %@", key.lastPathComponent);
+    return YES;
 }
 
 #pragma mark Properties (Private)

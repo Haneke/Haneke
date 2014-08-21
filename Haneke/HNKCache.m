@@ -122,13 +122,13 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
 #pragma mark Getting images
 
-- (BOOL)fetchImageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock
+- (BOOL)fetchImageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     NSString *key = entity.cacheKey;
-    return [self fetchImageForKey:key formatName:formatName completionBlock:^(UIImage *image, NSError *error) {
+    return [self fetchImageForKey:key formatName:formatName completionBlock:^(UIImage *image, NSError *_) {
         if (image)
         {
-            completionBlock(image, error);
+            if (successBlock) successBlock(image);
             return;
         }
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -138,7 +138,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
                 if (!originalImage)
                 {
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        completionBlock(nil, error);
+                        if (failureBlock) failureBlock(error);
                     });
                     return;
                 }
@@ -146,7 +146,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
                 UIImage *image = [self imageFromOriginal:originalImage key:key format:format];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self setMemoryImage:image forKey:key format:format];
-                    completionBlock(image, error);
+                    if (successBlock) successBlock(image);
                 });
                 [self setDiskImage:image forKey:key format:format];
             }];

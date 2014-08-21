@@ -65,18 +65,19 @@
     HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(1, 1)];
  
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+        [_sut fetchImageForEntity:entity formatName:format.name success:^(UIImage *result) {
             CGSize resultSize = result.size;
             
             XCTAssertNotNil(result, @"");
-            XCTAssertNil(error, @"");
             XCTAssertTrue(CGSizeEqualToSize(resultSize, format.size), @"");
             XCTAssertFalse(result.hnk_hasAlpha, @"");
-
+            
+            dispatch_semaphore_signal(semaphore);
+        } failure:^(NSError *error) {
+            XCTFail(@"Expected success");
             dispatch_semaphore_signal(semaphore);
         }];
     }];
-    
 }
 
 - (void)testFetchImageForEntity_ImageWithAlpha
@@ -86,14 +87,16 @@
     HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(1, 1)];
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+        [_sut fetchImageForEntity:entity formatName:format.name success:^(UIImage *result) {
             CGSize resultSize = result.size;
             
             XCTAssertNotNil(result, @"");
-            XCTAssertNil(error, @"");
             XCTAssertTrue(CGSizeEqualToSize(resultSize, format.size), @"");
             XCTAssertTrue(result.hnk_hasAlpha, @"");
             
+            dispatch_semaphore_signal(semaphore);
+        } failure:^(NSError *error) {
+            XCTFail(@"Expected success");
             dispatch_semaphore_signal(semaphore);
         }];
     }];
@@ -106,13 +109,15 @@
     
     HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(1, 1)];
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+        [_sut fetchImageForEntity:entity formatName:format.name success:^(UIImage *result) {
             CGSize resultSize = result.size;
             
             XCTAssertNotNil(result, @"");
-            XCTAssertNil(error, @"");
             XCTAssertTrue(CGSizeEqualToSize(resultSize, format.size), @"");
             
+            dispatch_semaphore_signal(semaphore);
+        } failure:^(NSError *error) {
+            XCTFail(@"Expected success");
             dispatch_semaphore_signal(semaphore);
         }];
     }];
@@ -133,10 +138,13 @@
     };
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+        [_sut fetchImageForEntity:entity formatName:format.name success:^(UIImage *result) {
             
             XCTAssertEqualObjects(result, preResizeImage, @"");
             
+            dispatch_semaphore_signal(semaphore);
+        } failure:^(NSError *error) {
+            XCTFail(@"Expected success");
             dispatch_semaphore_signal(semaphore);
         }];
     }];
@@ -157,10 +165,13 @@
     };
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+        [_sut fetchImageForEntity:entity formatName:format.name success:^(UIImage *result) {
             
             XCTAssertEqualObjects(result, postResizeImage, @"");
             
+            dispatch_semaphore_signal(semaphore);
+        } failure:^(NSError *error) {
+            XCTFail(@"Expected success");
             dispatch_semaphore_signal(semaphore);
         }];
     }];
@@ -174,9 +185,10 @@
     NSString *formatName = format.name;
     [_sut setImage:image forKey:entity.cacheKey formatName:formatName];
 
-    BOOL result = [_sut fetchImageForEntity:entity formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {
-        XCTAssertEqualObjects(resultImage, image, @"");
-        XCTAssertNil(error);
+    BOOL result = [_sut fetchImageForEntity:entity formatName:format.name success:^(UIImage *result) {
+        XCTAssertEqualObjects(result, image, @"");
+    } failure:^(NSError *error) {
+        XCTFail(@"Expected success");
     }];
     
     XCTAssertTrue(result, @"");
@@ -189,7 +201,7 @@
     HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(1, 1)];
     NSString *formatName = format.name;
     
-    BOOL result = [_sut fetchImageForEntity:entity formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {}];
+    BOOL result = [_sut fetchImageForEntity:entity formatName:formatName success:nil failure:nil];
     
     XCTAssertFalse(result, @"");
 }
@@ -200,7 +212,6 @@
     UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
     NSString *key = self.name;
     id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:originalImage];
-    NSString *formatName = format.name;
     
     UIImage *preResizeImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:format.size];
     
@@ -211,12 +222,13 @@
     };
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        BOOL result = [_sut fetchImageForEntity:entity formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {
-            XCTAssertEqualObjects(resultImage, preResizeImage, @"");
-            XCTAssertNil(error);
+        BOOL result = [_sut fetchImageForEntity:entity formatName:format.name success:^(UIImage *result) {
+            XCTAssertEqualObjects(result, preResizeImage, @"");
+            dispatch_semaphore_signal(semaphore);
+        } failure:^(NSError *error) {
+            XCTFail(@"Expected success");
             dispatch_semaphore_signal(semaphore);
         }];
-
         XCTAssertFalse(result, @"");
     }];
 }
@@ -227,7 +239,6 @@
     UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
     NSString *key = self.name;
     id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:originalImage];
-    NSString *formatName = format.name;
     
     UIImage *postResizeImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:format.size];
     
@@ -238,9 +249,11 @@
     };
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        BOOL result = [_sut fetchImageForEntity:entity formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {
-            XCTAssertEqualObjects(resultImage, postResizeImage, @"");
-            XCTAssertNil(error);
+        BOOL result = [_sut fetchImageForEntity:entity formatName:format.name success:^(UIImage *result) {
+            XCTAssertEqualObjects(result, postResizeImage, @"");
+            dispatch_semaphore_signal(semaphore);
+        } failure:^(NSError *error) {
+            XCTFail(@"Expected success");
             dispatch_semaphore_signal(semaphore);
         }];
         
@@ -352,10 +365,8 @@
     
     [_sut removeAllImages];
     
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:nil];
-    
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageForEntity:entity formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
+        [_sut fetchImageForKey:key formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
             XCTAssertNil(result, @"");
             
             dispatch_semaphore_signal(semaphore);
@@ -380,11 +391,8 @@
     
     [_sut removeAllImages];
     
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:nil];
-
-    
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageForEntity:entity formatName:format1.name completionBlock:^(UIImage *result, NSError *error) {
+        [_sut fetchImageForKey:key formatName:format1.name completionBlock:^(UIImage *result, NSError *error) {
             XCTAssertNil(result, @"");
             
             dispatch_semaphore_signal(semaphore);
@@ -392,7 +400,7 @@
     }];
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageForEntity:entity formatName:format2.name completionBlock:^(UIImage *result, NSError *error) {
+        [_sut fetchImageForKey:key formatName:format2.name completionBlock:^(UIImage *result, NSError *error) {
             XCTAssertNil(result, @"");
             
             dispatch_semaphore_signal(semaphore);
