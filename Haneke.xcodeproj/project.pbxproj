@@ -44,6 +44,7 @@
 		A010752E19A6276A002A1990 /* HNKSimpleEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = A0818B7019A3BD7A00F89CCF /* HNKSimpleEntity.m */; };
 		A010753119A6295F002A1990 /* HNKDiskCache.m in Sources */ = {isa = PBXBuildFile; fileRef = A010753019A6295F002A1990 /* HNKDiskCache.m */; };
 		A010753319A64480002A1990 /* HNKDiskCache.m in Sources */ = {isa = PBXBuildFile; fileRef = A010753019A6295F002A1990 /* HNKDiskCache.m */; };
+		A010753519A652FE002A1990 /* HNKDiskCacheTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A010753419A652FE002A1990 /* HNKDiskCacheTests.m */; };
 		A0818B7119A3BD7A00F89CCF /* HNKSimpleEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = A0818B7019A3BD7A00F89CCF /* HNKSimpleEntity.m */; };
 		A0818B7419A4A6AC00F89CCF /* HNKSimpleEntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A0818B7319A4A6AC00F89CCF /* HNKSimpleEntityTests.m */; };
 		A0818B7619A4ABFD00F89CCF /* HNKDiskEntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A0818B7519A4ABFD00F89CCF /* HNKDiskEntityTests.m */; };
@@ -110,7 +111,6 @@
 		8762BB12192915BC007AE90D /* UIImage+HanekeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+HanekeTests.m"; sourceTree = "<group>"; };
 		876E5F1E18AB762600B4EAF6 /* UIImageView+Haneke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+Haneke.h"; sourceTree = "<group>"; };
 		876E5F1F18AB762600B4EAF6 /* UIImageView+Haneke.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+Haneke.m"; sourceTree = "<group>"; };
-		87775ADA193386E60096B3B9 /* HNKCache+DiskTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "HNKCache+DiskTests.m"; sourceTree = "<group>"; };
 		87A6907A18B678C700F97E13 /* GTMCodeCoverageApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMCodeCoverageApp.h; sourceTree = "<group>"; };
 		87A6907B18B678C700F97E13 /* GTMCodeCoverageApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMCodeCoverageApp.m; sourceTree = "<group>"; };
 		87A6907C18B678C700F97E13 /* GTMCodeCoverageTestsXC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMCodeCoverageTestsXC.m; sourceTree = "<group>"; };
@@ -125,6 +125,7 @@
 		87F47BB818AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKDemoCollectionViewCell.m; sourceTree = "<group>"; };
 		A010752F19A6295F002A1990 /* HNKDiskCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKDiskCache.h; sourceTree = "<group>"; };
 		A010753019A6295F002A1990 /* HNKDiskCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKDiskCache.m; sourceTree = "<group>"; };
+		A010753419A652FE002A1990 /* HNKDiskCacheTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKDiskCacheTests.m; sourceTree = "<group>"; };
 		A0818B6F19A3BD7A00F89CCF /* HNKSimpleEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKSimpleEntity.h; sourceTree = "<group>"; };
 		A0818B7019A3BD7A00F89CCF /* HNKSimpleEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKSimpleEntity.m; sourceTree = "<group>"; };
 		A0818B7319A4A6AC00F89CCF /* HNKSimpleEntityTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKSimpleEntityTests.m; sourceTree = "<group>"; };
@@ -232,8 +233,8 @@
 			children = (
 				87A6907918B678A000F97E13 /* Code Coverage iOS 7 Workaround */,
 				A0818B8019A4E8E100F89CCF /* Entities */,
-				87775ADA193386E60096B3B9 /* HNKCache+DiskTests.m */,
 				873E22BE18AA8D9F00E7919C /* HNKCacheTests.m */,
+				A010753419A652FE002A1990 /* HNKDiskCacheTests.m */,
 				873E22A918AA8C7C00E7919C /* Supporting Files */,
 				8762BB12192915BC007AE90D /* UIImage+HanekeTests.m */,
 				A0818B8119A4E8E600F89CCF /* UIKit+Haneke */,
@@ -522,6 +523,7 @@
 				A0818B8319A4E91D00F89CCF /* UIView+HanekeTests.m in Sources */,
 				A0818B7819A4B80D00F89CCF /* HNKNetworkEntityTests.m in Sources */,
 				873E22BF18AA8D9F00E7919C /* HNKCacheTests.m in Sources */,
+				A010753519A652FE002A1990 /* HNKDiskCacheTests.m in Sources */,
 				87A6908318B6817C00F97E13 /* UIImage+HanekeTestUtils.m in Sources */,
 				A0818B8519A5025300F89CCF /* UIButton+HanekeTests.m in Sources */,
 				A0818B7419A4A6AC00F89CCF /* HNKSimpleEntityTests.m in Sources */,

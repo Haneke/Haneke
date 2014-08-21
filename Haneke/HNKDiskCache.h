@@ -14,6 +14,8 @@
 
 @property (nonatomic, assign) unsigned long long capacity;
 
+@property (nonatomic, readonly) dispatch_queue_t queue;
+
 - (instancetype)initWithDirectory:(NSString*)directory capacity:(unsigned long long)capacity;
 
 - (void)enumerateDataByAccessDateUsingBlock:(void(^)(NSString *key, NSData *data, NSDate *accessDate, BOOL *stop))block;

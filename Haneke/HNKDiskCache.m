@@ -28,7 +28,6 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
 
 @implementation HNKDiskCache {
     NSString *_directory;
-    dispatch_queue_t _queue;
 }
 
 - (instancetype)initWithDirectory:(NSString*)directory capacity:(unsigned long long)capacity
@@ -148,6 +147,14 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
     });
 }
 
+- (void)setCapacity:(unsigned long long)capacity
+{
+    _capacity = capacity;
+    dispatch_async(_queue, ^{
+        [self controlCapacity];
+    });
+}
+
 #pragma mark Private (in _queue)
 
 - (void)calculateSize
@@ -222,10 +229,16 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
 {
     NSError *error;
     NSString *path = [self pathForKey:key];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSDictionary *previousAttributes = [fileManager attributesOfItemAtPath:path error:nil];
     if ([data writeToFile:path options:kNilOptions error:&error])
     {
         [path hnk_setValue:key forExtendedFileAttribute:HNKExtendedFileAttributeKey];
         const NSUInteger byteCount = data.length;
+        if (previousAttributes)
+        {
+            _size -= previousAttributes.fileSize;
+        }
         _size += byteCount;
         [self controlCapacity];
     }
