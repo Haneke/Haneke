@@ -85,11 +85,6 @@
     [self hnk_setImageFromEntity:entity placeholder:placeholder success:nil failure:nil];
 }
 
-- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
-{
-    [self hnk_setImageFromEntity:entity placeholder:nil success:successBlock failure:failureBlock];
-}
-
 - (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     [self hnk_cancelSetImage];
