@@ -18,16 +18,16 @@
 
 - (instancetype)initWithDirectory:(NSString*)directory capacity:(unsigned long long)capacity;
 
-- (void)enumerateDataByAccessDateUsingBlock:(void(^)(NSString *key, NSData *data, NSDate *accessDate, BOOL *stop))block;
+- (void)setData:(NSData*)data forKey:(NSString*)key;
 
 - (void)fetchDataForKey:(NSString*)key success:(void (^)(NSData *data))successBlock failure:(void (^)(NSError *error))failureBlock;
-
-- (void)setData:(NSData*)data forKey:(NSString*)key;
 
 - (void)removeDataForKey:(NSString*)key;
 
 - (void)removeAllData;
 
-- (void)updateAccessDateOfData:(NSData* (^)())lazyData forKey:(NSString*)key;
+- (void)enumerateDataByAccessDateUsingBlock:(void(^)(NSString *key, NSData *data, NSDate *accessDate, BOOL *stop))block;
+
+- (void)updateAccessDateForKey:(NSString*)key data:(NSData* (^)())lazyData ;
 
 @end

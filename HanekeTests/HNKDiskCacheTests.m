@@ -77,7 +77,7 @@
 {
     const unsigned long long size = 10;
     [self _writeDataWithSize:size];
-    _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:size * 2];
+    _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
     dispatch_sync(_sut.queue, ^{
         XCTAssertEqual(_sut.size, size, @"");
     });
@@ -92,7 +92,7 @@
 - (void)testSetData
 {
     const long size = 5;
-    _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:size * 2];
+    _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
     NSData *data = [self _dataWithSize:size];
     NSString *key = self.name;
     
@@ -115,7 +115,7 @@
 - (void)testSetData_LongKey
 {
     const long size = 5;
-    _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:size * 2];
+    _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
     NSData *data = [self _dataWithSize:size];
     NSString *key = @"12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
     
@@ -138,7 +138,7 @@
 - (void)testSetData_KeyWithInvalidCharacters
 {
     const long size = 7;
-    _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:size * 2];
+    _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
     NSData *data = [self _dataWithSize:size];
     NSString *key = @":/\\";
     
@@ -160,15 +160,15 @@
 
 - (void)testSetData_Ovewrite
 {
+    _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
     const long size1 = 7;
-    const long size2 = 12;
-    _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:MAX(size1, size2)];
     NSData *data1 = [self _dataWithSize:size1];
     NSString *key = self.name;
     [_sut setData:data1 forKey:key];
     dispatch_sync(_sut.queue, ^{
         XCTAssertEqual(_sut.size, size1, @"");
     });
+    const long size2 = 12;
     NSData *data2 = [self _dataWithSize:size2];
 
     [_sut setData:data2 forKey:key];
@@ -185,6 +185,170 @@
             dispatch_semaphore_signal(semaphore);
         }];
     }];
+}
+
+- (void)testSetFetchDataForKey_Success
+{
+    _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
+    NSData *data = [self _dataWithSize:14];
+    NSString *key = self.name;
+    [_sut setData:data forKey:key];
+
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_sut fetchDataForKey:key success:^(NSData *resultData) {
+            XCTAssertEqualObjects(data, resultData, @"");
+            dispatch_semaphore_signal(semaphore);
+        } failure:^(NSError *error) {
+            XCTFail(@"Expected success");
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
+}
+
+- (void)testSetFetchDataForKey_Failure
+{
+    _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
+    NSString *key = self.name;
+    
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_sut fetchDataForKey:key success:^(NSData *resultData) {
+            XCTFail(@"Expected failure");
+            dispatch_semaphore_signal(semaphore);
+        } failure:^(NSError *error) {
+            XCTAssertEqual(error.code, NSFileReadNoSuchFileError, @"");
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
+}
+
+- (void)testRemoveDataForKey
+{
+    _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
+    NSData *data = [self _dataWithSize:23];
+    NSString *key = self.name;
+    [_sut setData:data forKey:key];
+    dispatch_sync(_sut.queue, ^{
+        XCTAssertTrue(_sut.size > 0, @"");
+    });
+    
+    [_sut removeDataForKey:key];
+    dispatch_sync(_sut.queue, ^{
+        XCTAssertEqual(_sut.size, 0, @"");
+    });
+}
+
+- (void)testRemoveDataForKey_Inexisting
+{
+    _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
+    NSData *data = [self _dataWithSize:23];
+    [_sut setData:data forKey:@"1"];
+    dispatch_sync(_sut.queue, ^{
+        XCTAssertTrue(_sut.size > 0, @"");
+    });
+    
+    [_sut removeDataForKey:@"inexisting"];
+    
+    dispatch_sync(_sut.queue, ^{
+        XCTAssertTrue(_sut.size > 0, @"");
+    });
+}
+
+- (void)testRemoveAllData
+{
+    [self _writeDataWithSize:10];
+    [self _writeDataWithSize:7];
+    _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
+    dispatch_sync(_sut.queue, ^{
+        XCTAssertTrue(_sut.size > 0, @"");
+    });
+    
+    [_sut removeAllData];
+    dispatch_sync(_sut.queue, ^{
+        XCTAssertEqual(_sut.size, 0, @"");
+    });
+}
+
+- (void)testEnumerateDataByAccessDateUsingBlock_One
+{
+    _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
+    NSData *data = [self _dataWithSize:8];
+    NSString *key = self.name;
+    [_sut setData:data forKey:key];
+    
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_sut enumerateDataByAccessDateUsingBlock:^(NSString *resultKey, NSData *resultData, NSDate *accessDate, BOOL *stop) {
+            XCTAssertEqualObjects(resultKey, key, @"");
+            XCTAssertEqualObjects(resultData, data, @"");
+            XCTAssertNotNil(accessDate, @"");
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
+}
+
+- (void)testEnumerateDataByAccessDateUsingBlock_Two
+{
+    _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
+    NSData *data1 = [self _dataWithSize:8];
+    NSString *key1 = @"1";
+    [_sut setData:data1 forKey:key1];
+    NSData *data2 = [self _dataWithSize:13];
+    NSString *key2 = @"2";
+    [_sut setData:data2 forKey:key2];
+    
+    __block NSInteger i = 0;
+    
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_sut enumerateDataByAccessDateUsingBlock:^(NSString *resultKey, NSData *resultData, NSDate *accessDate, BOOL *stop) {
+            i++;
+            if (i == 2) dispatch_semaphore_signal(semaphore);
+        }];
+    }];
+}
+
+- (void)testEnumerateDataByAccessDateUsingBlock_Empty
+{
+    _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
+    
+    [_sut enumerateDataByAccessDateUsingBlock:^(NSString *key, NSData *data, NSDate *accessDate, BOOL *stop) {
+        XCTFail(@"");
+    }];
+}
+
+- (void)testUpdateAccessDateForKey_Inexisting_DataNil
+{
+    _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
+    NSString *key = self.name;
+    
+    [_sut updateAccessDateForKey:key data:nil];
+}
+
+- (void)testUpdateAccessDateForKey_Inexisting_Data
+{
+    _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
+    NSData *data = [self _dataWithSize:3];
+    NSString *key = self.name;
+    
+    [_sut updateAccessDateForKey:key data:^NSData *{ return data; }];
+    
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_sut fetchDataForKey:key success:^(NSData *resultData) {
+            XCTAssertEqualObjects(data, resultData, @"");
+            dispatch_semaphore_signal(semaphore);
+        } failure:^(NSError *error) {
+            XCTFail(@"Expected success");
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
+}
+
+- (void)testUpdateAccessDateForKey_Existing
+{
+    _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
+    NSData *data = [self _dataWithSize:3];
+    NSString *key = self.name;
+    [_sut setData:data forKey:key];
+    
+    [_sut updateAccessDateForKey:key data:^NSData *{ return data; }];
 }
 
 #pragma mark Helpers

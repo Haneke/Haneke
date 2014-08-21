@@ -371,10 +371,10 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
 - (void)updateAccessDateOfImage:(UIImage*)image key:(NSString*)key format:(HNKCacheFormat*)format
 {
-    [format.diskCache updateAccessDateOfData:^NSData *{
+    [format.diskCache updateAccessDateForKey:key data:^NSData *{
         NSData *data = [image hnk_dataWithCompressionQuality:format.compressionQuality];
         return data;
-    } forKey:key];
+    }];
 }
 
 #pragma mark Notifications

@@ -64,9 +64,7 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
             
             if (block)
             {
-                dispatch_sync(dispatch_get_main_queue(), ^{
-                    block(key, data, accessDate, &innerStop);
-                });
+                block(key, data, accessDate, &innerStop);
             }
             
             if (innerStop) *stop = YES;
@@ -98,7 +96,7 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
             });
         }
         
-        [self syncUpdateAccessDateOfData:^NSData *{ return data; } forKey:key];
+        [self syncUpdateAccessDateForKey:key data:^NSData *{ return data; }];
     });
 }
 
@@ -140,10 +138,10 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
     });
 }
 
-- (void)updateAccessDateOfData:(NSData* (^)())lazyData forKey:(NSString*)key
+- (void)updateAccessDateForKey:(NSString*)key data:(NSData* (^)())lazyData
 {
     dispatch_async(_queue, ^{
-        [self syncUpdateAccessDateOfData:lazyData forKey:key];
+        [self syncUpdateAccessDateForKey:key data:lazyData];
     });
 }
 
@@ -248,7 +246,7 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
     }
 }
 
-- (void)syncUpdateAccessDateOfData:(NSData* (^)())lazyData forKey:(NSString*)key
+- (void)syncUpdateAccessDateForKey:(NSString*)key data:(NSData* (^)())lazyData
 {
     NSString *path = [self pathForKey:key];
     NSDate *now = [NSDate date];
