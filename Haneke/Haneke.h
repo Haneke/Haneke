@@ -19,5 +19,7 @@
 //
 
 #import "HNKCache.h"
+#import "HNKDiskEntity.h"
+#import "HNKNetworkEntity.h"
 #import "UIImageView+Haneke.h"
 #import "UIButton+Haneke.h"
