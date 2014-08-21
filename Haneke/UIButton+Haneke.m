@@ -249,6 +249,16 @@
     [self hnk_setBackgroundImage:image withKey:key forState:state placeholder:placeholder success:nil failure:nil];
 }
 
+- (void)hnk_setBackgroundImageFromEntity:(id<HNKCacheEntity>)entity forState:(UIControlState)state
+{
+    [self hnk_setBackgroundImageFromEntity:entity forState:state placeholder:nil];
+}
+
+- (void)hnk_setBackgroundImageFromEntity:(id<HNKCacheEntity>)entity forState:(UIControlState)state placeholder:(UIImage*)placeholder
+{
+    [self hnk_setBackgroundImageFromEntity:entity forState:state placeholder:placeholder success:nil failure:nil];
+}
+
 - (void)hnk_setBackgroundImageFromEntity:(id<HNKCacheEntity>)entity forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     [self hnk_cancelSetBackgroundImage];
