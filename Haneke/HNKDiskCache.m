@@ -42,6 +42,8 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
     NSString *_directory;
 }
 
+#pragma mark Initializing the cache
+
 - (instancetype)initWithDirectory:(NSString*)directory capacity:(unsigned long long)capacity
 {
     if (self = [super init])
@@ -58,29 +60,20 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
     return self;
 }
 
-- (void)enumerateDataByAccessDateUsingBlock:(void(^)(NSString *key, NSData *data, NSDate *accessDate, BOOL *stop))block
+- (void)setCapacity:(unsigned long long)capacity
+{
+    _capacity = capacity;
+    dispatch_async(_queue, ^{
+        [self controlCapacity];
+    });
+}
+
+#pragma mark Setting and fetching data
+
+- (void)setData:(NSData*)data forKey:(NSString*)key
 {
     dispatch_async(_queue, ^{
-        [[NSFileManager defaultManager] hnk_enumerateContentsOfDirectoryAtPath:_directory orderedByProperty:NSURLContentModificationDateKey ascending:NO usingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
-            NSDate *accessDate;
-            [url getResourceValue:&accessDate forKey:NSURLContentModificationDateKey error:nil];
-            
-            NSString *path = url.path;
-            NSString *key = [path hnk_valueForExtendedFileAttribute:HNKExtendedFileAttributeKey];
-            if (!key) return;
-            
-            NSData *data = [NSData dataWithContentsOfFile:path];
-            if (!data) return;
-            
-            __block BOOL innerStop = NO;
-            
-            if (block)
-            {
-                block(key, data, accessDate, &innerStop);
-            }
-            
-            if (innerStop) *stop = YES;
-        }];
+        [self syncSetData:data forKey:key];
     });
 }
 
@@ -112,12 +105,7 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
     });
 }
 
-- (void)setData:(NSData*)data forKey:(NSString*)key
-{
-    dispatch_async(_queue, ^{
-        [self syncSetData:data forKey:key];
-    });
-}
+#pragma mark Removing data
 
 - (void)removeDataForKey:(NSString*)key
 {
@@ -150,18 +138,38 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
     });
 }
 
+#pragma mark Managing data by access date
+
+- (void)enumerateDataByAccessDateUsingBlock:(void(^)(NSString *key, NSData *data, NSDate *accessDate, BOOL *stop))block
+{
+    dispatch_async(_queue, ^{
+        [[NSFileManager defaultManager] hnk_enumerateContentsOfDirectoryAtPath:_directory orderedByProperty:NSURLContentModificationDateKey ascending:NO usingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
+            NSDate *accessDate;
+            [url getResourceValue:&accessDate forKey:NSURLContentModificationDateKey error:nil];
+            
+            NSString *path = url.path;
+            NSString *key = [path hnk_valueForExtendedFileAttribute:HNKExtendedFileAttributeKey];
+            if (!key) return;
+            
+            NSData *data = [NSData dataWithContentsOfFile:path];
+            if (!data) return;
+            
+            __block BOOL innerStop = NO;
+            
+            if (block)
+            {
+                block(key, data, accessDate, &innerStop);
+            }
+            
+            if (innerStop) *stop = YES;
+        }];
+    });
+}
+
 - (void)updateAccessDateForKey:(NSString*)key data:(NSData* (^)())lazyData
 {
     dispatch_async(_queue, ^{
         [self syncUpdateAccessDateForKey:key data:lazyData];
-    });
-}
-
-- (void)setCapacity:(unsigned long long)capacity
-{
-    _capacity = capacity;
-    dispatch_async(_queue, ^{
-        [self controlCapacity];
     });
 }
 

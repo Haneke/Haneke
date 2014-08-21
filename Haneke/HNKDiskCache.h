@@ -22,24 +22,49 @@
 
 @interface HNKDiskCache : NSObject
 
-@property (nonatomic, readonly) unsigned long long size;
+#pragma mark Initializing the cache
+///---------------------------------------------
+/// @name Initializing the cache
+///---------------------------------------------
+
+- (instancetype)initWithDirectory:(NSString*)directory capacity:(unsigned long long)capacity;
 
 @property (nonatomic, assign) unsigned long long capacity;
 
-@property (nonatomic, readonly) dispatch_queue_t queue;
+@property (nonatomic, readonly) unsigned long long size;
 
-- (instancetype)initWithDirectory:(NSString*)directory capacity:(unsigned long long)capacity;
+#pragma mark Setting and fetching data
+///---------------------------------------------
+/// @name Setting and fetching data
+///---------------------------------------------
 
 - (void)setData:(NSData*)data forKey:(NSString*)key;
 
 - (void)fetchDataForKey:(NSString*)key success:(void (^)(NSData *data))successBlock failure:(void (^)(NSError *error))failureBlock;
 
+#pragma mark Removing data
+///---------------------------------------------
+/// @name Removing data
+///---------------------------------------------
+
 - (void)removeDataForKey:(NSString*)key;
 
 - (void)removeAllData;
 
+#pragma mark Managing data by access date
+///---------------------------------------------
+/// @name Managing data by access date
+///---------------------------------------------
+
 - (void)enumerateDataByAccessDateUsingBlock:(void(^)(NSString *key, NSData *data, NSDate *accessDate, BOOL *stop))block;
 
 - (void)updateAccessDateForKey:(NSString*)key data:(NSData* (^)())lazyData ;
+
+#pragma mark Getting the cache queue
+///---------------------------------------------
+/// @name Getting the cache queue
+///---------------------------------------------
+
+@property (nonatomic, readonly) dispatch_queue_t queue;
 
 @end
