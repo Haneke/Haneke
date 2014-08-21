@@ -178,4 +178,10 @@
     [_sut cancelFetch];
 }
 
+- (void)testURLSession
+{
+    _sut = [[HNKNetworkEntity alloc] initWithURL:_URL];
+    XCTAssertEqualObjects(_sut.URLSession, [NSURLSession sharedSession], @"");
+}
+
 @end

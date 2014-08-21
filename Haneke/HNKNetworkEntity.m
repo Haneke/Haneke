@@ -43,8 +43,7 @@
 - (void)fetchImageWithSuccess:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
 {
     _cancelled = NO;
-    NSURLSession *session = [NSURLSession sharedSession];
-    _dataTask = [session dataTaskWithURL:_URL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+    _dataTask = [self.URLSession dataTaskWithURL:_URL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (_cancelled) return;
         
         if (error)
@@ -101,6 +100,15 @@
 {
     [_dataTask cancel];
     _cancelled = YES;
+}
+
+@end
+
+@implementation HNKNetworkEntity(Subclassing)
+
+- (NSURLSession*)URLSession
+{
+    return [NSURLSession sharedSession];
 }
 
 @end

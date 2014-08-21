@@ -32,3 +32,9 @@ enum
 - (instancetype)initWithURL:(NSURL*)URL;
 
 @end
+
+@interface HNKNetworkEntity (Subclassing)
+
+@property (nonatomic, readonly) NSURLSession *URLSession;
+
+@end
