@@ -292,11 +292,55 @@
     [_cache removeImagesOfFormatNamed:format.name];
 }
 
-- (void)testRemoveImagesFromEntity_NoImagesNoFormats
+- (void)testRemoveImagesForKey_NoImagesNoFormats
 {
     static NSString *key = @"test";
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:nil];
-    [_cache removeImagesOfEntity:entity];
+    [_cache removeImagesForKey:key];
+}
+
+- (void)testRemoveImagesForKey_One
+{
+    HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(2, 2)];
+    NSString *key = self.name;
+    [_cache setImage:image forKey:key formatName:format.name];
+    
+    [_cache removeImagesForKey:key];
+    
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_cache fetchImageForKey:key formatName:format.name completionBlock:^(UIImage *resultImage, NSError *error) {
+            XCTAssertNil(resultImage, @"");
+            XCTAssertEqual(error.code, HNKErrorDiskCacheMiss, @"");
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
+}
+
+- (void)testRemoveImagesForKey_Two
+{
+    HNKCacheFormat *format1 = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
+    HNKCacheFormat *format2 = [_cache registerFormatWithSize:CGSizeMake(2, 2)];
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(2, 2)];
+    NSString *key = self.name;
+    [_cache setImage:image forKey:key formatName:format1.name];
+    [_cache setImage:image forKey:key formatName:format2.name];
+    
+    [_cache removeImagesForKey:key];
+    
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_cache fetchImageForKey:key formatName:format1.name completionBlock:^(UIImage *resultImage, NSError *error) {
+            XCTAssertNil(resultImage, @"");
+            XCTAssertEqual(error.code, HNKErrorDiskCacheMiss, @"");
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_cache fetchImageForKey:key formatName:format2.name completionBlock:^(UIImage *resultImage, NSError *error) {
+            XCTAssertNil(resultImage, @"");
+            XCTAssertEqual(error.code, HNKErrorDiskCacheMiss, @"");
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
 }
 
 - (void)testRemoveAllImages_OneFormat
@@ -354,17 +398,6 @@
             dispatch_semaphore_signal(semaphore);
         }];
     }];
-}
-
-- (void)testRemoveImagesFromEntity_Images
-{
-    HNKCacheFormat *format = [_cache registerFormatWithSize:CGSizeMake(1, 1)];
-    UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(2, 2)];
-    static NSString *key = @"test";
-    [_cache setImage:image forKey:key formatName:format.name];
-    
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:nil];
-    [_cache removeImagesOfEntity:entity];
 }
 
 #pragma mark Notifications

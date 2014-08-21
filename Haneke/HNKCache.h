@@ -113,10 +113,10 @@
  */
 - (void)removeImagesOfFormatNamed:(NSString*)formatName;
 
-/** Removes all cached images of the given entity.
- @param entity Entity whose images will be removed.
+/** Removes all cached images for the given key.
+ @param entity Key whose images will be removed.
  */
-- (void)removeImagesOfEntity:(id<HNKCacheEntity>)entity;
+- (void)removeImagesForKey:(NSString*)key;
 
 @end
 

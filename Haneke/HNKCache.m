@@ -241,14 +241,13 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
      }];
 }
 
-- (void)removeImagesOfEntity:(id<HNKCacheEntity>)entity
+- (void)removeImagesForKey:(NSString *)key
 {
-    NSString *cacheKey = entity.cacheKey;
-    [_memoryCaches enumerateKeysAndObjectsUsingBlock:^(id key, NSCache *cache, BOOL *stop) {
-        [cache removeObjectForKey:cacheKey];
+    [_memoryCaches enumerateKeysAndObjectsUsingBlock:^(id _, NSCache *cache, BOOL *stop) {
+        [cache removeObjectForKey:key];
     }];
     NSDictionary *formats = _formats.copy;
-    [formats enumerateKeysAndObjectsUsingBlock:^(id key, HNKCacheFormat *format, BOOL *stop) {
+    [formats enumerateKeysAndObjectsUsingBlock:^(id _, HNKCacheFormat *format, BOOL *stop) {
         [self setDiskImage:nil forKey:key format:format];
     }];
 }
