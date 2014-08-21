@@ -155,7 +155,9 @@
         }
         else
         {
-            [self hnk_failSetImageWithError:error failure:failureBlock];
+            self.hnk_imageEntity = nil;
+            
+            if (failureBlock) failureBlock(error);
         }
     }];
     animated = YES;
@@ -185,13 +187,6 @@
     
     HanekeLog(@"Cancelled set image from key %@", key.lastPathComponent);
     return YES;
-}
-
-- (void)hnk_failSetImageWithError:(NSError*)error failure:(void (^)(NSError *error))failureBlock
-{
-    self.hnk_imageEntity = nil;
-    
-    if (failureBlock) failureBlock(error);
 }
 
 - (id<HNKCacheEntity>)hnk_imageEntity
@@ -311,7 +306,9 @@
         }
         else
         {
-            [self hnk_failSetBackgroundImageWithError:error failure:failureBlock];
+            self.hnk_backgroundImageEntity = nil;
+            
+            if (failureBlock) failureBlock(error);
         }
     }];
     animated = YES;
@@ -341,13 +338,6 @@
     
     HanekeLog(@"Cancelled set background image from key %@", key.lastPathComponent);
     return YES;
-}
-
-- (void)hnk_failSetBackgroundImageWithError:(NSError*)error failure:(void (^)(NSError *error))failureBlock
-{
-    self.hnk_backgroundImageEntity = nil;
-    
-    if (failureBlock) failureBlock(error);
 }
 
 - (id<HNKCacheEntity>)hnk_backgroundImageEntity

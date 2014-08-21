@@ -151,7 +151,13 @@
     HNKCacheFormat *format = self.hnk_cacheFormat;
     __block BOOL animated = NO;
     const BOOL didSetImage = [[HNKCache sharedCache] retrieveImageForEntity:entity formatName:format.name completionBlock:^(UIImage *image, NSError *error) {
-        if ([self hnk_shouldCancelRequestForKey:entity.cacheKey formatName:format.name]) return;
+        
+        // Cancel set image?
+        if (![self.hnk_entity.cacheKey isEqualToString:entity.cacheKey])
+        {
+            HanekeLog(@"Cancelled set image for key %@", entity.cacheKey.lastPathComponent);
+            return;
+        }
         
         if (image)
         {
@@ -159,18 +165,13 @@
         }
         else
         {
-            [self hnk_failWithError:error failure:failureBlock];
+            self.hnk_entity = nil;
+            
+            if (failureBlock) failureBlock(error);
         }
     }];
     animated = YES;
     return didSetImage;
-}
-
-- (void)hnk_failWithError:(NSError*)error failure:(void (^)(NSError *error))failureBlock
-{
-    self.hnk_entity = nil;
-    
-    if (failureBlock) failureBlock(error);
 }
 
 - (void)hnk_setImage:(UIImage*)image animated:(BOOL)animated success:(void (^)(UIImage *image))successBlock
@@ -188,14 +189,6 @@
             self.image = image;
         } completion:nil];
     }
-}
-
-- (BOOL)hnk_shouldCancelRequestForKey:(NSString*)key formatName:(NSString*)formatName
-{
-    if ([self.hnk_entity.cacheKey isEqualToString:key]) return NO;
-    
-    HanekeLog(@"Cancelled request due to view reuse: %@/%@", formatName, key.lastPathComponent);
-    return YES;
 }
 
 #pragma mark Properties (Private)
