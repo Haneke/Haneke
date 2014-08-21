@@ -22,6 +22,9 @@
 #import "HNKCache.h"
 #import <objc/runtime.h>
 
+const CGFloat HNKViewFormatCompressionQuality = 0.75;
+const unsigned long long HNKViewFormatDiskCapacity = 10 * 1024 * 1024;
+
 static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 {
     switch (scaleMode) {
@@ -85,9 +88,9 @@ static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
     {
         format = [[HNKCacheFormat alloc] initWithName:name];
         format.size = size;
-        format.diskCapacity = 10 * 1024 * 1024;
+        format.diskCapacity = HNKViewFormatDiskCapacity;
         format.allowUpscaling = YES;
-        format.compressionQuality = 0.75;
+        format.compressionQuality = HNKViewFormatCompressionQuality;
         format.scaleMode = scaleMode;
         [cache registerFormat:format];
     }

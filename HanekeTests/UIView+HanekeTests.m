@@ -121,8 +121,8 @@
     HNKCacheFormat *result = [HNKCache sharedFormatWithSize:size scaleMode:scaleMode];
     
     XCTAssertEqual(result.allowUpscaling, YES, @"");
-    XCTAssertTrue(result.compressionQuality == 0.75, @"");
-    XCTAssertTrue(result.diskCapacity == 10 * 1024 * 1024, @"");
+    XCTAssertTrue(result.compressionQuality == HNKViewFormatCompressionQuality, @"");
+    XCTAssertTrue(result.diskCapacity == HNKViewFormatDiskCapacity, @"");
     XCTAssertEqual(result.scaleMode, scaleMode, @"");
     XCTAssertTrue(CGSizeEqualToSize(result.size, size), @"");
     XCTAssertNotNil([HNKCache sharedCache].formats[result.name], @"");

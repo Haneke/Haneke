@@ -24,6 +24,7 @@
 #import "HNKCache+HanekeTestUtils.h"
 #import "HNKNetworkEntity.h"
 #import "HNKDiskEntity.h"
+#import "UIView+Haneke.h"
 #import "XCTestCase+HanekeTestUtils.h"
 #import <OHHTTPStubs/OHHTTPStubs.h>
 
@@ -64,8 +65,8 @@
     HNKCacheFormat *result = _imageView.hnk_cacheFormat;
     XCTAssertNotNil(result, @"");
     XCTAssertEqual(result.allowUpscaling, YES, @"");
-    XCTAssertTrue(result.compressionQuality == 0.75, @"");
-    XCTAssertTrue(result.diskCapacity == 10 * 1024 * 1024, @"");
+    XCTAssertTrue(result.compressionQuality == HNKViewFormatCompressionQuality, @"");
+    XCTAssertTrue(result.diskCapacity == HNKViewFormatDiskCapacity, @"");
     XCTAssertEqual(result.scaleMode, HNKScaleModeFill, @"");
     XCTAssertTrue(CGSizeEqualToSize(result.size, _imageView.bounds.size), @"");
 }

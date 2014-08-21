@@ -21,6 +21,9 @@
 #import <UIKit/UIKit.h>
 #import "HNKCache.h"
 
+extern const CGFloat HNKViewFormatCompressionQuality;
+extern const unsigned long long HNKViewFormatDiskCapacity;
+
 @interface UIView (Haneke)
 
 @property (nonatomic, readonly) HNKScaleMode hnk_scaleMode;
