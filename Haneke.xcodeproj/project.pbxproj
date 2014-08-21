@@ -38,6 +38,11 @@
 		87F47BAE18AC123C00F1FB48 /* UIImageView+HanekeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F47BAD18AC123C00F1FB48 /* UIImageView+HanekeTests.m */; };
 		87F47BB618AD436700F1FB48 /* UIImage+HanekeDemo.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F47BB518AD436700F1FB48 /* UIImage+HanekeDemo.m */; };
 		87F47BB918AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F47BB818AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m */; };
+		A010752A19A6275B002A1990 /* UIView+Haneke.m in Sources */ = {isa = PBXBuildFile; fileRef = A0818B7B19A4CE4100F89CCF /* UIView+Haneke.m */; };
+		A010752B19A62761002A1990 /* UIButton+Haneke.m in Sources */ = {isa = PBXBuildFile; fileRef = A0818B7E19A4D11600F89CCF /* UIButton+Haneke.m */; };
+		A010752C19A62765002A1990 /* HNKDiskEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = A0ADE334198029AB00B75057 /* HNKDiskEntity.m */; };
+		A010752D19A62768002A1990 /* HNKNetworkEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = A0ADE32E197FE0C400B75057 /* HNKNetworkEntity.m */; };
+		A010752E19A6276A002A1990 /* HNKSimpleEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = A0818B7019A3BD7A00F89CCF /* HNKSimpleEntity.m */; };
 		A0818B7119A3BD7A00F89CCF /* HNKSimpleEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = A0818B7019A3BD7A00F89CCF /* HNKSimpleEntity.m */; };
 		A0818B7419A4A6AC00F89CCF /* HNKSimpleEntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A0818B7319A4A6AC00F89CCF /* HNKSimpleEntityTests.m */; };
 		A0818B7619A4ABFD00F89CCF /* HNKDiskEntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A0818B7519A4ABFD00F89CCF /* HNKDiskEntityTests.m */; };
@@ -525,11 +530,16 @@
 			files = (
 				873E230218AA90F000E7919C /* HNKDemoAppDelegate.m in Sources */,
 				87F47BB918AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m in Sources */,
+				A010752A19A6275B002A1990 /* UIView+Haneke.m in Sources */,
 				876E5F2118AB831500B4EAF6 /* UIImageView+Haneke.m in Sources */,
 				87F47BB618AD436700F1FB48 /* UIImage+HanekeDemo.m in Sources */,
 				873E22FE18AA90F000E7919C /* main.m in Sources */,
 				873E231F18AA915300E7919C /* HNKDemoViewController.m in Sources */,
+				A010752B19A62761002A1990 /* UIButton+Haneke.m in Sources */,
+				A010752E19A6276A002A1990 /* HNKSimpleEntity.m in Sources */,
 				873E232418AA982F00E7919C /* HNKCache.m in Sources */,
+				A010752C19A62765002A1990 /* HNKDiskEntity.m in Sources */,
+				A010752D19A62768002A1990 /* HNKNetworkEntity.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
