@@ -102,7 +102,30 @@
     }];
 }
 
-- (void)testFetchImageForEntity
+- (void)testFetchImageForEntity_HNKScaleModeAspectFill
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 2)];
+    id entity = [HNKCache entityWithKey:@"1" image:image];
+    
+    HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(10, 10)];
+    format.allowUpscaling = YES;
+    format.scaleMode = HNKScaleModeAspectFill;
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_sut fetchImageForEntity:entity formatName:format.name success:^(UIImage *result) {
+            CGSize resultSize = result.size;
+            
+            XCTAssertNotNil(result, @"");
+            XCTAssertTrue(CGSizeEqualToSize(resultSize, CGSizeMake(10, 20)), @"");
+            
+            dispatch_semaphore_signal(semaphore);
+        } failure:^(NSError *error) {
+            XCTFail(@"Expected success");
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
+}
+
+- (void)testFetchImageForEntity_HNKScaleModeFill
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
     id entity = [HNKCache entityWithKey:@"1" image:image];
@@ -110,11 +133,8 @@
     HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(1, 1)];
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
         [_sut fetchImageForEntity:entity formatName:format.name success:^(UIImage *result) {
-            CGSize resultSize = result.size;
-            
-            XCTAssertNotNil(result, @"");
+            const CGSize resultSize = result.size;
             XCTAssertTrue(CGSizeEqualToSize(resultSize, format.size), @"");
-            
             dispatch_semaphore_signal(semaphore);
         } failure:^(NSError *error) {
             XCTFail(@"Expected success");
@@ -287,6 +307,28 @@
     BOOL result = [_sut fetchImageForKey:key formatName:formatName success:nil failure:nil];
     
     XCTAssertFalse(result, @"");
+}
+
+- (void)testFetchImageForKey_MemoryCacheMiss_DiskCacheHit
+{
+    HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(1, 1)];
+    format.diskCapacity = 1000;
+    NSString *formatName = format.name;
+    NSString *key = self.name;
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
+    [_sut setImage:image forKey:key formatName:formatName];
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidReceiveMemoryWarningNotification object:nil];
+    
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        BOOL result = [_sut fetchImageForKey:key formatName:formatName success:^(UIImage *image) {
+            XCTAssertTrue(CGSizeEqualToSize(image.size, format.size), @"");
+            dispatch_semaphore_signal(semaphore);
+        } failure:^(NSError *error) {
+            XCTFail(@"Expected success");
+            dispatch_semaphore_signal(semaphore);
+        }];
+        XCTAssertFalse(result, @"");
+    }];
 }
 
 #pragma mark Removing images
