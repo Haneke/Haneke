@@ -92,16 +92,6 @@
 /** Resizes, displays and caches an appropiately sized image from the given image. If a success block is provided you will be responsible for setting the image.
  @param image Original image.
  @param key A key. Used by the cache to uniquely identify an image.
- @param successBlock Block to be called when the requested image is ready to be set. If provided, the block is reponsible for setting the image. Can be nil.
- @param failureBlock Block to be called if an error occurs. The most likely cause of error is that the given path does not contain an image. Can be nil.
- @warning If a success block is provided you will be responsible for setting the image.
- @see hnk_setImage:withKey:placeholder:success:failure:
- **/
-- (void)hnk_setImage:(UIImage*)image withKey:(NSString*)key success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
-
-/** Resizes, displays and caches an appropiately sized image from the given image. If a success block is provided you will be responsible for setting the image.
- @param image Original image.
- @param key A key. Used by the cache to uniquely identify an image.
  @param placeholder Image to be used as a placeholder until the requested image is ready. The placeholder image will only be used if the requested image is not available in the memory cache. If nil, the image view will not change its image until the requested image is ready.
  @param successBlock Block to be called when the requested image is ready to be set. If provided, the block is reponsible for setting the image. Can be nil.
  @param failureBlock Block to be called if an error occurs. The most likely cause of error is that the given path does not contain an image. Can be nil.

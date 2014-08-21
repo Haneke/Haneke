@@ -342,14 +342,14 @@
     XCTAssertEqualObjects(result, previousImage, @"");
 }
 
-- (void)testSetImageFromFileSuccessFailure_MemoryCacheHit
+- (void)testSetImageFromFilePlaceholderSuccessFailure_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     NSString *key = [self fixturePathWithName:@"image.png"];
     HNKCacheFormat *format = _imageView.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
     
-    [_imageView hnk_setImageFromFile:key success:^(UIImage *result) {
+    [_imageView hnk_setImageFromFile:key placeholder:nil success:^(UIImage *result) {
         XCTAssertEqualObjects(result, image, @"");
     } failure:^(NSError *error) {
         XCTFail(@"");
@@ -358,14 +358,14 @@
     XCTAssertNil(_imageView.image, @"");
 }
 
-- (void)testSetImageFromFileSuccessFailure_SuccessNil_MemoryCacheHit
+- (void)testSetImageFromFilePlaceholderSuccessFailure_SuccessNil_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     NSString *key = [self fixturePathWithName:@"image.png"];
     HNKCacheFormat *format = _imageView.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
     
-    [_imageView hnk_setImageFromFile:key success:nil failure:^(NSError *error) {
+    [_imageView hnk_setImageFromFile:key placeholder:nil success:nil failure:^(NSError *error) {
         XCTFail(@"");
     }];
     
@@ -374,24 +374,24 @@
     XCTAssertEqualObjects(result, image, @"");
 }
 
-- (void)testSetImageFromFileSuccessFailure_MemoryCacheMiss
+- (void)testSetImageFromFilePlaceholderSuccessFailure_MemoryCacheMiss
 {
     NSString *path = [self fixturePathWithName:@"image.png"];
     
-    [_imageView hnk_setImageFromFile:path success:nil failure:nil];
+    [_imageView hnk_setImageFromFile:path placeholder:nil success:nil failure:nil];
     
     HNKDiskEntity *entity = [[HNKDiskEntity alloc] initWithPath:path];
     XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, entity.cacheKey,  @"");
     XCTAssertNil(_imageView.image, @"");
 }
 
-- (void)testSetImageFromFileSuccessFailure_ImageSet_MemoryCacheMiss
+- (void)testSetImageFromFilePlaceholderSuccessFailure_ImageSet_MemoryCacheMiss
 {
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     _imageView.image = previousImage;
     NSString *path = [self fixturePathWithName:@"image.png"];
     
-    [_imageView hnk_setImageFromFile:path success:nil failure:nil];
+    [_imageView hnk_setImageFromFile:path placeholder:nil success:nil failure:nil];
     
     HNKDiskEntity *entity = [[HNKDiskEntity alloc] initWithPath:path];
     XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, entity.cacheKey,  @"");
@@ -399,12 +399,12 @@
     XCTAssertEqualObjects(result, previousImage, @"");
 }
 
-- (void)testSetImageFromFileSuccessFailure_NoSuchFileError
+- (void)testSetImageFromFilePlaceholderSuccessFailure_NoSuchFileError
 {
     NSString *key = [self fixturePathWithName:@"image.png"];
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_imageView hnk_setImageFromFile:key success:^(UIImage *result) {
+        [_imageView hnk_setImageFromFile:key placeholder:nil success:^(UIImage *result) {
             XCTFail(@"");
             dispatch_semaphore_signal(semaphore);
         } failure:^(NSError *error) {
@@ -417,14 +417,14 @@
     XCTAssertNil(_imageView.hnk_entity, @"");
 }
 
-- (void)testSetImageFromFileSuccessFailure_InvalidData
+- (void)testSetImageFromFilePlaceholderSuccessFailure_InvalidData
 {
     NSString *path = [self fixturePathWithName:@"image.png"];
     NSData *data = [@"Hello" dataUsingEncoding:NSUTF8StringEncoding];
     [data writeToFile:path atomically:YES];
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_imageView hnk_setImageFromFile:path success:^(UIImage *result) {
+        [_imageView hnk_setImageFromFile:path placeholder:nil success:^(UIImage *result) {
             XCTFail(@"hnk_setImageFromFile succeded with invalid data");
             dispatch_semaphore_signal(semaphore);
          } failure:^(NSError *error) {
@@ -613,24 +613,24 @@
     XCTAssertEqualObjects(result, previousImage, @"");
 }
 
-- (void)testSetImageFromURLSuccessFailure_MemoryCacheMiss
+- (void)testSetImageFromURLPlaceholderSuccessFailure_MemoryCacheMiss
 {
     NSURL *url = [NSURL URLWithString:@"http://imgs.xkcd.com/comics/election.png"];
     
-    [_imageView hnk_setImageFromURL:url success:nil failure:nil];
+    [_imageView hnk_setImageFromURL:url placeholder:nil success:nil failure:nil];
     
     id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:url];
     XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, entity.cacheKey,  @"");
     XCTAssertNil(_imageView.image, @"");
 }
 
-- (void)testSetImageFromURLSuccessFailure_ImageSet_MemoryCacheMiss
+- (void)testSetImageFromURLPlaceholderSuccessFailure_ImageSet_MemoryCacheMiss
 {
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     _imageView.image = previousImage;
     NSURL *url = [NSURL URLWithString:@"http://imgs.xkcd.com/comics/election.png"];
     
-    [_imageView hnk_setImageFromURL:url success:nil failure:nil];
+    [_imageView hnk_setImageFromURL:url placeholder:nil success:nil failure:nil];
     
     id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:url];
     XCTAssertEqualObjects(_imageView.hnk_entity.cacheKey, entity.cacheKey,  @"");
@@ -638,7 +638,7 @@
     XCTAssertEqualObjects(result, previousImage, @"");
 }
 
-- (void)testSetImageFromURLSuccessFailure_MemoryCacheHit
+- (void)testSetImageFromURLPlaceholderSuccessFailure_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = @"http://imgs.xkcd.com/comics/election.png";
@@ -646,7 +646,7 @@
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
     NSURL *url = [NSURL URLWithString:key];
     
-    [_imageView hnk_setImageFromURL:url success:^(UIImage *result) {
+    [_imageView hnk_setImageFromURL:url placeholder:nil success:^(UIImage *result) {
         XCTAssertEqualObjects(result, image, @"");
     } failure:^(NSError *error) {
         XCTFail(@"");
@@ -656,7 +656,7 @@
     XCTAssertNil(_imageView.image, @"");
 }
 
-- (void)testSetImageFromURLSuccessFailure_SuccesNil_MemoryCacheHit
+- (void)testSetImageFromURLPlaceholderSuccessFailure_SuccesNil_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = @"http://imgs.xkcd.com/comics/election.png";
@@ -664,7 +664,7 @@
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
     NSURL *url = [NSURL URLWithString:key];
     
-    [_imageView hnk_setImageFromURL:url success:nil failure:^(NSError *error) {
+    [_imageView hnk_setImageFromURL:url placeholder:nil success:nil failure:^(NSError *error) {
         XCTFail(@"");
     }];
     
@@ -673,7 +673,7 @@
     XCTAssertEqualObjects(result, image, @"");
 }
 
-- (void)testSetImageFromURLSuccessFailure_DownloadSuccess
+- (void)testSetImageFromURLPlaceholderSuccessFailure_DownloadSuccess
 {
     NSURL *URL = [NSURL URLWithString:@"http://haneke.com/image.jpg"];
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
@@ -686,7 +686,7 @@
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore)
      {
-         [_imageView hnk_setImageFromURL:URL success:^(UIImage *image) {
+         [_imageView hnk_setImageFromURL:URL placeholder:nil success:^(UIImage *image) {
              dispatch_semaphore_signal(semaphore);
          } failure:^(NSError *error) {
              XCTFail(@"");
@@ -695,7 +695,7 @@
      }];
 }
 
-- (void)testSetImageFromURLSuccessFailure_DownloadFailure
+- (void)testSetImageFromURLPlaceholderSuccessFailure_DownloadFailure
 {
     NSURL *URL = [NSURL URLWithString:@"http://haneke.com/image.jpg"];
     NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:kCFURLErrorNotConnectedToInternet userInfo:nil];
@@ -707,7 +707,7 @@
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore)
      {
-         [_imageView hnk_setImageFromURL:URL success:^(UIImage *image) {
+         [_imageView hnk_setImageFromURL:URL placeholder:nil success:^(UIImage *image) {
              XCTFail(@"");
              dispatch_semaphore_signal(semaphore);
          } failure:^(NSError *result) {
@@ -735,7 +735,7 @@
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore)
      {
-         [_imageView hnk_setImageFromURL:URL success:^(UIImage *image) {
+         [_imageView hnk_setImageFromURL:URL placeholder:nil success:^(UIImage *image) {
              XCTFail(@"");
              dispatch_semaphore_signal(semaphore);
          } failure:^(NSError *error) {
@@ -758,7 +758,7 @@
 - (void)testCancelSetImage_After
 {
     NSURL *url = [NSURL URLWithString:@"http://imgs.xkcd.com/comics/election.png"];
-    [_imageView hnk_setImageFromURL:url success:^(UIImage *image) {
+    [_imageView hnk_setImageFromURL:url placeholder:nil success:^(UIImage *image) {
         XCTFail(@"Unexpected success");
     } failure:^(NSError *error) {
         XCTFail(@"Unexpected success");
