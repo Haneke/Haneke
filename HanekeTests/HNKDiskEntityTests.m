@@ -34,6 +34,7 @@
 
 - (void)setUp
 {
+    [super setUp];
     _directory = NSHomeDirectory();
     _directory = [_directory stringByAppendingPathComponent:@"io.haneke"];
     _directory = [_directory stringByAppendingPathComponent:NSStringFromClass(self.class)];
