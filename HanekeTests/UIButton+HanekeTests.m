@@ -130,7 +130,33 @@
     XCTAssertTrue(CGSizeEqualToSize(result.size, formatSize), @"");
 }
 
-// TODO
+#pragma mark setImageFormat
+
+- (void)testSetImageFormat_Nil
+{
+    _sut.hnk_imageFormat = nil;
+    XCTAssertNotNil(_sut.hnk_imageFormat, @"");
+}
+
+- (void)testSetImageFormat_NilAfterValue
+{
+    HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"test"];
+    _sut.hnk_imageFormat = format;
+    
+    _sut.hnk_imageFormat = nil;
+    HNKCacheFormat *result = _sut.hnk_imageFormat;
+    XCTAssertNotNil(result, @"");
+    XCTAssertNotEqualObjects(result, format, @"");
+}
+
+- (void)testSetImageFormat_Value
+{
+    HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"test"];
+    _sut.hnk_imageFormat = format;
+    
+    HNKCacheFormat *result = _sut.hnk_imageFormat;
+    XCTAssertEqualObjects(result, format, @"");
+}
 
 #pragma mark setImageWithKey
 
@@ -290,6 +316,50 @@
     
     XCTAssertEqualObjects(_sut.hnk_imageEntity.cacheKey, key,  @"");
     XCTAssertEqualObjects([_sut imageForState:state], previousImage, @"");
+}
+
+#pragma mark backgroundImageFormat
+
+- (void)testBackgroundImageFormat
+{
+    const CGRect contentRect = [_sut contentRectForBounds:_sut.bounds];
+    const CGSize formatSize = contentRect.size;
+    
+    HNKCacheFormat *result = _sut.hnk_backgroundImageFormat;
+    
+    XCTAssertEqual(result.allowUpscaling, YES, @"");
+    XCTAssertTrue(result.compressionQuality == HNKViewFormatCompressionQuality, @"");
+    XCTAssertTrue(result.diskCapacity == HNKViewFormatDiskCapacity, @"");
+    XCTAssertEqual(result.scaleMode, HNKScaleModeFill, @"");
+    XCTAssertTrue(CGSizeEqualToSize(result.size, formatSize), @"");
+}
+
+#pragma mark setBackgroundImageFormat
+
+- (void)testSetBackgroundImageFormat_Nil
+{
+    _sut.hnk_backgroundImageFormat = nil;
+    XCTAssertNotNil(_sut.hnk_backgroundImageFormat, @"");
+}
+
+- (void)testSetBackgroundImageFormat_NilAfterValue
+{
+    HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"test"];
+    _sut.hnk_backgroundImageFormat = format;
+    
+    _sut.hnk_backgroundImageFormat = nil;
+    HNKCacheFormat *result = _sut.hnk_backgroundImageFormat;
+    XCTAssertNotNil(result, @"");
+    XCTAssertNotEqualObjects(result, format, @"");
+}
+
+- (void)testSetBackgroundImageFormat_Value
+{
+    HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"test"];
+    _sut.hnk_backgroundImageFormat = format;
+    
+    HNKCacheFormat *result = _sut.hnk_backgroundImageFormat;
+    XCTAssertEqualObjects(result, format, @"");
 }
 
 #pragma mark setBackgroundImageWithKey
