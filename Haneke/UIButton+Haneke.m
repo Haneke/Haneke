@@ -124,11 +124,19 @@
     NSAssert(bounds.size.width > 0 && bounds.size.height > 0, @"%s: UIButton size is zero. Set its frame, call sizeToFit or force layout first.", __PRETTY_FUNCTION__);
     
     const CGRect contentRect = [self contentRectForBounds:bounds];
-    const CGRect imageRect = [self imageRectForContentRect:contentRect];
-    const CGSize imageSize = imageRect.size;
+    // Ideally we would use imageRectForContentRect: but it requires the image to be set to work
+    const UIEdgeInsets imageInsets = self.imageEdgeInsets;
+    const CGSize contentSize = contentRect.size;
+    const CGSize imageSize = CGSizeMake(contentSize.width - imageInsets.left - imageInsets.right, contentSize.height - imageInsets.top - imageInsets.bottom);
     
-    HNKScaleMode scaleMode = self.hnk_scaleMode;
+    const HNKScaleMode scaleMode = self.contentHorizontalAlignment != UIControlContentHorizontalAlignmentFill || self.contentVerticalAlignment != UIControlContentVerticalAlignmentFill ? HNKScaleModeAspectFit : HNKScaleModeFill;
+    
     format = [HNKCache sharedFormatWithSize:imageSize scaleMode:scaleMode];
+    if (scaleMode == HNKScaleModeAspectFit)
+    {
+        format.allowUpscaling = NO;
+    }
+    
     return format;
 }
 
