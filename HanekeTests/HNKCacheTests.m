@@ -368,7 +368,7 @@
             XCTFail(@"Expected failure");
             dispatch_semaphore_signal(semaphore);
         } failure:^(NSError *error) {
-            XCTAssertEqual(error.code, HNKErrorDiskCacheMiss, @"");
+            XCTAssertEqual(error.code, HNKErrorImageNotFound, @"");
             dispatch_semaphore_signal(semaphore);
         }];
     }];
@@ -390,7 +390,7 @@
             XCTFail(@"Expected failure");
             dispatch_semaphore_signal(semaphore);
         } failure:^(NSError *error) {
-            XCTAssertEqual(error.code, HNKErrorDiskCacheMiss, @"");
+            XCTAssertEqual(error.code, HNKErrorImageNotFound, @"");
             dispatch_semaphore_signal(semaphore);
         }];
     }];
@@ -399,7 +399,7 @@
             XCTFail(@"Expected failure");
             dispatch_semaphore_signal(semaphore);
         } failure:^(NSError *error) {
-            XCTAssertEqual(error.code, HNKErrorDiskCacheMiss, @"");
+            XCTAssertEqual(error.code, HNKErrorImageNotFound, @"");
             dispatch_semaphore_signal(semaphore);
         }];
     }];
@@ -419,7 +419,7 @@
             XCTFail(@"Expected failure");
             dispatch_semaphore_signal(semaphore);
         } failure:^(NSError *error) {
-            XCTAssertEqual(error.code, HNKErrorDiskCacheMiss, @"");
+            XCTAssertEqual(error.code, HNKErrorImageNotFound, @"");
             dispatch_semaphore_signal(semaphore);
         }];
     }];
@@ -447,7 +447,7 @@
             XCTFail(@"Expected failure");
             dispatch_semaphore_signal(semaphore);
         } failure:^(NSError *error) {
-            XCTAssertEqual(error.code, HNKErrorDiskCacheMiss, @"");
+            XCTAssertEqual(error.code, HNKErrorImageNotFound, @"");
             dispatch_semaphore_signal(semaphore);
         }];
     }];
@@ -456,7 +456,7 @@
             XCTFail(@"Expected failure");
             dispatch_semaphore_signal(semaphore);
         } failure:^(NSError *error) {
-            XCTAssertEqual(error.code, HNKErrorDiskCacheMiss, @"");
+            XCTAssertEqual(error.code, HNKErrorImageNotFound, @"");
             dispatch_semaphore_signal(semaphore);
         }];
     }];
@@ -478,7 +478,7 @@
             XCTFail(@"Expected failure");
             dispatch_semaphore_signal(semaphore);
         } failure:^(NSError *error) {
-            XCTAssertEqual(error.code, HNKErrorDiskCacheMiss, @"");
+            XCTAssertEqual(error.code, HNKErrorImageNotFound, @"");
             dispatch_semaphore_signal(semaphore);
         }];
     }];

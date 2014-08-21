@@ -111,7 +111,7 @@
             dispatch_semaphore_signal(semaphore);
         } failure:^(NSError *error) {
             XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
-            XCTAssertEqual(error.code, HNKNetworkEntityInvalidDataError, @"");
+            XCTAssertEqual(error.code, HNKErrorNetworkEntityInvalidData, @"");
             XCTAssertNotNil(error.localizedDescription, @"");
             XCTAssertEqualObjects(error.userInfo[NSURLErrorKey], _URL, @"");
             dispatch_semaphore_signal(semaphore);
@@ -141,7 +141,7 @@
             dispatch_semaphore_signal(semaphore);
         } failure:^(NSError *error) {
             XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
-            XCTAssertEqual(error.code, HNKNetworkEntityMissingDataError, @"");
+            XCTAssertEqual(error.code, HNKErrorNetworkEntityMissingData, @"");
             XCTAssertNotNil(error.localizedDescription, @"");
             XCTAssertEqualObjects(error.userInfo[NSURLErrorKey], _URL, @"");
             dispatch_semaphore_signal(semaphore);

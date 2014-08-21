@@ -194,9 +194,9 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
             if (error.code == NSFileReadNoSuchFileError)
             {
                 HanekeLog(@"Disk cache miss: %@/%@", formatName, key.lastPathComponent);
-                NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Disk cache: Miss for key %@", @""), key.lastPathComponent];
+                NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Image not found for key %@", @""), key.lastPathComponent];
                 NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
-                NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorDiskCacheMiss userInfo:userInfo];
+                NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorImageNotFound userInfo:userInfo];
                 if (failureBlock) failureBlock(error);
             }
             else

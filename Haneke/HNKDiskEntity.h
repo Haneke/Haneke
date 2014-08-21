@@ -23,7 +23,7 @@
 
 enum
 {
-    HNKDiskEntityInvalidDataError = -500,
+    HNKErrorDiskEntityInvalidData = -500,
 };
 
 @interface HNKDiskEntity : NSObject<HNKCacheEntity>

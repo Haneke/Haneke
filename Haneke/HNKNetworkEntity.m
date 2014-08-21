@@ -66,7 +66,7 @@
                 NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Request %@ received %ld out of %ld bytes", @""), _URL.absoluteString, (long)dataLength, (long)expectedContentLength];
                 HanekeLog(@"%@", errorDescription);
                 NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription , NSURLErrorKey : _URL};
-                NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKNetworkEntityMissingDataError userInfo:userInfo];
+                NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorNetworkEntityMissingData userInfo:userInfo];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     failureBlock(error);
                 });
@@ -81,7 +81,7 @@
             NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Failed to load image from data at URL %@", @""), _URL];
             HanekeLog(@"%@", errorDescription);
             NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription , NSURLErrorKey : _URL};
-            NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKNetworkEntityInvalidDataError userInfo:userInfo];
+            NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorNetworkEntityInvalidData userInfo:userInfo];
             dispatch_async(dispatch_get_main_queue(), ^{
                 failureBlock(error);
             });

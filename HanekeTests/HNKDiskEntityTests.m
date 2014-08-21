@@ -105,7 +105,7 @@
             dispatch_semaphore_signal(semaphore);
         } failure:^(NSError *error) {
             XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
-            XCTAssertEqual(error.code, HNKDiskEntityInvalidDataError, @"");
+            XCTAssertEqual(error.code, HNKErrorDiskEntityInvalidData, @"");
             XCTAssertNotNil(error.localizedDescription, @"");
             XCTAssertEqualObjects(error.userInfo[NSFilePathErrorKey], path, @"");
             dispatch_semaphore_signal(semaphore);
