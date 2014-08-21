@@ -76,13 +76,14 @@
 - (BOOL)fetchImageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
 
 /**
- Retrieves an image from the cache. If the image exists in the memory cache, the completion block will be executed synchronously. If the image has to be retreived from the disk cache, the completion block will be executed asynchronously.
+ Retrieves an image from the cache. If the image exists in the memory cache, the success block will be executed synchronously. If the image has to be retreived from the disk cache, the success block will be executed asynchronously.
  @param key Image cache key.
  @param formatName Name of the format in which the image is desired. The format must have been previously registered with the cache.
- @param completionBlock Block to be called with the requested image. Always called from the main queue. Will be called synchronously if the image exists in the memory cache, or asynchronously if the image exists in the disk cache.
- @return YES if image exists in the memory cache (and thus, the completion block was called synchronously), NO otherwise.
+ @param successBlock Block to be called with the requested image. Always called from the main queue. Will be called synchronously if the image exists in the memory cache, or asynchronously if the image has to be retreived from the disk cache.
+ @param failureBlock Block to be called if the image is not in the cache or if there is another error. Called asynchronously from the main queue. 
+ @return YES if image exists in the memory cache (and thus, the success block was called synchronously), NO otherwise.
  */
-- (BOOL)fetchImageForKey:(NSString*)key formatName:(NSString *)formatName completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock;
+- (BOOL)fetchImageForKey:(NSString*)key formatName:(NSString *)formatName success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
 
 #pragma mark Setting images
 ///---------------------------------------------

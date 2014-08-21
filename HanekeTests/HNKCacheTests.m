@@ -269,9 +269,10 @@
     NSString *key = self.name;
     [_sut setImage:image forKey:key formatName:formatName];
     
-    BOOL result = [_sut fetchImageForKey:key formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {
-        XCTAssertEqualObjects(resultImage, image, @"");
-        XCTAssertNil(error);
+    BOOL result = [_sut fetchImageForKey:key formatName:formatName success:^(UIImage *result) {
+        XCTAssertEqualObjects(result, image, @"");
+    } failure:^(NSError *error) {
+        XCTFail(@"Expected success");
     }];
     
     XCTAssertTrue(result, @"");
@@ -283,7 +284,7 @@
     NSString *formatName = format.name;
     NSString *key = self.name;
     
-    BOOL result = [_sut fetchImageForKey:key formatName:formatName completionBlock:^(UIImage *resultImage, NSError *error) {}];
+    BOOL result = [_sut fetchImageForKey:key formatName:formatName success:nil failure:nil];
     
     XCTAssertFalse(result, @"");
 }
@@ -321,8 +322,10 @@
     [_sut removeImagesForKey:key];
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageForKey:key formatName:format.name completionBlock:^(UIImage *resultImage, NSError *error) {
-            XCTAssertNil(resultImage, @"");
+        [_sut fetchImageForKey:key formatName:format.name success:^(UIImage *image) {
+            XCTFail(@"Expected failure");
+            dispatch_semaphore_signal(semaphore);
+        } failure:^(NSError *error) {
             XCTAssertEqual(error.code, HNKErrorDiskCacheMiss, @"");
             dispatch_semaphore_signal(semaphore);
         }];
@@ -341,15 +344,19 @@
     [_sut removeImagesForKey:key];
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageForKey:key formatName:format1.name completionBlock:^(UIImage *resultImage, NSError *error) {
-            XCTAssertNil(resultImage, @"");
+        [_sut fetchImageForKey:key formatName:format1.name success:^(UIImage *image) {
+            XCTFail(@"Expected failure");
+            dispatch_semaphore_signal(semaphore);
+        } failure:^(NSError *error) {
             XCTAssertEqual(error.code, HNKErrorDiskCacheMiss, @"");
             dispatch_semaphore_signal(semaphore);
         }];
     }];
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageForKey:key formatName:format2.name completionBlock:^(UIImage *resultImage, NSError *error) {
-            XCTAssertNil(resultImage, @"");
+        [_sut fetchImageForKey:key formatName:format2.name success:^(UIImage *image) {
+            XCTFail(@"Expected failure");
+            dispatch_semaphore_signal(semaphore);
+        } failure:^(NSError *error) {
             XCTAssertEqual(error.code, HNKErrorDiskCacheMiss, @"");
             dispatch_semaphore_signal(semaphore);
         }];
@@ -366,9 +373,11 @@
     [_sut removeAllImages];
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageForKey:key formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
-            XCTAssertNil(result, @"");
-            
+        [_sut fetchImageForKey:key formatName:format.name success:^(UIImage *image) {
+            XCTFail(@"Expected failure");
+            dispatch_semaphore_signal(semaphore);
+        } failure:^(NSError *error) {
+            XCTAssertEqual(error.code, HNKErrorDiskCacheMiss, @"");
             dispatch_semaphore_signal(semaphore);
         }];
     }];
@@ -392,17 +401,20 @@
     [_sut removeAllImages];
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageForKey:key formatName:format1.name completionBlock:^(UIImage *result, NSError *error) {
-            XCTAssertNil(result, @"");
-            
+        [_sut fetchImageForKey:key formatName:format1.name success:^(UIImage *image) {
+            XCTFail(@"Expected failure");
+            dispatch_semaphore_signal(semaphore);
+        } failure:^(NSError *error) {
+            XCTAssertEqual(error.code, HNKErrorDiskCacheMiss, @"");
             dispatch_semaphore_signal(semaphore);
         }];
     }];
-    
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageForKey:key formatName:format2.name completionBlock:^(UIImage *result, NSError *error) {
-            XCTAssertNil(result, @"");
-            
+        [_sut fetchImageForKey:key formatName:format2.name success:^(UIImage *image) {
+            XCTFail(@"Expected failure");
+            dispatch_semaphore_signal(semaphore);
+        } failure:^(NSError *error) {
+            XCTAssertEqual(error.code, HNKErrorDiskCacheMiss, @"");
             dispatch_semaphore_signal(semaphore);
         }];
     }];
@@ -420,9 +432,11 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidReceiveMemoryWarningNotification object:nil];
 
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageForKey:key formatName:format.name completionBlock:^(UIImage *result, NSError *error) {
-            XCTAssertNil(result, @"");
-            
+        [_sut fetchImageForKey:key formatName:format.name success:^(UIImage *image) {
+            XCTFail(@"Expected failure");
+            dispatch_semaphore_signal(semaphore);
+        } failure:^(NSError *error) {
+            XCTAssertEqual(error.code, HNKErrorDiskCacheMiss, @"");
             dispatch_semaphore_signal(semaphore);
         }];
     }];

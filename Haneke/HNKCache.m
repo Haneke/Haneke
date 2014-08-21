@@ -125,15 +125,12 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 - (BOOL)fetchImageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     NSString *key = entity.cacheKey;
-    return [self fetchImageForKey:key formatName:formatName completionBlock:^(UIImage *image, NSError *_) {
-        if (image)
-        {
-            if (successBlock) successBlock(image);
-            return;
-        }
+    return [self fetchImageForKey:key formatName:formatName success:^(UIImage *image) {
+        if (successBlock) successBlock(image);
+    } failure:^(NSError *error) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             HNKCacheFormat *format = _formats[formatName];
-
+            
             [self fetchImageFromEntity:entity completionBlock:^(UIImage *originalImage, NSError *error) {
                 if (!originalImage)
                 {
@@ -154,7 +151,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     }];
 }
 
-- (BOOL)fetchImageForKey:(NSString*)key formatName:(NSString *)formatName completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock
+- (BOOL)fetchImageForKey:(NSString*)key formatName:(NSString *)formatName success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     HNKCacheFormat *format = _formats[formatName];
     NSAssert(format, @"Unknown format %@", formatName);
@@ -164,7 +161,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     if (image)
     {
         HanekeLog(@"Memory cache hit: %@/%@", formatName, key.lastPathComponent);
-        completionBlock(image, nil);
+        if (successBlock) successBlock(image);
         [self updateAccessDateOfImage:image key:key format:format];
         return YES;
     }
@@ -180,7 +177,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
                     UIImage *decompressedImage = [image hnk_decompressedImage];
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [self setMemoryImage:decompressedImage forKey:key format:format];
-                        completionBlock(decompressedImage, nil);
+                        if (successBlock) successBlock(decompressedImage);
                     });
                 });
                 [self updateAccessDateOfImage:image key:key format:format];
@@ -191,7 +188,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
                 HanekeLog(@"%@", errorDescription);
                 NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription};
                 NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorDiskCacheCannotReadImageFromData userInfo:userInfo];
-                completionBlock(nil, error);
+                if (failureBlock) failureBlock(error);
             }
         } failure:^(NSError *error) {
             if (error.code == NSFileReadNoSuchFileError)
@@ -200,11 +197,11 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
                 NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Disk cache: Miss for key %@", @""), key.lastPathComponent];
                 NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
                 NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorDiskCacheMiss userInfo:userInfo];
-                completionBlock(nil, error);
+                if (failureBlock) failureBlock(error);
             }
             else
             {
-                completionBlock(nil, error);
+                if (failureBlock) failureBlock(error);
             }
         }];
     });
