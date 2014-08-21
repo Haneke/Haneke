@@ -135,10 +135,11 @@
 {
     HNKCacheFormat *format = self.hnk_cacheFormat;
     __block BOOL animated = NO;
+    __weak UIImageView *weakSelf = self;
     const BOOL didSetImage = [[HNKCache sharedCache] fetchImageForEntity:entity formatName:format.name completionBlock:^(UIImage *image, NSError *error) {
         
         // Cancel set image?
-        if (![self.hnk_entity.cacheKey isEqualToString:entity.cacheKey])
+        if (![weakSelf.hnk_entity.cacheKey isEqualToString:entity.cacheKey])
         {
             HanekeLog(@"Cancelled set image for key %@", entity.cacheKey.lastPathComponent);
             return;
@@ -146,11 +147,11 @@
         
         if (image)
         {
-            [self hnk_setImage:image animated:animated success:successBlock];
+            [weakSelf hnk_setImage:image animated:animated success:successBlock];
         }
         else
         {
-            self.hnk_entity = nil;
+            weakSelf.hnk_entity = nil;
             
             if (failureBlock) failureBlock(error);
         }
