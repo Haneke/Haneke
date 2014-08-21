@@ -49,7 +49,7 @@
         NSData *data = [NSData dataWithContentsOfFile:_path options:kNilOptions error:&error];
         if (!data)
         {
-            HanekeLog(@"Request %@ failed with error %@", path, error);
+            HanekeLog(@"Request %@ failed with error %@", _path, error);
             dispatch_async(dispatch_get_main_queue(), ^{
                 failureBlock(error);
             });
