@@ -38,17 +38,18 @@
 
 /**
  Initialize a cache with the given name.
- @param name Name of the cache. Used as the name of the subdirectory for the disk cache.
+ @param name Name of the cache. Used as the name for the subdirectory of the disk cache.
 */
 - (id)initWithName:(NSString*)name;
 
 /**
- Returns the shared cache. For simple apps that don't require multiple caches.
+ Returns the shared cache used by the UIKit categories.
+ @discussion It is recommended to use the shared cache unless you need separate caches.
  */
 + (HNKCache*)sharedCache;
 
 /**
- Registers a format in the cache. Haneke will automatically update the diskSize of the format as images are added. If a format with the same name already exists in the cache, it will be cleared first.
+ Registers a format in the cache. If a format with the same name already exists in the cache, it will be cleared first.
  @param Format to be registered in the cache.
  @discussion If the format preload policy allows it, Haneke will add some or all images cached on disk to the memory cache. If an image of the given format is requested, Haneke will cancel preloading to give priority to the request.
  @discussion A format can only be registered in one cache.
@@ -122,20 +123,31 @@
 
 @end
 
-/** Represents an object that is associated with an image. Used by the cache to assign identifiers to images and obtain the original data or image needed to create resized images. 
- **/
+/** Represents an object that is associated with an image. Used by the cache to assign keys to images and fetch the original image needed to create resized images.
+ */
 @protocol HNKCacheEntity <NSObject>
 
 /** 
- Return a key for the original image associated with the entity.
+ Returns the key of the original image associated with the entity.
  @discussion If two different entities have the same image, they should return the same key for better performance.
  */
 @property (nonatomic, readonly) NSString *cacheKey;
 
+/**
+ Retrieves the original image associated with the entity.
+ @param successBlock Block to be called with the original image. Must be called from the main queue.
+ @param failureBlock Block to be called if entity fails to provide the original image. Must be called from the main queue.
+ @discussion If the fetch is cancelled the entity must not call any of the provided blocks.
+ @see cancelFetch
+ */
 - (void)fetchImageWithSuccess:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
 
 @optional
 
+/**
+ Cancels the current fetch. When a fetch is cancelled it should not call any of the provided blocks.
+ @discussion This will be typically used by UI logic to cancel fetches during view reuse.
+ */
 - (void)cancelFetch;
 
 @end
@@ -173,7 +185,7 @@ typedef NS_ENUM(NSInteger, HNKPreloadPolicy)
 @property (nonatomic, assign) CGFloat compressionQuality;
 
 /**
- Format name. Used by Haneke as the format subdirectory name in the disk cache and to uniquely identify the disk queue of the format. Avoid special characters.
+ Format name. Used by Haneke as the format subdirectory name of the disk cache and to uniquely identify the disk queue of the format. Avoid special characters.
  */
 @property (nonatomic, readonly) NSString *name;
 
