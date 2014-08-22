@@ -29,6 +29,9 @@
 #define HanekeLog(...)
 #endif
 
+/**
+ A cache for images.
+ */
 @interface HNKCache : NSObject
 
 #pragma mark Initializing the cache
@@ -37,7 +40,7 @@
 ///---------------------------------------------
 
 /**
- Initialize a cache with the given name.
+ Initializes a cache with the given name.
  @param name Name of the cache. Used as the name for the subdirectory of the disk cache.
 */
 - (id)initWithName:(NSString*)name;
