@@ -21,8 +21,17 @@
 #import <Foundation/Foundation.h>
 #import "HNKCache.h"
 
+/**
+ Simple entity that represents a key-image pair.
+ @discussion Used as a convenience by the UIKit categories.
+ */
 @interface HNKSimpleEntity : NSObject<HNKCacheEntity>
 
+/**
+ Initializes an entity with the given key and image.
+ @param key Entity key.
+ @param image Entity image.
+ */
 - (instancetype)initWithKey:(NSString*)key image:(UIImage*)image;
 
 @end

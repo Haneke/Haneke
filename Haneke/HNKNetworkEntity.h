@@ -27,14 +27,30 @@ enum
     HNKErrorNetworkEntityMissingData = -401,
 };
 
+/**
+ Entity that represents a network image. The key will be the absolute string of the given URL.
+ */
 @interface HNKNetworkEntity : NSObject<HNKCacheEntity>
 
+/**
+ Initializes an entity with the given URL.
+ @param URL Image URL.
+ */
 - (instancetype)initWithURL:(NSURL*)URL;
+
+/**
+ Cancels the current fetch. When a fetch is cancelled it should not call any of the provided blocks.
+ @discussion This will be typically used by UI logic to cancel fetches during view reuse.
+ */
+- (void)cancelFetch;
 
 @end
 
 @interface HNKNetworkEntity (Subclassing)
 
+/**
+ Returns the URL sessions used to download the image. Override to use a custom session. Uses sharedSession by default.
+ */
 @property (nonatomic, readonly) NSURLSession *URLSession;
 
 @end

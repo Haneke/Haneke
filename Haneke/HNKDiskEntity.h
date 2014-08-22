@@ -26,8 +26,21 @@ enum
     HNKErrorDiskEntityInvalidData = -500,
 };
 
+/**
+ Entity that represents a disk image. The key will be the given path.
+ */
 @interface HNKDiskEntity : NSObject<HNKCacheEntity>
 
+/**
+ Initializes an entity with the given path.
+ @param path Image path.
+ */
 - (instancetype)initWithPath:(NSString*)path;
+
+/**
+ Cancels the current fetch. When a fetch is cancelled it should not call any of the provided blocks.
+ @discussion This will be typically used by UI logic to cancel fetches during view reuse.
+ */
+- (void)cancelFetch;
 
 @end
