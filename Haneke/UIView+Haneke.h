@@ -24,6 +24,9 @@
 extern const CGFloat HNKViewFormatCompressionQuality;
 extern const unsigned long long HNKViewFormatDiskCapacity;
 
+/**
+ Convenience category used in the other UIKit categories to avoid repeating code. Intended for internal use.
+ */
 @interface UIView (Haneke)
 
 @property (nonatomic, readonly) HNKScaleMode hnk_scaleMode;
