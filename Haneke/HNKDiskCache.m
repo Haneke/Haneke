@@ -293,10 +293,9 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
 
 - (void)hnk_enumerateContentsOfDirectoryAtPath:(NSString*)path orderedByProperty:(NSString*)property ascending:(BOOL)ascending usingBlock:(void(^)(NSURL *url, NSUInteger idx, BOOL *stop))block
 {
-    NSFileManager *fileManager = [NSFileManager defaultManager];
     NSURL *directoryURL = [NSURL fileURLWithPath:path];
     NSError *error;
-    NSArray *contents = [fileManager contentsOfDirectoryAtURL:directoryURL includingPropertiesForKeys:@[property] options:kNilOptions error:&error];
+    NSArray *contents = [self contentsOfDirectoryAtURL:directoryURL includingPropertiesForKeys:@[property] options:kNilOptions error:&error];
     if (!contents)
     {
         NSLog(@"Failed to list directory with error %@", error);
@@ -304,9 +303,9 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
     }
     contents = [contents sortedArrayUsingComparator:^NSComparisonResult(NSURL *url1, NSURL *url2) {
         id value1;
-        [url1 getResourceValue:&value1 forKey:property error:nil];
+        if ([url1 getResourceValue:&value1 forKey:property error:nil]) return ascending ? NSOrderedAscending : NSOrderedDescending;
         id value2;
-        [url2 getResourceValue:&value2 forKey:property error:nil] ;
+        if ([url2 getResourceValue:&value2 forKey:property error:nil]) return ascending ? NSOrderedDescending : NSOrderedAscending;
         return ascending ? [value1 compare:value2] : [value2 compare:value1];
     }];
     [contents enumerateObjectsUsingBlock:block];
