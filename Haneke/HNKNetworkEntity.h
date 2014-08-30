@@ -25,6 +25,7 @@ enum
 {
     HNKErrorNetworkEntityInvalidData = -400,
     HNKErrorNetworkEntityMissingData = -401,
+    HNKErrorNetworkEntityInvalidStatusCode = -402
 };
 
 /**

@@ -74,6 +74,25 @@
     }];
 }
 
+- (void)testFetchImage_Failure_InvalidStatusCode_401
+{
+    [self _testFetchImage_Failure_InvalidStatusCode:401];
+}
+
+- (void)testFetchImage_Failure_InvalidStatusCode_402
+{
+    [self _testFetchImage_Failure_InvalidStatusCode:402];
+}
+
+- (void)testFetchImage_Failure_InvalidStatusCode_403
+{
+    [self _testFetchImage_Failure_InvalidStatusCode:403];
+}
+
+- (void)testFetchImage_Failure_InvalidStatusCode_404
+{
+    [self _testFetchImage_Failure_InvalidStatusCode:404];
+}
 - (void)testFetchImage_Failure_DownloadError
 {
     NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:kCFURLErrorNotConnectedToInternet userInfo:nil];
@@ -182,6 +201,32 @@
 {
     _sut = [[HNKNetworkEntity alloc] initWithURL:_URL];
     XCTAssertEqualObjects(_sut.URLSession, [NSURLSession sharedSession], @"");
+}
+
+#pragma mark Helpers
+
+- (void)_testFetchImage_Failure_InvalidStatusCode:(int)statusCode
+{
+    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+        return [request.URL.absoluteString isEqualToString:_URL.absoluteString];
+    } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
+        NSData *data = [@"404" dataUsingEncoding:NSUTF8StringEncoding];
+        return [OHHTTPStubsResponse responseWithData:data statusCode:statusCode headers:nil];
+    }];
+    _sut = [[HNKNetworkEntity alloc] initWithURL:_URL];
+    
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
+            XCTFail(@"Expected to fail");
+            dispatch_semaphore_signal(semaphore);
+        } failure:^(NSError *error) {
+            XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
+            XCTAssertEqual(error.code, HNKErrorNetworkEntityInvalidStatusCode, @"");
+            XCTAssertNotNil(error.localizedDescription, @"");
+            XCTAssertEqualObjects(error.userInfo[NSURLErrorKey], _URL, @"");
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
 }
 
 @end

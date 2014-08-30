@@ -51,12 +51,28 @@
             if ([error.domain isEqualToString:NSURLErrorDomain] && error.code == NSURLErrorCancelled) return;
             
             HanekeLog(@"Request %@ failed with error %@", _URL.absoluteString, error);
-            dispatch_async(dispatch_get_main_queue(), ^
-                           {
-                               failureBlock(error);
-                           });
+            if (!failureBlock) return;
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                failureBlock(error);
+            });
             return;
         }
+        
+        if (![response isKindOfClass:NSHTTPURLResponse.class])
+        {
+            HanekeLog(@"Request %@ received unkown response %@", _URL.absoluteString, response);
+            return;
+        }
+        
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
+        if (httpResponse.statusCode != 200)
+        {
+            NSString *errorDescription = [NSHTTPURLResponse localizedStringForStatusCode:httpResponse.statusCode];
+            [self failWithLocalizedDescription:errorDescription code:HNKErrorNetworkEntityInvalidStatusCode block:failureBlock];
+            return;
+        }
+        
         const long long expectedContentLength = response.expectedContentLength;
         if (expectedContentLength > -1)
         {
@@ -64,12 +80,7 @@
             if (dataLength < expectedContentLength)
             {
                 NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Request %@ received %ld out of %ld bytes", @""), _URL.absoluteString, (long)dataLength, (long)expectedContentLength];
-                HanekeLog(@"%@", errorDescription);
-                NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription , NSURLErrorKey : _URL};
-                NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorNetworkEntityMissingData userInfo:userInfo];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    failureBlock(error);
-                });
+                [self failWithLocalizedDescription:errorDescription code:HNKErrorNetworkEntityMissingData block:failureBlock];
                 return;
             }
         }
@@ -79,12 +90,7 @@
         if (!image)
         {
             NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Failed to load image from data at URL %@", @""), _URL];
-            HanekeLog(@"%@", errorDescription);
-            NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription , NSURLErrorKey : _URL};
-            NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorNetworkEntityInvalidData userInfo:userInfo];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                failureBlock(error);
-            });
+            [self failWithLocalizedDescription:errorDescription code:HNKErrorNetworkEntityInvalidData block:failureBlock];
             return;
         }
         
@@ -100,6 +106,20 @@
 {
     [_dataTask cancel];
     _cancelled = YES;
+}
+
+#pragma mark Private
+
+- (void)failWithLocalizedDescription:(NSString*)localizedDescription code:(NSInteger)code block:(void (^)(NSError *error))failureBlock;
+{
+    HanekeLog(@"%@", localizedDescription);
+    if (!failureBlock) return;
+
+    NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : localizedDescription , NSURLErrorKey : _URL};
+    NSError *error = [NSError errorWithDomain:HNKErrorDomain code:code userInfo:userInfo];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        failureBlock(error);
+    });
 }
 
 @end
