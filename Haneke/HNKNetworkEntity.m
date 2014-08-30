@@ -48,7 +48,7 @@
         
         if (error)
         {
-            if (error.code == NSURLErrorCancelled) return;
+            if ([error.domain isEqualToString:NSURLErrorDomain] && error.code == NSURLErrorCancelled) return;
             
             HanekeLog(@"Request %@ failed with error %@", _URL.absoluteString, error);
             dispatch_async(dispatch_get_main_queue(), ^
