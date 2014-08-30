@@ -167,44 +167,42 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     }
     HanekeLog(@"Memory cache miss: %@/%@", formatName, key.lastPathComponent);
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [format.diskCache fetchDataForKey:key success:^(NSData *data) {
-            HanekeLog(@"Disk cache hit: %@/%@", formatName, key.lastPathComponent);
-            UIImage *image = [UIImage imageWithData:data];
-            if (image)
-            {
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    UIImage *decompressedImage = [image hnk_decompressedImage];
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [self setMemoryImage:decompressedImage forKey:key format:format];
-                        if (successBlock) successBlock(decompressedImage);
-                    });
+    [format.diskCache fetchDataForKey:key success:^(NSData *data) {
+        HanekeLog(@"Disk cache hit: %@/%@", formatName, key.lastPathComponent);
+        UIImage *image = [UIImage imageWithData:data];
+        if (image)
+        {
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                UIImage *decompressedImage = [image hnk_decompressedImage];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self setMemoryImage:decompressedImage forKey:key format:format];
+                    if (successBlock) successBlock(decompressedImage);
                 });
-                [self updateAccessDateOfImage:image key:key format:format];
-            }
-            else
-            {
-                NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Disk cache: Cannot read image for key %@", @""), key.lastPathComponent];
-                HanekeLog(@"%@", errorDescription);
-                NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription};
-                NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorDiskCacheCannotReadImageFromData userInfo:userInfo];
-                if (failureBlock) failureBlock(error);
-            }
-        } failure:^(NSError *error) {
-            if (error.code == NSFileReadNoSuchFileError)
-            {
-                HanekeLog(@"Disk cache miss: %@/%@", formatName, key.lastPathComponent);
-                NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Image not found for key %@", @""), key.lastPathComponent];
-                NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
-                NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorImageNotFound userInfo:userInfo];
-                if (failureBlock) failureBlock(error);
-            }
-            else
-            {
-                if (failureBlock) failureBlock(error);
-            }
-        }];
-    });
+            });
+            [self updateAccessDateOfImage:image key:key format:format];
+        }
+        else
+        {
+            NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Disk cache: Cannot read image for key %@", @""), key.lastPathComponent];
+            HanekeLog(@"%@", errorDescription);
+            NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription};
+            NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorDiskCacheCannotReadImageFromData userInfo:userInfo];
+            if (failureBlock) failureBlock(error);
+        }
+    } failure:^(NSError *error) {
+        if (error.code == NSFileReadNoSuchFileError)
+        {
+            HanekeLog(@"Disk cache miss: %@/%@", formatName, key.lastPathComponent);
+            NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Image not found for key %@", @""), key.lastPathComponent];
+            NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
+            NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorImageNotFound userInfo:userInfo];
+            if (failureBlock) failureBlock(error);
+        }
+        else
+        {
+            if (failureBlock) failureBlock(error);
+        }
+    }];
     return NO;
 }
 
