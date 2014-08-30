@@ -127,7 +127,7 @@
         
         UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(5, 5)];
         NSData *data = UIImageJPEGRepresentation(image, 1);
-        NSString *contentLengthString = [NSString stringWithFormat:@"%lu", data.length * 10];
+        NSString *contentLengthString = [NSString stringWithFormat:@"%ld", (long)data.length * 10];
         OHHTTPStubsResponse *response = [OHHTTPStubsResponse responseWithData:data statusCode:200 headers:nil];
         response.httpHeaders = @{@"Content-Length": contentLengthString}; // See: https://github.com/AliSoftware/OHHTTPStubs/pull/62
         return response;

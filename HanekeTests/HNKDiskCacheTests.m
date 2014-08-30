@@ -365,14 +365,14 @@
 
 #pragma mark Helpers
 
-- (NSData*)_dataWithSize:(unsigned long long)size
+- (NSData*)_dataWithSize:(NSUInteger)size
 {
     char bytes[size];
     NSData *data = [NSData dataWithBytes:bytes length:size];
     return data;
 }
 
-- (void)_writeDataWithSize:(unsigned long long)size
+- (void)_writeDataWithSize:(NSUInteger)size
 {
     static NSInteger i = 0;
     NSData *data = [self _dataWithSize:size];
