@@ -37,6 +37,7 @@
 		87F47BAE18AC123C00F1FB48 /* UIImageView+HanekeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F47BAD18AC123C00F1FB48 /* UIImageView+HanekeTests.m */; };
 		87F47BB618AD436700F1FB48 /* UIImage+HanekeDemo.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F47BB518AD436700F1FB48 /* UIImage+HanekeDemo.m */; };
 		87F47BB918AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F47BB818AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m */; };
+		A0045DCA19B226BA00B12CE4 /* NSString+HanekeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A0045DC919B226BA00B12CE4 /* NSString+HanekeTests.m */; };
 		A010752A19A6275B002A1990 /* UIView+Haneke.m in Sources */ = {isa = PBXBuildFile; fileRef = A0818B7B19A4CE4100F89CCF /* UIView+Haneke.m */; };
 		A010752B19A62761002A1990 /* UIButton+Haneke.m in Sources */ = {isa = PBXBuildFile; fileRef = A0818B7E19A4D11600F89CCF /* UIButton+Haneke.m */; };
 		A010752C19A62765002A1990 /* HNKDiskEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = A0ADE334198029AB00B75057 /* HNKDiskEntity.m */; };
@@ -123,6 +124,7 @@
 		87F47BB518AD436700F1FB48 /* UIImage+HanekeDemo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+HanekeDemo.m"; sourceTree = "<group>"; };
 		87F47BB718AD4D0400F1FB48 /* HNKDemoCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKDemoCollectionViewCell.h; sourceTree = "<group>"; };
 		87F47BB818AD4D0400F1FB48 /* HNKDemoCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKDemoCollectionViewCell.m; sourceTree = "<group>"; };
+		A0045DC919B226BA00B12CE4 /* NSString+HanekeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+HanekeTests.m"; sourceTree = "<group>"; };
 		A010752F19A6295F002A1990 /* HNKDiskCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKDiskCache.h; sourceTree = "<group>"; };
 		A010753019A6295F002A1990 /* HNKDiskCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKDiskCache.m; sourceTree = "<group>"; };
 		A010753419A652FE002A1990 /* HNKDiskCacheTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKDiskCacheTests.m; sourceTree = "<group>"; };
@@ -231,14 +233,14 @@
 		873E22A818AA8C7C00E7919C /* HanekeTests */ = {
 			isa = PBXGroup;
 			children = (
+				A0045DCB19B226C300B12CE4 /* Categories */,
 				87A6907918B678A000F97E13 /* Code Coverage iOS 7 Workaround */,
 				A0818B8019A4E8E100F89CCF /* Entities */,
 				873E22BE18AA8D9F00E7919C /* HNKCacheTests.m */,
 				A010753419A652FE002A1990 /* HNKDiskCacheTests.m */,
 				873E22A918AA8C7C00E7919C /* Supporting Files */,
-				8762BB12192915BC007AE90D /* UIImage+HanekeTests.m */,
 				A0818B8119A4E8E600F89CCF /* UIKit+Haneke */,
-				87A6908018B6813E00F97E13 /* Utils */,
+				87A6908018B6813E00F97E13 /* Test Utils */,
 			);
 			path = HanekeTests;
 			sourceTree = "<group>";
@@ -291,7 +293,7 @@
 			name = "Code Coverage iOS 7 Workaround";
 			sourceTree = "<group>";
 		};
-		87A6908018B6813E00F97E13 /* Utils */ = {
+		87A6908018B6813E00F97E13 /* Test Utils */ = {
 			isa = PBXGroup;
 			children = (
 				87A6908418B68BF200F97E13 /* HNKCache+HanekeTestUtils.h */,
@@ -301,7 +303,16 @@
 				87260AB718CCDB7000D3680F /* XCTestCase+HanekeTestUtils.h */,
 				87260AB818CCDB7000D3680F /* XCTestCase+HanekeTestUtils.m */,
 			);
-			name = Utils;
+			name = "Test Utils";
+			sourceTree = "<group>";
+		};
+		A0045DCB19B226C300B12CE4 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				8762BB12192915BC007AE90D /* UIImage+HanekeTests.m */,
+				A0045DC919B226BA00B12CE4 /* NSString+HanekeTests.m */,
+			);
+			name = Categories;
 			sourceTree = "<group>";
 		};
 		A0818B7219A3BD7D00F89CCF /* Entities */ = {
@@ -526,6 +537,7 @@
 				A010753519A652FE002A1990 /* HNKDiskCacheTests.m in Sources */,
 				87A6908318B6817C00F97E13 /* UIImage+HanekeTestUtils.m in Sources */,
 				A0818B8519A5025300F89CCF /* UIButton+HanekeTests.m in Sources */,
+				A0045DCA19B226BA00B12CE4 /* NSString+HanekeTests.m in Sources */,
 				A0818B7419A4A6AC00F89CCF /* HNKSimpleEntityTests.m in Sources */,
 				A0818B7619A4ABFD00F89CCF /* HNKDiskEntityTests.m in Sources */,
 			);

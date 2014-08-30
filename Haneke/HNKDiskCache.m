@@ -28,6 +28,7 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
 
 - (NSString*)hnk_MD5String;
 - (BOOL)hnk_setValue:(NSString*)value forExtendedFileAttribute:(NSString*)attribute;
+- (NSString*)hnk_stringByEscapingFilename;
 - (NSString*)hnk_valueForExtendedFileAttribute:(NSString*)attribute;
 
 @end
@@ -213,7 +214,7 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
 
 - (NSString*)pathForKey:(NSString*)key
 {
-    NSString *filename = CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,(CFStringRef)key, NULL, CFSTR("/:"), kCFStringEncodingUTF8));
+    NSString *filename = [key hnk_stringByEscapingFilename];
     if (filename.length >= NAME_MAX)
     {
         NSString *MD5 = [key hnk_MD5String];
@@ -335,6 +336,13 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
     const char *valueC = [value UTF8String];
     const int result = setxattr(path, attributeC, valueC, strlen(valueC), 0, 0);
     return result == 0;
+}
+
+- (NSString*)hnk_stringByEscapingFilename
+{
+    // TODO: Add more characters to leave unescaped that are valid for paths but not for URLs
+    NSString *filename = CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,(CFStringRef)self, CFSTR(" \\"), CFSTR("/:"), kCFStringEncodingUTF8));
+    return filename;
 }
 
 - (NSString*)hnk_valueForExtendedFileAttribute:(NSString*)attribute
