@@ -35,7 +35,14 @@
 
 - (void)setUp
 {
+    [super setUp];
     _sut = [[HNKCache alloc] initWithName:@"test"];
+}
+
+- (void)tearDown
+{
+    [_sut removeAllImages];
+    [super tearDown];
 }
 
 - (void)testInitWithName
@@ -312,7 +319,7 @@
 - (void)testFetchImageForKey_MemoryCacheMiss_DiskCacheHit
 {
     HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(1, 1)];
-    format.diskCapacity = 1000;
+    format.diskCapacity = NSUIntegerMax;
     NSString *formatName = format.name;
     NSString *key = self.name;
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
