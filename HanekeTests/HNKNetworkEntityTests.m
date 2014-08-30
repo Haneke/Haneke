@@ -44,6 +44,13 @@
     [super tearDown];
 }
 
+- (void)testURL
+{
+    _sut = [[HNKNetworkEntity alloc] initWithURL:_URL];
+
+    XCTAssertEqualObjects(_sut.URL, _URL, @"");
+}
+
 - (void)testCacheKey
 {
     _sut = [[HNKNetworkEntity alloc] initWithURL:_URL];

@@ -40,6 +40,12 @@ enum
 - (instancetype)initWithURL:(NSURL*)URL;
 
 /**
+ Entity URL.
+ */
+@property (nonatomic, readonly) NSURL *URL;
+
+
+/**
  Cancels the current fetch. When a fetch is cancelled it should not call any of the provided blocks.
  @discussion This will be typically used by UI logic to cancel fetches during view reuse.
  */
