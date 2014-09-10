@@ -130,15 +130,17 @@
 {
     HNKCacheFormat *format = self.hnk_cacheFormat;
     __block BOOL animated = NO;
-    __weak UIImageView *weakSelf = self;
+    __weak __typeof__(self) weakSelf = self;
     const BOOL didSetImage = [[HNKCache sharedCache] fetchImageForEntity:entity formatName:format.name success:^(UIImage *image) {
-        if ([weakSelf hnk_shouldCancelForKey:entity.cacheKey]) return;
+        __typeof__(weakSelf) strongSelf = weakSelf;
+        if ([strongSelf hnk_shouldCancelForKey:entity.cacheKey]) return;
         
-        [weakSelf hnk_setImage:image animated:animated success:successBlock];
+        [strongSelf hnk_setImage:image animated:animated success:successBlock];
     } failure:^(NSError *error) {
-        if ([weakSelf hnk_shouldCancelForKey:entity.cacheKey]) return;
+        __typeof__(weakSelf) strongSelf = weakSelf;
+        if ([strongSelf hnk_shouldCancelForKey:entity.cacheKey]) return;
         
-        weakSelf.hnk_entity = nil;
+        strongSelf.hnk_entity = nil;
         
         if (failureBlock) failureBlock(error);
     }];

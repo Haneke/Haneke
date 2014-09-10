@@ -146,15 +146,17 @@
 {
     HNKCacheFormat *format = self.hnk_imageFormat;
     __block BOOL animated = NO;
-    __weak UIButton *weakSelf = self;
+    __weak __typeof__(self) weakSelf = self;
     const BOOL didSetImage = [[HNKCache sharedCache] fetchImageForEntity:entity formatName:format.name success:^(UIImage *image) {
-        if ([weakSelf hnk_shouldCancelSetImageForKey:entity.cacheKey]) return;
+        __typeof__(weakSelf) strongSelf = weakSelf;
+        if ([strongSelf hnk_shouldCancelSetImageForKey:entity.cacheKey]) return;
 
-        [weakSelf hnk_setImage:image forState:state animated:animated success:successBlock];
+        [strongSelf hnk_setImage:image forState:state animated:animated success:successBlock];
     } failure:^(NSError *error) {
-        if ([weakSelf hnk_shouldCancelSetImageForKey:entity.cacheKey]) return;
+        __typeof__(weakSelf) strongSelf = weakSelf;
+        if ([strongSelf hnk_shouldCancelSetImageForKey:entity.cacheKey]) return;
         
-        weakSelf.hnk_imageEntity = nil;
+        strongSelf.hnk_imageEntity = nil;
         
         if (failureBlock) failureBlock(error);
     }];
@@ -305,15 +307,17 @@
 {
     HNKCacheFormat *format = self.hnk_backgroundImageFormat;
     __block BOOL animated = NO;
-    __weak UIButton *weakSelf = self;
+    __weak __typeof__(self) weakSelf = self;
     const BOOL didSetImage = [[HNKCache sharedCache] fetchImageForEntity:entity formatName:format.name success:^(UIImage *image) {
-        if ([weakSelf hnk_shouldCancelSetBackgroundImageForKey:entity.cacheKey]) return;
+        __typeof__(weakSelf) strongSelf = weakSelf;
+        if ([strongSelf hnk_shouldCancelSetBackgroundImageForKey:entity.cacheKey]) return;
 
-        [weakSelf hnk_setBackgroundImage:image forState:state animated:animated success:successBlock];
+        [strongSelf hnk_setBackgroundImage:image forState:state animated:animated success:successBlock];
     } failure:^(NSError *error) {
-        if ([weakSelf hnk_shouldCancelSetBackgroundImageForKey:entity.cacheKey]) return;
+        __typeof__(weakSelf) strongSelf = weakSelf;
+        if ([strongSelf hnk_shouldCancelSetBackgroundImageForKey:entity.cacheKey]) return;
 
-        weakSelf.hnk_backgroundImageEntity = nil;
+        strongSelf.hnk_backgroundImageEntity = nil;
         
         if (failureBlock) failureBlock(error);
     }];
