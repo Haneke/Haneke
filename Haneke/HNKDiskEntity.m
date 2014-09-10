@@ -42,29 +42,36 @@
 - (void)fetchImageWithSuccess:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
 {
     _cancelled = NO;
+    __weak __typeof__(self) weakSelf = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if (_cancelled) return;
+        __strong __typeof__(weakSelf) strongSelf = weakSelf;
+
+        if (!strongSelf) return;
+
+        if (strongSelf->_cancelled) return;
+        
+        NSString *path = strongSelf->_path;
         
         NSError *error = nil;
-        NSData *data = [NSData dataWithContentsOfFile:_path options:kNilOptions error:&error];
+        NSData *data = [NSData dataWithContentsOfFile:path options:kNilOptions error:&error];
         if (!data)
         {
-            HanekeLog(@"Request %@ failed with error %@", _path, error);
+            HanekeLog(@"Request %@ failed with error %@", path, error);
             dispatch_async(dispatch_get_main_queue(), ^{
                 failureBlock(error);
             });
             return;
         }
         
-        if (_cancelled) return;
+        if (strongSelf->_cancelled) return;
         
         UIImage *image = [UIImage imageWithData:data];
         
         if (!image)
         {
-            NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Failed to load image from data at path %@", @""), _path];
+            NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Failed to load image from data at path %@", @""), path];
             HanekeLog(@"%@", errorDescription);
-            NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription , NSFilePathErrorKey : _path};
+            NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription , NSFilePathErrorKey : path};
             NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorDiskEntityInvalidData userInfo:userInfo];
             dispatch_async(dispatch_get_main_queue(), ^{
                 failureBlock(error);
@@ -73,7 +80,7 @@
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (_cancelled) return;
+            if (strongSelf->_cancelled) return;
             
             successBlock(image);
         });
@@ -83,6 +90,11 @@
 - (void)cancelFetch
 {
     _cancelled = YES;
+}
+
+- (void)dealloc
+{
+    [self cancelFetch];
 }
 
 @end

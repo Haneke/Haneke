@@ -43,14 +43,21 @@
 - (void)fetchImageWithSuccess:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
 {
     _cancelled = NO;
+    __weak __typeof__(self) weakSelf = self;
     _dataTask = [self.URLSession dataTaskWithURL:_URL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        if (_cancelled) return;
+        __strong __typeof__(weakSelf) strongSelf = weakSelf;
+
+        if (!strongSelf) return;
+
+        if (strongSelf->_cancelled) return;
+        
+        NSURL *URL = strongSelf->_URL;
         
         if (error)
         {
             if ([error.domain isEqualToString:NSURLErrorDomain] && error.code == NSURLErrorCancelled) return;
             
-            HanekeLog(@"Request %@ failed with error %@", _URL.absoluteString, error);
+            HanekeLog(@"Request %@ failed with error %@", URL.absoluteString, error);
             if (!failureBlock) return;
             
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -61,7 +68,7 @@
         
         if (![response isKindOfClass:NSHTTPURLResponse.class])
         {
-            HanekeLog(@"Request %@ received unkown response %@", _URL.absoluteString, response);
+            HanekeLog(@"Request %@ received unkown response %@", URL.absoluteString, response);
             return;
         }
         
@@ -69,7 +76,7 @@
         if (httpResponse.statusCode != 200)
         {
             NSString *errorDescription = [NSHTTPURLResponse localizedStringForStatusCode:httpResponse.statusCode];
-            [self failWithLocalizedDescription:errorDescription code:HNKErrorNetworkEntityInvalidStatusCode block:failureBlock];
+            [strongSelf failWithLocalizedDescription:errorDescription code:HNKErrorNetworkEntityInvalidStatusCode block:failureBlock];
             return;
         }
         
@@ -79,8 +86,8 @@
             const NSUInteger dataLength = data.length;
             if (dataLength < expectedContentLength)
             {
-                NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Request %@ received %ld out of %ld bytes", @""), _URL.absoluteString, (long)dataLength, (long)expectedContentLength];
-                [self failWithLocalizedDescription:errorDescription code:HNKErrorNetworkEntityMissingData block:failureBlock];
+                NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Request %@ received %ld out of %ld bytes", @""), URL.absoluteString, (long)dataLength, (long)expectedContentLength];
+                [strongSelf failWithLocalizedDescription:errorDescription code:HNKErrorNetworkEntityMissingData block:failureBlock];
                 return;
             }
         }
@@ -89,8 +96,8 @@
         
         if (!image)
         {
-            NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Failed to load image from data at URL %@", @""), _URL];
-            [self failWithLocalizedDescription:errorDescription code:HNKErrorNetworkEntityInvalidData block:failureBlock];
+            NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Failed to load image from data at URL %@", @""), URL];
+            [strongSelf failWithLocalizedDescription:errorDescription code:HNKErrorNetworkEntityInvalidData block:failureBlock];
             return;
         }
         
@@ -106,6 +113,11 @@
 {
     [_dataTask cancel];
     _cancelled = YES;
+}
+
+- (void)dealloc
+{
+    [self cancelFetch];
 }
 
 #pragma mark Private
