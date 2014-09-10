@@ -199,7 +199,7 @@
     }];
 }
 
-- (void)testSetFetchDataForKey_Success
+- (void)testFetchDataForKey_Success
 {
     _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
     NSData *data = [self _dataWithSize:14];
@@ -217,7 +217,7 @@
     }];
 }
 
-- (void)testSetFetchDataForKey_Failure
+- (void)testFetchDataForKey_Failure
 {
     _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
     NSString *key = self.name;
