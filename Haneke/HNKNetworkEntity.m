@@ -68,7 +68,7 @@
         
         if (![response isKindOfClass:NSHTTPURLResponse.class])
         {
-            HanekeLog(@"Request %@ received unkown response %@", URL.absoluteString, response);
+            HanekeLog(@"Request %@ received unknown response %@", URL.absoluteString, response);
             return;
         }
         
