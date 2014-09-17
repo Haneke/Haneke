@@ -122,16 +122,16 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
 #pragma mark Getting images
 
-- (BOOL)fetchImageForEntity:(id<HNKFetcher>)entity formatName:(NSString *)formatName success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (BOOL)fetchImageForFetcher:(id<HNKFetcher>)fetcher formatName:(NSString *)formatName success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    NSString *key = entity.cacheKey;
+    NSString *key = fetcher.cacheKey;
     return [self fetchImageForKey:key formatName:formatName success:^(UIImage *image) {
         if (successBlock) successBlock(image);
     } failure:^(NSError *error) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             HNKCacheFormat *format = _formats[formatName];
             
-            [self fetchImageFromEntity:entity completionBlock:^(UIImage *originalImage, NSError *error) {
+            [self fetchImageFromFetcher:fetcher completionBlock:^(UIImage *originalImage, NSError *error) {
                 if (!originalImage)
                 {
                     dispatch_async(dispatch_get_main_queue(), ^{
@@ -249,21 +249,21 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
 #pragma mark Private (utils)
 
-- (void)fetchImageFromEntity:(id<HNKFetcher>)entity completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock;
+- (void)fetchImageFromFetcher:(id<HNKFetcher>)fetcher completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock;
 {
     hnk_dispatch_sync_main_queue_if_needed((^{
-        [entity fetchImageWithSuccess:^(UIImage *image) {
+        [fetcher fetchImageWithSuccess:^(UIImage *image) {
             if (image)
             {
                 completionBlock(image, nil);
             }
             else
             {
-                NSString *key = entity.cacheKey;
-                NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Invalid entity %@: Must return non-nil in success block", @""), key.lastPathComponent];
+                NSString *key = fetcher.cacheKey;
+                NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Invalid fetcher %@: Must return non-nil in success block", @""), key.lastPathComponent];
                 HanekeLog(@"%@", errorDescription);
                 NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
-                NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorEntityMustReturnImage userInfo:userInfo];
+                NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorFetcherMustReturnImage userInfo:userInfo];
                 completionBlock(nil, error);
                 return;
             }

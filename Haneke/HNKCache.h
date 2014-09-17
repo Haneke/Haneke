@@ -71,13 +71,13 @@
 
 /**
  Retrieves an image from the cache, or creates one if it doesn't exist. If the image exists in the memory cache, the success block will be executed synchronously. If the image has to be retreived from the disk cache or has to be created, the success block will be executed asynchronously.
- @param entity Entity that represents the original image. If the image doesn't exist in the cache, the entity will be asked to provide the original image to create it. Any calls to the entity will be done in the main queue.
+ @param fetcher Fetcher that can provide the original image. If the image doesn't exist in the cache, the fetcher will be asked to provide the original image to add it. Any calls to the fetcher will be done in the main queue.
  @param formatName Name of the format in which the image is desired. The format must have been previously registered with the cache. If the image doesn't exist in the cache, it will be created based on the format. If by creating the image the format disk capacity is surpassed, the least recently used images of the format will be removed until it isn't.
  @param successBlock Block to be called with the requested image. Always called from the main queue. Will be called synchronously if the image exists in the memory cache, or asynchronously if the image has to be retreived from the disk cache or has to be created.
- @param failureBlock Block to be called if the image is not in the cache and the entity fails to provide the original. Called asynchronously from the main queue.
+ @param failureBlock Block to be called if the image is not in the cache and the fetcher fails to provide the original. Called asynchronously from the main queue.
  @return YES if image exists in the memory cache (and thus, the success block was called synchronously), NO otherwise.
  */
-- (BOOL)fetchImageForEntity:(id<HNKFetcher>)entity formatName:(NSString *)formatName success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
+- (BOOL)fetchImageForFetcher:(id<HNKFetcher>)fetcher formatName:(NSString *)formatName success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
 
 /**
  Retrieves an image from the cache. If the image exists in the memory cache, the success block will be executed synchronously. If the image has to be retreived from the disk cache, the success block will be executed asynchronously.
@@ -120,27 +120,27 @@
 - (void)removeImagesOfFormatNamed:(NSString*)formatName;
 
 /** Removes all cached images for the given key.
- @param entity Key whose images will be removed.
+ @param key Key whose images will be removed.
  */
 - (void)removeImagesForKey:(NSString*)key;
 
 @end
 
-/** Represents an object that is associated with an image. Used by the cache to assign keys to images and fetch the original image needed to create resized images.
+/** Fetches an image asynchronously. Used by the cache to fetch the original image from which resized images will be created.
  */
 @protocol HNKFetcher <NSObject>
 
 /** 
- Returns the key of the original image associated with the entity.
- @discussion If two different entities have the same image, they should return the same key for better performance.
+ Returns the key of the original image returned by the fetcher.
+ @discussion If two different fetchers provide the same image, they should return the same key for better performance.
  */
 @property (nonatomic, readonly) NSString *cacheKey;
 
 /**
- Retrieves the original image associated with the entity.
+ Retrieves the original image associated with the fetcher.
  @param successBlock Block to be called with the original image. Must be called from the main queue.
- @param failureBlock Block to be called if entity fails to provide the original image. Must be called from the main queue.
- @discussion If the fetch is cancelled the entity must not call any of the provided blocks.
+ @param failureBlock Block to be called if the fetcher fails to provide the original image. Must be called from the main queue.
+ @discussion If the fetch is cancelled the fetcher must not call any of the provided blocks.
  @see cancelFetch
  */
 - (void)fetchImageWithSuccess:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
@@ -260,7 +260,7 @@ enum
 {
     HNKErrorImageNotFound = -100,
     
-    HNKErrorEntityMustReturnImage = -200,
+    HNKErrorFetcherMustReturnImage = -200,
 
     HNKErrorDiskCacheCannotReadImageFromData = -300
 };

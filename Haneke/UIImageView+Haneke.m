@@ -131,7 +131,7 @@
     HNKCacheFormat *format = self.hnk_cacheFormat;
     __block BOOL animated = NO;
     __weak __typeof__(self) weakSelf = self;
-    const BOOL didSetImage = [[HNKCache sharedCache] fetchImageForEntity:entity formatName:format.name success:^(UIImage *image) {
+    const BOOL didSetImage = [[HNKCache sharedCache] fetchImageForFetcher:entity formatName:format.name success:^(UIImage *image) {
         __typeof__(weakSelf) strongSelf = weakSelf;
         if ([strongSelf hnk_shouldCancelForKey:entity.cacheKey]) return;
         
