@@ -209,7 +209,7 @@
     
     [_sut hnk_setImage:image withKey:key forState:UIControlStateNormal];
     
-    XCTAssertEqualObjects(_sut.hnk_imageFetcher.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_imageFetcher.key, key,  @"");
     XCTAssertNil([_sut imageForState:UIControlStateNormal], @"");
 }
 
@@ -223,7 +223,7 @@
     
     [_sut hnk_setImage:image withKey:key forState:state];
     
-    XCTAssertEqualObjects(_sut.hnk_imageFetcher.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_imageFetcher.key, key,  @"");
     XCTAssertEqualObjects([_sut imageForState:state], previousImage, @"");
 }
 
@@ -249,7 +249,7 @@
     
     [_sut hnk_setImage:image withKey:key forState:UIControlStateNormal placeholder:placeholder];
     
-    XCTAssertEqualObjects(_sut.hnk_imageFetcher.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_imageFetcher.key, key,  @"");
     XCTAssertEqualObjects([_sut imageForState:UIControlStateNormal], placeholder, @"");
 }
 
@@ -264,7 +264,7 @@
     
     [_sut hnk_setImage:image withKey:key forState:state placeholder:placeholder];
     
-    XCTAssertEqualObjects(_sut.hnk_imageFetcher.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_imageFetcher.key, key,  @"");
     XCTAssertEqualObjects([_sut imageForState:state], placeholder, @"");
 }
 
@@ -313,7 +313,7 @@
 
     [_sut hnk_setImage:image withKey:key forState:state placeholder:nil success:nil failure:nil];
     
-    XCTAssertEqualObjects(_sut.hnk_imageFetcher.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_imageFetcher.key, key,  @"");
     XCTAssertNil([_sut imageForState:state], @"");
 }
 
@@ -327,7 +327,7 @@
     
     [_sut hnk_setImage:image withKey:key forState:state placeholder:nil success:nil failure:nil];
     
-    XCTAssertEqualObjects(_sut.hnk_imageFetcher.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_imageFetcher.key, key,  @"");
     XCTAssertEqualObjects([_sut imageForState:state], previousImage, @"");
 }
 
@@ -339,7 +339,7 @@
     id<HNKFetcher> fetcher = [[HNKDiskFetcher alloc] initWithPath:path];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.key formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
     [_sut hnk_setImageFromFile:path forState:state];
@@ -357,7 +357,7 @@
     
     [_sut hnk_setImageFromFile:path forState:state placeholder:placeholder];
     
-    XCTAssertEqualObjects(_sut.hnk_imageFetcher.cacheKey, fetcher.cacheKey,  @"");
+    XCTAssertEqualObjects(_sut.hnk_imageFetcher.key, fetcher.key,  @"");
     XCTAssertEqualObjects([_sut imageForState:state], placeholder, @"");
 }
 
@@ -367,7 +367,7 @@
     id<HNKFetcher> fetcher = [[HNKDiskFetcher alloc] initWithPath:path];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.key formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
     __block BOOL success = NO;
@@ -391,7 +391,7 @@
     id<HNKFetcher> fetcher = [[HNKNetworkFetcher alloc] initWithURL:URL];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.key formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
     [_sut hnk_setImageFromURL:URL forState:state];
@@ -409,7 +409,7 @@
     
     [_sut hnk_setImageFromURL:URL forState:state placeholder:placeholder];
     
-    XCTAssertEqualObjects(_sut.hnk_imageFetcher.cacheKey, fetcher.cacheKey,  @"");
+    XCTAssertEqualObjects(_sut.hnk_imageFetcher.key, fetcher.key,  @"");
     XCTAssertEqualObjects([_sut imageForState:state], placeholder, @"");
 }
 
@@ -419,7 +419,7 @@
     id<HNKFetcher> fetcher = [[HNKNetworkFetcher alloc] initWithURL:URL];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.key formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
     __block BOOL success = NO;
@@ -442,7 +442,7 @@
     id<HNKFetcher> fetcher = [[HNKSimpleFetcher alloc] initWithKey:self.name image:nil];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.key formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
     [_sut hnk_setImageFromFetcher:fetcher forState:state];
@@ -468,7 +468,7 @@
     id<HNKFetcher> fetcher = [[HNKSimpleFetcher alloc] initWithKey:self.name image:nil];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.key formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
     __block BOOL success = NO;
@@ -590,7 +590,7 @@
     
     [_sut hnk_setBackgroundImage:image withKey:key forState:UIControlStateNormal];
     
-    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.key, key,  @"");
     XCTAssertNil([_sut backgroundImageForState:UIControlStateNormal], @"");
 }
 
@@ -604,7 +604,7 @@
     
     [_sut hnk_setBackgroundImage:image withKey:key forState:state];
     
-    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.key, key,  @"");
     XCTAssertEqualObjects([_sut backgroundImageForState:state], previousImage, @"");
 }
 
@@ -630,7 +630,7 @@
     
     [_sut hnk_setBackgroundImage:image withKey:key forState:UIControlStateNormal placeholder:placeholder];
     
-    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.key, key,  @"");
     XCTAssertEqualObjects([_sut backgroundImageForState:UIControlStateNormal], placeholder, @"");
 }
 
@@ -645,7 +645,7 @@
     
     [_sut hnk_setBackgroundImage:image withKey:key forState:state placeholder:placeholder];
     
-    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.key, key,  @"");
     XCTAssertEqualObjects([_sut backgroundImageForState:state], placeholder, @"");
 }
 
@@ -694,7 +694,7 @@
     
     [_sut hnk_setBackgroundImage:image withKey:key forState:state placeholder:nil success:nil failure:nil];
     
-    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.key, key,  @"");
     XCTAssertNil([_sut backgroundImageForState:state], @"");
 }
 
@@ -708,7 +708,7 @@
     
     [_sut hnk_setBackgroundImage:image withKey:key forState:state placeholder:nil success:nil failure:nil];
     
-    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.key, key,  @"");
     XCTAssertEqualObjects([_sut backgroundImageForState:state], previousImage, @"");
 }
 
@@ -720,7 +720,7 @@
     id<HNKFetcher> fetcher = [[HNKDiskFetcher alloc] initWithPath:path];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.key formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
     [_sut hnk_setBackgroundImageFromFile:path forState:state];
@@ -738,7 +738,7 @@
     
     [_sut hnk_setBackgroundImageFromFile:path forState:state placeholder:placeholder];
     
-    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.cacheKey, fetcher.cacheKey,  @"");
+    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.key, fetcher.key,  @"");
     XCTAssertEqualObjects([_sut backgroundImageForState:state], placeholder, @"");
 }
 
@@ -748,7 +748,7 @@
     id<HNKFetcher> fetcher = [[HNKDiskFetcher alloc] initWithPath:path];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.key formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
     __block BOOL success = NO;
@@ -772,7 +772,7 @@
     id<HNKFetcher> fetcher = [[HNKNetworkFetcher alloc] initWithURL:URL];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.key formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
     [_sut hnk_setBackgroundImageFromURL:URL forState:state];
@@ -790,7 +790,7 @@
     
     [_sut hnk_setBackgroundImageFromURL:URL forState:state placeholder:placeholder];
     
-    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.cacheKey, fetcher.cacheKey,  @"");
+    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.key, fetcher.key,  @"");
     XCTAssertEqualObjects([_sut backgroundImageForState:state], placeholder, @"");
 }
 
@@ -800,7 +800,7 @@
     id<HNKFetcher> fetcher = [[HNKNetworkFetcher alloc] initWithURL:URL];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.key formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
     __block BOOL success = NO;
@@ -823,7 +823,7 @@
     id<HNKFetcher> fetcher = [[HNKSimpleFetcher alloc] initWithKey:self.name image:nil];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.key formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
     [_sut hnk_setBackgroundImageFromFetcher:fetcher forState:state];
@@ -849,7 +849,7 @@
     id<HNKFetcher> fetcher = [[HNKSimpleFetcher alloc] initWithKey:self.name image:nil];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.key formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
     __block BOOL success = NO;

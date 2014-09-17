@@ -51,11 +51,11 @@
     XCTAssertEqualObjects(_sut.URL, _URL, @"");
 }
 
-- (void)testCacheKey
+- (void)testKey
 {
     _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
     
-    XCTAssertEqualObjects(_sut.cacheKey, _URL.absoluteString, @"");
+    XCTAssertEqualObjects(_sut.key, _URL.absoluteString, @"");
 }
 
 - (void)testFetchImage_Success

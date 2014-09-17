@@ -149,12 +149,12 @@
     __weak __typeof__(self) weakSelf = self;
     const BOOL didSetImage = [[HNKCache sharedCache] fetchImageForFetcher:fetcher formatName:format.name success:^(UIImage *image) {
         __typeof__(weakSelf) strongSelf = weakSelf;
-        if ([strongSelf hnk_shouldCancelSetImageForKey:fetcher.cacheKey]) return;
+        if ([strongSelf hnk_shouldCancelSetImageForKey:fetcher.key]) return;
 
         [strongSelf hnk_setImage:image forState:state animated:animated success:successBlock];
     } failure:^(NSError *error) {
         __typeof__(weakSelf) strongSelf = weakSelf;
-        if ([strongSelf hnk_shouldCancelSetImageForKey:fetcher.cacheKey]) return;
+        if ([strongSelf hnk_shouldCancelSetImageForKey:fetcher.key]) return;
         
         strongSelf.hnk_imageFetcher = nil;
         
@@ -183,7 +183,7 @@
 
 - (BOOL)hnk_shouldCancelSetImageForKey:(NSString*)key
 {
-    if ([self.hnk_imageFetcher.cacheKey isEqualToString:key]) return NO;
+    if ([self.hnk_imageFetcher.key isEqualToString:key]) return NO;
     
     HanekeLog(@"Cancelled set image from key %@", key.lastPathComponent);
     return YES;
@@ -310,12 +310,12 @@
     __weak __typeof__(self) weakSelf = self;
     const BOOL didSetImage = [[HNKCache sharedCache] fetchImageForFetcher:fetcher formatName:format.name success:^(UIImage *image) {
         __typeof__(weakSelf) strongSelf = weakSelf;
-        if ([strongSelf hnk_shouldCancelSetBackgroundImageForKey:fetcher.cacheKey]) return;
+        if ([strongSelf hnk_shouldCancelSetBackgroundImageForKey:fetcher.key]) return;
 
         [strongSelf hnk_setBackgroundImage:image forState:state animated:animated success:successBlock];
     } failure:^(NSError *error) {
         __typeof__(weakSelf) strongSelf = weakSelf;
-        if ([strongSelf hnk_shouldCancelSetBackgroundImageForKey:fetcher.cacheKey]) return;
+        if ([strongSelf hnk_shouldCancelSetBackgroundImageForKey:fetcher.key]) return;
 
         strongSelf.hnk_backgroundImageFetcher = nil;
         
@@ -344,7 +344,7 @@
 
 - (BOOL)hnk_shouldCancelSetBackgroundImageForKey:(NSString*)key
 {
-    if ([self.hnk_backgroundImageFetcher.cacheKey isEqualToString:key]) return NO;
+    if ([self.hnk_backgroundImageFetcher.key isEqualToString:key]) return NO;
     
     HanekeLog(@"Cancelled set background image from key %@", key.lastPathComponent);
     return YES;

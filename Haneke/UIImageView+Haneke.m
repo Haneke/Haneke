@@ -133,12 +133,12 @@
     __weak __typeof__(self) weakSelf = self;
     const BOOL didSetImage = [[HNKCache sharedCache] fetchImageForFetcher:fetcher formatName:format.name success:^(UIImage *image) {
         __typeof__(weakSelf) strongSelf = weakSelf;
-        if ([strongSelf hnk_shouldCancelForKey:fetcher.cacheKey]) return;
+        if ([strongSelf hnk_shouldCancelForKey:fetcher.key]) return;
         
         [strongSelf hnk_setImage:image animated:animated success:successBlock];
     } failure:^(NSError *error) {
         __typeof__(weakSelf) strongSelf = weakSelf;
-        if ([strongSelf hnk_shouldCancelForKey:fetcher.cacheKey]) return;
+        if ([strongSelf hnk_shouldCancelForKey:fetcher.key]) return;
         
         strongSelf.hnk_fetcher = nil;
         
@@ -167,7 +167,7 @@
 
 - (BOOL)hnk_shouldCancelForKey:(NSString*)key
 {
-    if ([self.hnk_fetcher.cacheKey isEqualToString:key]) return NO;
+    if ([self.hnk_fetcher.key isEqualToString:key]) return NO;
     
     HanekeLog(@"Cancelled set image for %@", key.lastPathComponent);
     return YES;

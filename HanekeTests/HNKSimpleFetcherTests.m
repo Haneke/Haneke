@@ -30,13 +30,13 @@
     HNKSimpleFetcher *_sut;
 }
 
-- (void)testCacheKey
+- (void)testKey
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 10)];
     NSString *key = self.name;
     _sut = [[HNKSimpleFetcher alloc] initWithKey:key image:image];
     
-    XCTAssertEqualObjects(_sut.cacheKey, key, @"");
+    XCTAssertEqualObjects(_sut.key, key, @"");
 }
 
 - (void)testFetchImage

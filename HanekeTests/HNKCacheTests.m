@@ -210,7 +210,7 @@
     id<HNKFetcher> fetcher = [HNKCache fetcherWithKey:@"1" image:image];
     HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(1, 1)];
     NSString *formatName = format.name;
-    [_sut setImage:image forKey:fetcher.cacheKey formatName:formatName];
+    [_sut setImage:image forKey:fetcher.key formatName:formatName];
 
     BOOL result = [_sut fetchImageForFetcher:fetcher formatName:format.name success:^(UIImage *result) {
         XCTAssertEqualObjects(result, image, @"");

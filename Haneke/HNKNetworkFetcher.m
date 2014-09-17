@@ -35,7 +35,7 @@
     return self;
 }
 
-- (NSString*)cacheKey
+- (NSString*)key
 {
     return _URL.absoluteString;
 }

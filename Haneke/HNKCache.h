@@ -134,7 +134,7 @@
  Returns the key of the original image returned by the fetcher.
  @discussion If two different fetchers provide the same image, they should return the same key for better performance.
  */
-@property (nonatomic, readonly) NSString *cacheKey;
+@property (nonatomic, readonly) NSString *key;
 
 /**
  Retrieves the original image associated with the fetcher.

@@ -49,12 +49,12 @@
     [super tearDown];
 }
 
-- (void)testCacheKey
+- (void)testKey
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
     _sut = [[HNKDiskFetcher alloc] initWithPath:path];
     
-    XCTAssertEqualObjects(_sut.cacheKey, path, @"");
+    XCTAssertEqualObjects(_sut.key, path, @"");
 }
 
 - (void)testFetchImage_Success

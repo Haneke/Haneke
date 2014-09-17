@@ -124,7 +124,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
 - (BOOL)fetchImageForFetcher:(id<HNKFetcher>)fetcher formatName:(NSString *)formatName success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    NSString *key = fetcher.cacheKey;
+    NSString *key = fetcher.key;
     return [self fetchImageForKey:key formatName:formatName success:^(UIImage *image) {
         if (successBlock) successBlock(image);
     } failure:^(NSError *error) {
@@ -259,7 +259,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
             }
             else
             {
-                NSString *key = fetcher.cacheKey;
+                NSString *key = fetcher.key;
                 NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Invalid fetcher %@: Must return non-nil in success block", @""), key.lastPathComponent];
                 HanekeLog(@"%@", errorDescription);
                 NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
