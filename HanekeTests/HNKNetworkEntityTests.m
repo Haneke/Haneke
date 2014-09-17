@@ -19,7 +19,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "HNKNetworkEntity.h"
+#import "HNKNetworkFetcher.h"
 #import "UIImage+HanekeTestUtils.h"
 #import "XCTestCase+HanekeTestUtils.h"
 #import <OHHTTPStubs/OHHTTPStubs.h>
@@ -29,7 +29,7 @@
 @end
 
 @implementation HNKNetworkEntityTests {
-    HNKNetworkEntity *_sut;
+    HNKNetworkFetcher *_sut;
     NSURL *_URL;
 }
 
@@ -46,14 +46,14 @@
 
 - (void)testURL
 {
-    _sut = [[HNKNetworkEntity alloc] initWithURL:_URL];
+    _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
 
     XCTAssertEqualObjects(_sut.URL, _URL, @"");
 }
 
 - (void)testCacheKey
 {
-    _sut = [[HNKNetworkEntity alloc] initWithURL:_URL];
+    _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
     
     XCTAssertEqualObjects(_sut.cacheKey, _URL.absoluteString, @"");
 }
@@ -68,7 +68,7 @@
         return [OHHTTPStubsResponse responseWithData:data statusCode:200 headers:nil];
     }];
     
-    _sut = [[HNKNetworkEntity alloc] initWithURL:_URL];
+    _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
         [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
@@ -109,7 +109,7 @@
     } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
         return [OHHTTPStubsResponse responseWithError:error];
     }];
-    _sut = [[HNKNetworkEntity alloc] initWithURL:_URL];
+    _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
         [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
@@ -130,7 +130,7 @@
         NSData *data = [NSData data];
         return [OHHTTPStubsResponse responseWithData:data statusCode:200 headers:nil];
     }];
-   _sut = [[HNKNetworkEntity alloc] initWithURL:_URL];
+   _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
         [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
@@ -138,7 +138,7 @@
             dispatch_semaphore_signal(semaphore);
         } failure:^(NSError *error) {
             XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
-            XCTAssertEqual(error.code, HNKErrorNetworkEntityInvalidData, @"");
+            XCTAssertEqual(error.code, HNKErrorNetworkFetcherInvalidData, @"");
             XCTAssertNotNil(error.localizedDescription, @"");
             XCTAssertEqualObjects(error.userInfo[NSURLErrorKey], _URL, @"");
             dispatch_semaphore_signal(semaphore);
@@ -160,7 +160,7 @@
         return response;
     }];
 
-    _sut = [[HNKNetworkEntity alloc] initWithURL:_URL];
+    _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
         [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
@@ -168,7 +168,7 @@
             dispatch_semaphore_signal(semaphore);
         } failure:^(NSError *error) {
             XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
-            XCTAssertEqual(error.code, HNKErrorNetworkEntityMissingData, @"");
+            XCTAssertEqual(error.code, HNKErrorNetworkFetcherMissingData, @"");
             XCTAssertNotNil(error.localizedDescription, @"");
             XCTAssertEqualObjects(error.userInfo[NSURLErrorKey], _URL, @"");
             dispatch_semaphore_signal(semaphore);
@@ -186,7 +186,7 @@
         return [OHHTTPStubsResponse responseWithData:data statusCode:200 headers:nil];
     }];
     
-    _sut = [[HNKNetworkEntity alloc] initWithURL:_URL];
+    _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
     [_sut fetchImageWithSuccess:^(UIImage *image) {
         XCTFail(@"Unexpected success");
     } failure:^(NSError *error) {
@@ -200,14 +200,14 @@
 
 - (void)testCancelFetch_NoFetch
 {
-   _sut = [[HNKNetworkEntity alloc] initWithURL:_URL];
+   _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
 
     [_sut cancelFetch];
 }
 
 - (void)testURLSession
 {
-    _sut = [[HNKNetworkEntity alloc] initWithURL:_URL];
+    _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
     XCTAssertEqualObjects(_sut.URLSession, [NSURLSession sharedSession], @"");
 }
 
@@ -221,7 +221,7 @@
         NSData *data = [@"404" dataUsingEncoding:NSUTF8StringEncoding];
         return [OHHTTPStubsResponse responseWithData:data statusCode:statusCode headers:nil];
     }];
-    _sut = [[HNKNetworkEntity alloc] initWithURL:_URL];
+    _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
         [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
@@ -229,7 +229,7 @@
             dispatch_semaphore_signal(semaphore);
         } failure:^(NSError *error) {
             XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
-            XCTAssertEqual(error.code, HNKErrorNetworkEntityInvalidStatusCode, @"");
+            XCTAssertEqual(error.code, HNKErrorNetworkFetcherInvalidStatusCode, @"");
             XCTAssertNotNil(error.localizedDescription, @"");
             XCTAssertEqualObjects(error.userInfo[NSURLErrorKey], _URL, @"");
             dispatch_semaphore_signal(semaphore);

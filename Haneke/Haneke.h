@@ -20,6 +20,6 @@
 
 #import "HNKCache.h"
 #import "HNKDiskFetcher.h"
-#import "HNKNetworkEntity.h"
+#import "HNKNetworkFetcher.h"
 #import "UIImageView+Haneke.h"
 #import "UIButton+Haneke.h"

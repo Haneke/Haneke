@@ -22,7 +22,7 @@
 #import "UIView+Haneke.h"
 #import "HNKSimpleFetcher.h"
 #import "HNKDiskFetcher.h"
-#import "HNKNetworkEntity.h"
+#import "HNKNetworkFetcher.h"
 #import <objc/runtime.h>
 
 @implementation UIButton (Haneke)
@@ -41,7 +41,7 @@
 
 - (void)hnk_setImageFromURL:(NSURL*)URL forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
+    id<HNKFetcher> entity = [[HNKNetworkFetcher alloc] initWithURL:URL];
     [self hnk_setImageFromEntity:entity forState:state placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
@@ -213,7 +213,7 @@
 
 - (void)hnk_setBackgroundImageFromURL:(NSURL*)URL forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
+    id<HNKFetcher> entity = [[HNKNetworkFetcher alloc] initWithURL:URL];
     [self hnk_setBackgroundImageFromEntity:entity forState:state placeholder:placeholder success:successBlock failure:failureBlock];
 }
 

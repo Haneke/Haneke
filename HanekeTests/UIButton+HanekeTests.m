@@ -8,7 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "HNKDiskFetcher.h"
-#import "HNKNetworkEntity.h"
+#import "HNKNetworkFetcher.h"
 #import "HNKSimpleFetcher.h"
 #import "UIView+Haneke.h"
 #import "UIButton+Haneke.h"
@@ -388,7 +388,7 @@
 - (void)testSetImageFromURL_MemoryCacheHit_UIControlStateNormal
 {
     NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
-    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
+    id<HNKFetcher> entity = [[HNKNetworkFetcher alloc] initWithURL:URL];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
@@ -403,7 +403,7 @@
 - (void)testSetImageFromURLPlaceholder_MemoryCacheMiss_UIControlStateSelected
 {
     NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
-    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
+    id<HNKFetcher> entity = [[HNKNetworkFetcher alloc] initWithURL:URL];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     const UIControlState state = UIControlStateSelected;
     
@@ -416,7 +416,7 @@
 - (void)testSetImageFromURLPlaceholderSuccessFailure_MemoryCacheHit
 {
     NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
-    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
+    id<HNKFetcher> entity = [[HNKNetworkFetcher alloc] initWithURL:URL];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
@@ -769,7 +769,7 @@
 - (void)testSetBackgroundImageFromURL_MemoryCacheHit_UIControlStateNormal
 {
     NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
-    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
+    id<HNKFetcher> entity = [[HNKNetworkFetcher alloc] initWithURL:URL];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
@@ -784,7 +784,7 @@
 - (void)testSetBackgroundImageFromURLPlaceholder_MemoryCacheMiss_UIControlStateSelected
 {
     NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
-    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
+    id<HNKFetcher> entity = [[HNKNetworkFetcher alloc] initWithURL:URL];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     const UIControlState state = UIControlStateSelected;
     
@@ -797,7 +797,7 @@
 - (void)testSetBackgroundImageFromURLPlaceholderSuccessFailure_MemoryCacheHit
 {
     NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
-    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
+    id<HNKFetcher> entity = [[HNKNetworkFetcher alloc] initWithURL:URL];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];

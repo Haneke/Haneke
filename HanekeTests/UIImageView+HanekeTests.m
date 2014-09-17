@@ -22,7 +22,7 @@
 #import "UIImageView+Haneke.h"
 #import "UIImage+HanekeTestUtils.h"
 #import "HNKCache+HanekeTestUtils.h"
-#import "HNKNetworkEntity.h"
+#import "HNKNetworkFetcher.h"
 #import "HNKDiskFetcher.h"
 #import "UIView+Haneke.h"
 #import "XCTestCase+HanekeTestUtils.h"
@@ -535,7 +535,7 @@
     
     [_sut hnk_setImageFromURL:url];
     
-    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:url];
+    id<HNKFetcher> entity = [[HNKNetworkFetcher alloc] initWithURL:url];
     XCTAssertEqualObjects(_sut.hnk_entity.cacheKey, entity.cacheKey,  @"");
     XCTAssertNil(_sut.image, @"");
 }
@@ -548,7 +548,7 @@
 
     [_sut hnk_setImageFromURL:url];
     
-    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:url];
+    id<HNKFetcher> entity = [[HNKNetworkFetcher alloc] initWithURL:url];
     XCTAssertEqualObjects(_sut.hnk_entity.cacheKey, entity.cacheKey,  @"");
     XCTAssertEqualObjects(_sut.image, previousImage, @"");
 }
@@ -592,7 +592,7 @@
     
     [_sut hnk_setImageFromURL:url placeholder:placeholder];
     
-    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:url];
+    id<HNKFetcher> entity = [[HNKNetworkFetcher alloc] initWithURL:url];
     XCTAssertEqualObjects(_sut.hnk_entity.cacheKey, entity.cacheKey,  @"");
     UIImage *result = _sut.image;
     XCTAssertEqualObjects(result, placeholder, @"");
@@ -607,7 +607,7 @@
     
     [_sut hnk_setImageFromURL:url placeholder:nil];
     
-    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:url];
+    id<HNKFetcher> entity = [[HNKNetworkFetcher alloc] initWithURL:url];
     XCTAssertEqualObjects(_sut.hnk_entity.cacheKey, entity.cacheKey,  @"");
     UIImage *result = _sut.image;
     XCTAssertEqualObjects(result, previousImage, @"");
@@ -619,7 +619,7 @@
     
     [_sut hnk_setImageFromURL:url placeholder:nil success:nil failure:nil];
     
-    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:url];
+    id<HNKFetcher> entity = [[HNKNetworkFetcher alloc] initWithURL:url];
     XCTAssertEqualObjects(_sut.hnk_entity.cacheKey, entity.cacheKey,  @"");
     XCTAssertNil(_sut.image, @"");
 }
@@ -632,7 +632,7 @@
     
     [_sut hnk_setImageFromURL:url placeholder:nil success:nil failure:nil];
     
-    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:url];
+    id<HNKFetcher> entity = [[HNKNetworkFetcher alloc] initWithURL:url];
     XCTAssertEqualObjects(_sut.hnk_entity.cacheKey, entity.cacheKey,  @"");
     UIImage *result = _sut.image;
     XCTAssertEqualObjects(result, previousImage, @"");
@@ -741,7 +741,7 @@
          } failure:^(NSError *error) {
              dispatch_semaphore_signal(semaphore);
              XCTAssertNotNil(error, @"");
-             XCTAssertEqual(HNKErrorNetworkEntityMissingData, error.code, @"");
+             XCTAssertEqual(HNKErrorNetworkFetcherMissingData, error.code, @"");
          }];
      }];
 }

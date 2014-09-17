@@ -1,5 +1,5 @@
 //
-//  HNKNetworkEntity.h
+//  HNKNetworkFetcher.h
 //  Haneke
 //
 //  Created by Hermes Pique on 7/23/14.
@@ -23,15 +23,15 @@
 
 enum
 {
-    HNKErrorNetworkEntityInvalidData = -400,
-    HNKErrorNetworkEntityMissingData = -401,
-    HNKErrorNetworkEntityInvalidStatusCode = -402
+    HNKErrorNetworkFetcherInvalidData = -400,
+    HNKErrorNetworkFetcherMissingData = -401,
+    HNKErrorNetworkFetcherInvalidStatusCode = -402
 };
 
 /**
  Entity that represents a network image. The key will be the absolute string of the given URL.
  */
-@interface HNKNetworkEntity : NSObject<HNKFetcher>
+@interface HNKNetworkFetcher : NSObject<HNKFetcher>
 
 /**
  Initializes an entity with the given URL.
@@ -53,7 +53,7 @@ enum
 
 @end
 
-@interface HNKNetworkEntity (Subclassing)
+@interface HNKNetworkFetcher (Subclassing)
 
 /**
  Returns the URL sessions used to download the image. Override to use a custom session. Uses sharedSession by default.

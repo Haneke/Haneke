@@ -1,5 +1,5 @@
 //
-//  HNKNetworkEntity.m
+//  HNKNetworkFetcher.m
 //  Haneke
 //
 //  Created by Hermes Pique on 7/23/14.
@@ -18,9 +18,9 @@
 //  limitations under the License.
 //
 
-#import "HNKNetworkEntity.h"
+#import "HNKNetworkFetcher.h"
 
-@implementation HNKNetworkEntity {
+@implementation HNKNetworkFetcher {
     NSURL *_URL;
     BOOL _cancelled;
     NSURLSessionDataTask *_dataTask;
@@ -76,7 +76,7 @@
         if (httpResponse.statusCode != 200)
         {
             NSString *errorDescription = [NSHTTPURLResponse localizedStringForStatusCode:httpResponse.statusCode];
-            [strongSelf failWithLocalizedDescription:errorDescription code:HNKErrorNetworkEntityInvalidStatusCode block:failureBlock];
+            [strongSelf failWithLocalizedDescription:errorDescription code:HNKErrorNetworkFetcherInvalidStatusCode block:failureBlock];
             return;
         }
         
@@ -87,7 +87,7 @@
             if (dataLength < expectedContentLength)
             {
                 NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Request %@ received %ld out of %ld bytes", @""), URL.absoluteString, (long)dataLength, (long)expectedContentLength];
-                [strongSelf failWithLocalizedDescription:errorDescription code:HNKErrorNetworkEntityMissingData block:failureBlock];
+                [strongSelf failWithLocalizedDescription:errorDescription code:HNKErrorNetworkFetcherMissingData block:failureBlock];
                 return;
             }
         }
@@ -97,7 +97,7 @@
         if (!image)
         {
             NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Failed to load image from data at URL %@", @""), URL];
-            [strongSelf failWithLocalizedDescription:errorDescription code:HNKErrorNetworkEntityInvalidData block:failureBlock];
+            [strongSelf failWithLocalizedDescription:errorDescription code:HNKErrorNetworkFetcherInvalidData block:failureBlock];
             return;
         }
         
@@ -136,7 +136,7 @@
 
 @end
 
-@implementation HNKNetworkEntity(Subclassing)
+@implementation HNKNetworkFetcher(Subclassing)
 
 - (NSURLSession*)URLSession
 {

@@ -21,7 +21,7 @@
 #import "UIImageView+Haneke.h"
 #import "HNKDiskFetcher.h"
 #import "HNKSimpleFetcher.h"
-#import "HNKNetworkEntity.h"
+#import "HNKNetworkFetcher.h"
 #import "UIView+Haneke.h"
 #import <objc/runtime.h>
 
@@ -55,7 +55,7 @@
 
 - (void)hnk_setImageFromURL:(NSURL*)url placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:url];
+    id<HNKFetcher> entity = [[HNKNetworkFetcher alloc] initWithURL:url];
     [self hnk_setImageFromEntity:entity placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
