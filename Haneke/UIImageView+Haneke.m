@@ -39,8 +39,8 @@
 
 - (void)hnk_setImageFromFile:(NSString*)path placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    id<HNKFetcher> entity = [[HNKDiskFetcher alloc] initWithPath:path];
-    [self hnk_setImageFromEntity:entity placeholder:placeholder success:successBlock failure:failureBlock];
+    id<HNKFetcher> fetcher = [[HNKDiskFetcher alloc] initWithPath:path];
+    [self hnk_setImageFromFetcher:fetcher placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
 - (void)hnk_setImageFromURL:(NSURL*)url
@@ -55,8 +55,8 @@
 
 - (void)hnk_setImageFromURL:(NSURL*)url placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    id<HNKFetcher> entity = [[HNKNetworkFetcher alloc] initWithURL:url];
-    [self hnk_setImageFromEntity:entity placeholder:placeholder success:successBlock failure:failureBlock];
+    id<HNKFetcher> fetcher = [[HNKNetworkFetcher alloc] initWithURL:url];
+    [self hnk_setImageFromFetcher:fetcher placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
 - (void)hnk_setImage:(UIImage*)originalImage withKey:(NSString*)key
@@ -71,25 +71,25 @@
 
 - (void)hnk_setImage:(UIImage*)originalImage withKey:(NSString*)key placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    id<HNKFetcher> entity = [[HNKSimpleFetcher alloc] initWithKey:key image:originalImage];
-    [self hnk_setImageFromEntity:entity placeholder:placeholder success:successBlock failure:failureBlock];
+    id<HNKFetcher> fetcher = [[HNKSimpleFetcher alloc] initWithKey:key image:originalImage];
+    [self hnk_setImageFromFetcher:fetcher placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
-- (void)hnk_setImageFromEntity:(id<HNKFetcher>)entity
+- (void)hnk_setImageFromFetcher:(id<HNKFetcher>)fetcher
 {
-    [self hnk_setImageFromEntity:entity placeholder:nil success:nil failure:nil];
+    [self hnk_setImageFromFetcher:fetcher placeholder:nil success:nil failure:nil];
 }
 
-- (void)hnk_setImageFromEntity:(id<HNKFetcher>)entity placeholder:(UIImage*)placeholder
+- (void)hnk_setImageFromFetcher:(id<HNKFetcher>)fetcher placeholder:(UIImage*)placeholder
 {
-    [self hnk_setImageFromEntity:entity placeholder:placeholder success:nil failure:nil];
+    [self hnk_setImageFromFetcher:fetcher placeholder:placeholder success:nil failure:nil];
 }
 
-- (void)hnk_setImageFromEntity:(id<HNKFetcher>)entity placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (void)hnk_setImageFromFetcher:(id<HNKFetcher>)fetcher placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     [self hnk_cancelSetImage];
-    self.hnk_entity = entity;
-    const BOOL didSetImage = [self hnk_fetchImageForEntity:entity success:successBlock failure:failureBlock];
+    self.hnk_fetcher = fetcher;
+    const BOOL didSetImage = [self hnk_fetchImageForFetcher:fetcher success:successBlock failure:failureBlock];
     if (!didSetImage && placeholder != nil)
     {
         self.image = placeholder;
@@ -117,30 +117,30 @@
 
 - (void)hnk_cancelSetImage
 {
-    if ([self.hnk_entity respondsToSelector:@selector(cancelFetch)])
+    if ([self.hnk_fetcher respondsToSelector:@selector(cancelFetch)])
     {
-        [self.hnk_entity cancelFetch];
+        [self.hnk_fetcher cancelFetch];
     }
-    self.hnk_entity = nil;
+    self.hnk_fetcher = nil;
 }
 
 #pragma mark Private
 
-- (BOOL)hnk_fetchImageForEntity:(id<HNKFetcher>)entity success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (BOOL)hnk_fetchImageForFetcher:(id<HNKFetcher>)fetcher success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     HNKCacheFormat *format = self.hnk_cacheFormat;
     __block BOOL animated = NO;
     __weak __typeof__(self) weakSelf = self;
-    const BOOL didSetImage = [[HNKCache sharedCache] fetchImageForFetcher:entity formatName:format.name success:^(UIImage *image) {
+    const BOOL didSetImage = [[HNKCache sharedCache] fetchImageForFetcher:fetcher formatName:format.name success:^(UIImage *image) {
         __typeof__(weakSelf) strongSelf = weakSelf;
-        if ([strongSelf hnk_shouldCancelForKey:entity.cacheKey]) return;
+        if ([strongSelf hnk_shouldCancelForKey:fetcher.cacheKey]) return;
         
         [strongSelf hnk_setImage:image animated:animated success:successBlock];
     } failure:^(NSError *error) {
         __typeof__(weakSelf) strongSelf = weakSelf;
-        if ([strongSelf hnk_shouldCancelForKey:entity.cacheKey]) return;
+        if ([strongSelf hnk_shouldCancelForKey:fetcher.cacheKey]) return;
         
-        strongSelf.hnk_entity = nil;
+        strongSelf.hnk_fetcher = nil;
         
         if (failureBlock) failureBlock(error);
     }];
@@ -150,7 +150,7 @@
 
 - (void)hnk_setImage:(UIImage*)image animated:(BOOL)animated success:(void (^)(UIImage *image))successBlock
 {
-    self.hnk_entity = nil;
+    self.hnk_fetcher = nil;
     
     if (successBlock)
     {
@@ -167,7 +167,7 @@
 
 - (BOOL)hnk_shouldCancelForKey:(NSString*)key
 {
-    if ([self.hnk_entity.cacheKey isEqualToString:key]) return NO;
+    if ([self.hnk_fetcher.cacheKey isEqualToString:key]) return NO;
     
     HanekeLog(@"Cancelled set image for %@", key.lastPathComponent);
     return YES;
@@ -175,14 +175,14 @@
 
 #pragma mark Properties (Private)
 
-- (id<HNKFetcher>)hnk_entity
+- (id<HNKFetcher>)hnk_fetcher
 {
-    return (id<HNKFetcher>)objc_getAssociatedObject(self, @selector(hnk_entity));
+    return (id<HNKFetcher>)objc_getAssociatedObject(self, @selector(hnk_fetcher));
 }
 
-- (void)setHnk_entity:(id<HNKFetcher>)entity
+- (void)setHnk_fetcher:(id<HNKFetcher>)fetcher
 {
-    objc_setAssociatedObject(self, @selector(hnk_entity), entity, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, @selector(hnk_fetcher), fetcher, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 @end
