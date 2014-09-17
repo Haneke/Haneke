@@ -41,7 +41,7 @@
 
 - (void)hnk_setImageFromURL:(NSURL*)URL forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
+    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
     [self hnk_setImageFromEntity:entity forState:state placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
@@ -57,7 +57,7 @@
 
 - (void)hnk_setImageFromFile:(NSString*)path forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    id<HNKCacheEntity> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    id<HNKFetcher> entity = [[HNKDiskEntity alloc] initWithPath:path];
     [self hnk_setImageFromEntity:entity forState:state placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
@@ -73,21 +73,21 @@
 
 - (void)hnk_setImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    id<HNKCacheEntity> entity = [[HNKSimpleEntity alloc] initWithKey:key image:image];
+    id<HNKFetcher> entity = [[HNKSimpleEntity alloc] initWithKey:key image:image];
     [self hnk_setImageFromEntity:entity forState:state placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
-- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity forState:(UIControlState)state
+- (void)hnk_setImageFromEntity:(id<HNKFetcher>)entity forState:(UIControlState)state
 {
     [self hnk_setImageFromEntity:entity forState:state placeholder:nil];
 }
 
-- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity forState:(UIControlState)state placeholder:(UIImage*)placeholder
+- (void)hnk_setImageFromEntity:(id<HNKFetcher>)entity forState:(UIControlState)state placeholder:(UIImage*)placeholder
 {
     [self hnk_setImageFromEntity:entity forState:state placeholder:placeholder success:nil failure:nil];
 }
 
-- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (void)hnk_setImageFromEntity:(id<HNKFetcher>)entity forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     [self hnk_cancelSetImage];
     self.hnk_imageEntity = entity;
@@ -100,7 +100,7 @@
 
 - (void)hnk_cancelSetImage
 {
-    id<HNKCacheEntity> entity = self.hnk_imageEntity;
+    id<HNKFetcher> entity = self.hnk_imageEntity;
     if ([entity respondsToSelector:@selector(cancelFetch)])
     {
         [entity cancelFetch];
@@ -142,7 +142,7 @@
 
 #pragma mark Private (content image)
 
-- (BOOL)hnk_fetchImageFromEntity:(id<HNKCacheEntity>)entity forState:(UIControlState)state success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (BOOL)hnk_fetchImageFromEntity:(id<HNKFetcher>)entity forState:(UIControlState)state success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     HNKCacheFormat *format = self.hnk_imageFormat;
     __block BOOL animated = NO;
@@ -189,12 +189,12 @@
     return YES;
 }
 
-- (id<HNKCacheEntity>)hnk_imageEntity
+- (id<HNKFetcher>)hnk_imageEntity
 {
-    return (id<HNKCacheEntity>)objc_getAssociatedObject(self, @selector(hnk_imageEntity));
+    return (id<HNKFetcher>)objc_getAssociatedObject(self, @selector(hnk_imageEntity));
 }
 
-- (void)setHnk_imageEntity:(id<HNKCacheEntity>)entity
+- (void)setHnk_imageEntity:(id<HNKFetcher>)entity
 {
     objc_setAssociatedObject(self, @selector(hnk_imageEntity), entity, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
@@ -213,7 +213,7 @@
 
 - (void)hnk_setBackgroundImageFromURL:(NSURL*)URL forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
+    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
     [self hnk_setBackgroundImageFromEntity:entity forState:state placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
@@ -229,13 +229,13 @@
 
 - (void)hnk_setBackgroundImageFromFile:(NSString*)path forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    id<HNKCacheEntity> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    id<HNKFetcher> entity = [[HNKDiskEntity alloc] initWithPath:path];
     [self hnk_setBackgroundImageFromEntity:entity forState:state placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
 - (void)hnk_setBackgroundImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    id<HNKCacheEntity> entity = [[HNKSimpleEntity alloc] initWithKey:key image:image];
+    id<HNKFetcher> entity = [[HNKSimpleEntity alloc] initWithKey:key image:image];
     [self hnk_setBackgroundImageFromEntity:entity forState:state placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
@@ -249,17 +249,17 @@
     [self hnk_setBackgroundImage:image withKey:key forState:state placeholder:placeholder success:nil failure:nil];
 }
 
-- (void)hnk_setBackgroundImageFromEntity:(id<HNKCacheEntity>)entity forState:(UIControlState)state
+- (void)hnk_setBackgroundImageFromEntity:(id<HNKFetcher>)entity forState:(UIControlState)state
 {
     [self hnk_setBackgroundImageFromEntity:entity forState:state placeholder:nil];
 }
 
-- (void)hnk_setBackgroundImageFromEntity:(id<HNKCacheEntity>)entity forState:(UIControlState)state placeholder:(UIImage*)placeholder
+- (void)hnk_setBackgroundImageFromEntity:(id<HNKFetcher>)entity forState:(UIControlState)state placeholder:(UIImage*)placeholder
 {
     [self hnk_setBackgroundImageFromEntity:entity forState:state placeholder:placeholder success:nil failure:nil];
 }
 
-- (void)hnk_setBackgroundImageFromEntity:(id<HNKCacheEntity>)entity forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (void)hnk_setBackgroundImageFromEntity:(id<HNKFetcher>)entity forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     [self hnk_cancelSetBackgroundImage];
     self.hnk_backgroundImageEntity = entity;
@@ -272,7 +272,7 @@
 
 - (void)hnk_cancelSetBackgroundImage
 {
-    id<HNKCacheEntity> entity = self.hnk_backgroundImageEntity;
+    id<HNKFetcher> entity = self.hnk_backgroundImageEntity;
     if ([entity respondsToSelector:@selector(cancelFetch)])
     {
         [entity cancelFetch];
@@ -303,7 +303,7 @@
 
 #pragma mark Private (background image)
 
-- (BOOL)hnk_fetchBackgroundImageFromEntity:(id<HNKCacheEntity>)entity forState:(UIControlState)state success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (BOOL)hnk_fetchBackgroundImageFromEntity:(id<HNKFetcher>)entity forState:(UIControlState)state success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     HNKCacheFormat *format = self.hnk_backgroundImageFormat;
     __block BOOL animated = NO;
@@ -350,12 +350,12 @@
     return YES;
 }
 
-- (id<HNKCacheEntity>)hnk_backgroundImageEntity
+- (id<HNKFetcher>)hnk_backgroundImageEntity
 {
-    return (id<HNKCacheEntity>)objc_getAssociatedObject(self, @selector(hnk_backgroundImageEntity));
+    return (id<HNKFetcher>)objc_getAssociatedObject(self, @selector(hnk_backgroundImageEntity));
 }
 
-- (void)setHnk_backgroundImageEntity:(id<HNKCacheEntity>)entity
+- (void)setHnk_backgroundImageEntity:(id<HNKFetcher>)entity
 {
     objc_setAssociatedObject(self, @selector(hnk_backgroundImageEntity), entity, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }

@@ -18,8 +18,8 @@
 
 @interface UIButton()
 
-@property (nonatomic, readonly) id<HNKCacheEntity> hnk_imageEntity;
-@property (nonatomic, readonly) id<HNKCacheEntity> hnk_backgroundImageEntity;
+@property (nonatomic, readonly) id<HNKFetcher> hnk_imageEntity;
+@property (nonatomic, readonly) id<HNKFetcher> hnk_backgroundImageEntity;
 
 @end
 
@@ -336,7 +336,7 @@
 - (void)testSetImageFromFile_MemoryCacheHit_UIControlStateNormal
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    id<HNKCacheEntity> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    id<HNKFetcher> entity = [[HNKDiskEntity alloc] initWithPath:path];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
@@ -351,7 +351,7 @@
 - (void)testSetImageFromFilePlaceholder_MemoryCacheMiss_UIControlStateSelected
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    id<HNKCacheEntity> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    id<HNKFetcher> entity = [[HNKDiskEntity alloc] initWithPath:path];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     const UIControlState state = UIControlStateSelected;
     
@@ -364,7 +364,7 @@
 - (void)testSetImageFromFilePlaceholderSuccessFailure_MemoryCacheHit
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    id<HNKCacheEntity> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    id<HNKFetcher> entity = [[HNKDiskEntity alloc] initWithPath:path];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
@@ -388,7 +388,7 @@
 - (void)testSetImageFromURL_MemoryCacheHit_UIControlStateNormal
 {
     NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
-    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
+    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
@@ -403,7 +403,7 @@
 - (void)testSetImageFromURLPlaceholder_MemoryCacheMiss_UIControlStateSelected
 {
     NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
-    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
+    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     const UIControlState state = UIControlStateSelected;
     
@@ -416,7 +416,7 @@
 - (void)testSetImageFromURLPlaceholderSuccessFailure_MemoryCacheHit
 {
     NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
-    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
+    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
@@ -439,7 +439,7 @@
 
 - (void)testSetImageFromEntity_MemoryCacheHit_UIControlStateNormal
 {
-    id<HNKCacheEntity> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
+    id<HNKFetcher> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
@@ -453,7 +453,7 @@
 
 - (void)testSetImageFromEntityLPlaceholder_MemoryCacheMiss_UIControlStateSelected
 {
-    id<HNKCacheEntity> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
+    id<HNKFetcher> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     const UIControlState state = UIControlStateSelected;
     
@@ -465,7 +465,7 @@
 
 - (void)testSetImageFromEntityPlaceholderSuccessFailure_MemoryCacheHit
 {
-    id<HNKCacheEntity> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
+    id<HNKFetcher> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
@@ -717,7 +717,7 @@
 - (void)testSetBackgroundImageFromFile_MemoryCacheHit_UIControlStateNormal
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    id<HNKCacheEntity> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    id<HNKFetcher> entity = [[HNKDiskEntity alloc] initWithPath:path];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
@@ -732,7 +732,7 @@
 - (void)testSetBackgroundImageFromFilePlaceholder_MemoryCacheMiss_UIControlStateSelected
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    id<HNKCacheEntity> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    id<HNKFetcher> entity = [[HNKDiskEntity alloc] initWithPath:path];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     const UIControlState state = UIControlStateSelected;
     
@@ -745,7 +745,7 @@
 - (void)testSetBackgroundImageFromFilePlaceholderSuccessFailure_MemoryCacheHit
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    id<HNKCacheEntity> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    id<HNKFetcher> entity = [[HNKDiskEntity alloc] initWithPath:path];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
@@ -769,7 +769,7 @@
 - (void)testSetBackgroundImageFromURL_MemoryCacheHit_UIControlStateNormal
 {
     NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
-    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
+    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
@@ -784,7 +784,7 @@
 - (void)testSetBackgroundImageFromURLPlaceholder_MemoryCacheMiss_UIControlStateSelected
 {
     NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
-    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
+    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     const UIControlState state = UIControlStateSelected;
     
@@ -797,7 +797,7 @@
 - (void)testSetBackgroundImageFromURLPlaceholderSuccessFailure_MemoryCacheHit
 {
     NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
-    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
+    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:URL];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
@@ -820,7 +820,7 @@
 
 - (void)testSetBackgroundImageFromEntity_MemoryCacheHit_UIControlStateNormal
 {
-    id<HNKCacheEntity> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
+    id<HNKFetcher> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
@@ -834,7 +834,7 @@
 
 - (void)testSetBackgroundImageFromEntityLPlaceholder_MemoryCacheMiss_UIControlStateSelected
 {
-    id<HNKCacheEntity> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
+    id<HNKFetcher> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     const UIControlState state = UIControlStateSelected;
     
@@ -846,7 +846,7 @@
 
 - (void)testSetBackgroundImageFromEntityPlaceholderSuccessFailure_MemoryCacheHit
 {
-    id<HNKCacheEntity> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
+    id<HNKFetcher> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];

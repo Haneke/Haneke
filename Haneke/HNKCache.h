@@ -20,7 +20,7 @@
 
 #import <UIKit/UIKit.h>
 
-@protocol HNKCacheEntity;
+@protocol HNKFetcher;
 @class HNKCacheFormat;
 
 #if HANEKE_DEBUG
@@ -77,7 +77,7 @@
  @param failureBlock Block to be called if the image is not in the cache and the entity fails to provide the original. Called asynchronously from the main queue.
  @return YES if image exists in the memory cache (and thus, the success block was called synchronously), NO otherwise.
  */
-- (BOOL)fetchImageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
+- (BOOL)fetchImageForEntity:(id<HNKFetcher>)entity formatName:(NSString *)formatName success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
 
 /**
  Retrieves an image from the cache. If the image exists in the memory cache, the success block will be executed synchronously. If the image has to be retreived from the disk cache, the success block will be executed asynchronously.
@@ -128,7 +128,7 @@
 
 /** Represents an object that is associated with an image. Used by the cache to assign keys to images and fetch the original image needed to create resized images.
  */
-@protocol HNKCacheEntity <NSObject>
+@protocol HNKFetcher <NSObject>
 
 /** 
  Returns the key of the original image associated with the entity.

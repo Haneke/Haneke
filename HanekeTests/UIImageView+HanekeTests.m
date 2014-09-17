@@ -30,7 +30,7 @@
 
 @interface UIImageView(HanekeTest)
 
-@property (nonatomic, strong) id<HNKCacheEntity> hnk_entity;
+@property (nonatomic, strong) id<HNKFetcher> hnk_entity;
 
 @end
 
@@ -447,7 +447,7 @@
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = self.name;
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:image];
+    id<HNKFetcher> entity = [HNKCache entityWithKey:key image:image];
     [_sut hnk_setImageFromEntity:entity];
     
     XCTAssertEqualObjects(_sut.hnk_entity, entity,  @"");
@@ -460,7 +460,7 @@
     NSString *key = @"test";
     HNKCacheFormat *format = _sut.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:image];
+    id<HNKFetcher> entity = [HNKCache entityWithKey:key image:image];
     
     [_sut hnk_setImageFromEntity:entity];
     
@@ -475,7 +475,7 @@
     _sut.image = previousImage;
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = self.name;
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:image];
+    id<HNKFetcher> entity = [HNKCache entityWithKey:key image:image];
     
     [_sut hnk_setImageFromEntity:entity];
     
@@ -488,7 +488,7 @@
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = self.name;
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:image];
+    id<HNKFetcher> entity = [HNKCache entityWithKey:key image:image];
     
     [_sut hnk_setImageFromEntity:entity placeholder:placeholder];
     
@@ -503,7 +503,7 @@
     NSString *key = @"test";
     HNKCacheFormat *format = _sut.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:image];
+    id<HNKFetcher> entity = [HNKCache entityWithKey:key image:image];
     
     [_sut hnk_setImageFromEntity:entity placeholder:placeholder];
     
@@ -512,13 +512,13 @@
     XCTAssertEqualObjects(image, result, @"");
 }
 
-- (void)testSetImageFromEntityImage_ImageSet_NilPlaceholder_MemoryCacheMiss
+- (void)testSetImageFromEntity_ImageSet_NilPlaceholder_MemoryCacheMiss
 {
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     _sut.image = previousImage;
     NSString *key = self.name;
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:image];
+    id<HNKFetcher> entity = [HNKCache entityWithKey:key image:image];
     
     [_sut hnk_setImageFromEntity:entity placeholder:nil];
     
@@ -535,7 +535,7 @@
     
     [_sut hnk_setImageFromURL:url];
     
-    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:url];
+    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:url];
     XCTAssertEqualObjects(_sut.hnk_entity.cacheKey, entity.cacheKey,  @"");
     XCTAssertNil(_sut.image, @"");
 }
@@ -548,7 +548,7 @@
 
     [_sut hnk_setImageFromURL:url];
     
-    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:url];
+    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:url];
     XCTAssertEqualObjects(_sut.hnk_entity.cacheKey, entity.cacheKey,  @"");
     XCTAssertEqualObjects(_sut.image, previousImage, @"");
 }
@@ -592,7 +592,7 @@
     
     [_sut hnk_setImageFromURL:url placeholder:placeholder];
     
-    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:url];
+    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:url];
     XCTAssertEqualObjects(_sut.hnk_entity.cacheKey, entity.cacheKey,  @"");
     UIImage *result = _sut.image;
     XCTAssertEqualObjects(result, placeholder, @"");
@@ -607,7 +607,7 @@
     
     [_sut hnk_setImageFromURL:url placeholder:nil];
     
-    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:url];
+    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:url];
     XCTAssertEqualObjects(_sut.hnk_entity.cacheKey, entity.cacheKey,  @"");
     UIImage *result = _sut.image;
     XCTAssertEqualObjects(result, previousImage, @"");
@@ -619,7 +619,7 @@
     
     [_sut hnk_setImageFromURL:url placeholder:nil success:nil failure:nil];
     
-    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:url];
+    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:url];
     XCTAssertEqualObjects(_sut.hnk_entity.cacheKey, entity.cacheKey,  @"");
     XCTAssertNil(_sut.image, @"");
 }
@@ -632,7 +632,7 @@
     
     [_sut hnk_setImageFromURL:url placeholder:nil success:nil failure:nil];
     
-    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:url];
+    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:url];
     XCTAssertEqualObjects(_sut.hnk_entity.cacheKey, entity.cacheKey,  @"");
     UIImage *result = _sut.image;
     XCTAssertEqualObjects(result, previousImage, @"");

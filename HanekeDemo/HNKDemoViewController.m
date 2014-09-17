@@ -86,7 +86,7 @@
     return viewController;
 }
 
-#pragma mark - UICollectionViewDatasource
+#pragma mark - UICollectionViewDataSource
 
 - (NSInteger)collectionView:(UICollectionView *)view numberOfItemsInSection:(NSInteger)section
 {

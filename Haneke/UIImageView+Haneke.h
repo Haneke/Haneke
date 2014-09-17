@@ -106,14 +106,14 @@
  @param entity Entity from which the original image will be retrieved if needed. The entity will have to provide the original image only if it can't be found in the cache.
  @see hnk_setImageFromEntity:placeholder:success:failure:
  */
-- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity;
+- (void)hnk_setImageFromEntity:(id<HNKFetcher>)entity;
 
 /** Loads, resizes, displays and caches an appropiately sized image from the given entity.
  @param entity Entity from which the original image will be retrieved if needed. The entity will have to provide the original image only if it can't be found in the cache.
  @param placeholder Image to be used as a placeholder until the requested image is ready. The placeholder image will only be used if the requested image is not available in the memory cache. If nil, the image view will not change its image until the requested image is ready.
  @see hnk_setImageFromEntity:placeholder:success:failure:
  */
-- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity placeholder:(UIImage*)placeholder;
+- (void)hnk_setImageFromEntity:(id<HNKFetcher>)entity placeholder:(UIImage*)placeholder;
 
 /** Loads, resizes, displays and caches an appropiately sized image from the given entity. If a success block is provided you will be responsible for setting the image.
  @param entity Entity from which the original image will be retrieved if needed. The entity will have to provide the original image only if it can't be found in the cache.
@@ -125,7 +125,7 @@
  @discussion If needed, the least recently used images in the cache will be evicted in background.
  @warning If a success block is provided you will be responsible for setting the image.
  */
-- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
+- (void)hnk_setImageFromEntity:(id<HNKFetcher>)entity placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
 
 /**
  Cancels the current set image request, if any.

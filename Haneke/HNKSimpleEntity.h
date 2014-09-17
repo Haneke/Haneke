@@ -25,7 +25,7 @@
  Simple entity that represents a key-image pair.
  @discussion Used as a convenience by the UIKit categories.
  */
-@interface HNKSimpleEntity : NSObject<HNKCacheEntity>
+@interface HNKSimpleEntity : NSObject<HNKFetcher>
 
 /**
  Initializes an entity with the given key and image.

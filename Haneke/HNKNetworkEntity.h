@@ -31,7 +31,7 @@ enum
 /**
  Entity that represents a network image. The key will be the absolute string of the given URL.
  */
-@interface HNKNetworkEntity : NSObject<HNKCacheEntity>
+@interface HNKNetworkEntity : NSObject<HNKFetcher>
 
 /**
  Initializes an entity with the given URL.

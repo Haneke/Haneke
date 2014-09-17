@@ -39,7 +39,7 @@
 
 - (void)hnk_setImageFromFile:(NSString*)path placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    id<HNKCacheEntity> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    id<HNKFetcher> entity = [[HNKDiskEntity alloc] initWithPath:path];
     [self hnk_setImageFromEntity:entity placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
@@ -55,7 +55,7 @@
 
 - (void)hnk_setImageFromURL:(NSURL*)url placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    id<HNKCacheEntity> entity = [[HNKNetworkEntity alloc] initWithURL:url];
+    id<HNKFetcher> entity = [[HNKNetworkEntity alloc] initWithURL:url];
     [self hnk_setImageFromEntity:entity placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
@@ -71,21 +71,21 @@
 
 - (void)hnk_setImage:(UIImage*)originalImage withKey:(NSString*)key placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    id<HNKCacheEntity> entity = [[HNKSimpleEntity alloc] initWithKey:key image:originalImage];
+    id<HNKFetcher> entity = [[HNKSimpleEntity alloc] initWithKey:key image:originalImage];
     [self hnk_setImageFromEntity:entity placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
-- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity
+- (void)hnk_setImageFromEntity:(id<HNKFetcher>)entity
 {
     [self hnk_setImageFromEntity:entity placeholder:nil success:nil failure:nil];
 }
 
-- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity placeholder:(UIImage*)placeholder
+- (void)hnk_setImageFromEntity:(id<HNKFetcher>)entity placeholder:(UIImage*)placeholder
 {
     [self hnk_setImageFromEntity:entity placeholder:placeholder success:nil failure:nil];
 }
 
-- (void)hnk_setImageFromEntity:(id<HNKCacheEntity>)entity placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (void)hnk_setImageFromEntity:(id<HNKFetcher>)entity placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     [self hnk_cancelSetImage];
     self.hnk_entity = entity;
@@ -126,7 +126,7 @@
 
 #pragma mark Private
 
-- (BOOL)hnk_fetchImageForEntity:(id<HNKCacheEntity>)entity success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (BOOL)hnk_fetchImageForEntity:(id<HNKFetcher>)entity success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     HNKCacheFormat *format = self.hnk_cacheFormat;
     __block BOOL animated = NO;
@@ -175,12 +175,12 @@
 
 #pragma mark Properties (Private)
 
-- (id<HNKCacheEntity>)hnk_entity
+- (id<HNKFetcher>)hnk_entity
 {
-    return (id<HNKCacheEntity>)objc_getAssociatedObject(self, @selector(hnk_entity));
+    return (id<HNKFetcher>)objc_getAssociatedObject(self, @selector(hnk_entity));
 }
 
-- (void)setHnk_entity:(id<HNKCacheEntity>)entity
+- (void)setHnk_entity:(id<HNKFetcher>)entity
 {
     objc_setAssociatedObject(self, @selector(hnk_entity), entity, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }

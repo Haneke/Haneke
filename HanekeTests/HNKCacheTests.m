@@ -207,7 +207,7 @@
 - (void)testFetchImageForEntity_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:@"1" image:image];
+    id<HNKFetcher> entity = [HNKCache entityWithKey:@"1" image:image];
     HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(1, 1)];
     NSString *formatName = format.name;
     [_sut setImage:image forKey:entity.cacheKey formatName:formatName];
@@ -224,7 +224,7 @@
 - (void)testFetchImageForEntity_MemoryCacheMiss
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:@"1" image:image];
+    id<HNKFetcher> entity = [HNKCache entityWithKey:@"1" image:image];
     HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(1, 1)];
     NSString *formatName = format.name;
     
@@ -238,7 +238,7 @@
     HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(1, 1)];
     UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
     NSString *key = self.name;
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:originalImage];
+    id<HNKFetcher> entity = [HNKCache entityWithKey:key image:originalImage];
     
     UIImage *preResizeImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:format.size];
     
@@ -265,7 +265,7 @@
     HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(1, 1)];
     UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
     NSString *key = self.name;
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key image:originalImage];
+    id<HNKFetcher> entity = [HNKCache entityWithKey:key image:originalImage];
     
     UIImage *postResizeImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:format.size];
     

@@ -29,7 +29,7 @@ enum
 /**
  Entity that represents a disk image. The key will be the given path.
  */
-@interface HNKDiskEntity : NSObject<HNKCacheEntity>
+@interface HNKDiskEntity : NSObject<HNKFetcher>
 
 /**
  Initializes an entity with the given path.

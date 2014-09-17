@@ -122,7 +122,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
 #pragma mark Getting images
 
-- (BOOL)fetchImageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (BOOL)fetchImageForEntity:(id<HNKFetcher>)entity formatName:(NSString *)formatName success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     NSString *key = entity.cacheKey;
     return [self fetchImageForKey:key formatName:formatName success:^(UIImage *image) {
@@ -249,7 +249,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
 #pragma mark Private (utils)
 
-- (void)fetchImageFromEntity:(id<HNKCacheEntity>)entity completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock;
+- (void)fetchImageFromEntity:(id<HNKFetcher>)entity completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock;
 {
     hnk_dispatch_sync_main_queue_if_needed((^{
         [entity fetchImageWithSuccess:^(UIImage *image) {
