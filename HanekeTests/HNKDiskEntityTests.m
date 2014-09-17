@@ -19,7 +19,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "HNKDiskEntity.h"
+#import "HNKDiskFetcher.h"
 #import "UIImage+HanekeTestUtils.h"
 #import "XCTestCase+HanekeTestUtils.h"
 
@@ -28,7 +28,7 @@
 @end
 
 @implementation HNKDiskEntityTests {
-    HNKDiskEntity *_sut;
+    HNKDiskFetcher *_sut;
     NSString *_directory;
 }
 
@@ -52,7 +52,7 @@
 - (void)testCacheKey
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    _sut = [[HNKDiskEntity alloc] initWithPath:path];
+    _sut = [[HNKDiskFetcher alloc] initWithPath:path];
     
     XCTAssertEqualObjects(_sut.cacheKey, path, @"");
 }
@@ -60,7 +60,7 @@
 - (void)testFetchImage_Success
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    _sut = [[HNKDiskEntity alloc] initWithPath:path];
+    _sut = [[HNKDiskFetcher alloc] initWithPath:path];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     NSData *data = UIImagePNGRepresentation(image);
     [data writeToFile:path atomically:YES];
@@ -79,7 +79,7 @@
 - (void)testFetchImage_Failure_NSFileReadNoSuchFileError
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    _sut = [[HNKDiskEntity alloc] initWithPath:path];
+    _sut = [[HNKDiskFetcher alloc] initWithPath:path];
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
         [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
@@ -95,7 +95,7 @@
 - (void)testFetchImage_Failure_HNKDiskEntityInvalidDataError
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    _sut = [[HNKDiskEntity alloc] initWithPath:path];
+    _sut = [[HNKDiskFetcher alloc] initWithPath:path];
     NSData *data = [NSData data];
     [data writeToFile:path atomically:YES];
     
@@ -105,7 +105,7 @@
             dispatch_semaphore_signal(semaphore);
         } failure:^(NSError *error) {
             XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
-            XCTAssertEqual(error.code, HNKErrorDiskEntityInvalidData, @"");
+            XCTAssertEqual(error.code, HNKErrorDiskFetcherInvalidData, @"");
             XCTAssertNotNil(error.localizedDescription, @"");
             XCTAssertEqualObjects(error.userInfo[NSFilePathErrorKey], path, @"");
             dispatch_semaphore_signal(semaphore);
@@ -116,7 +116,7 @@
 - (void)testCancelFetch
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    _sut = [[HNKDiskEntity alloc] initWithPath:path];
+    _sut = [[HNKDiskFetcher alloc] initWithPath:path];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     NSData *data = UIImagePNGRepresentation(image);
     [data writeToFile:path atomically:YES];
@@ -134,7 +134,7 @@
 - (void)testCancelFetch_NoFetch
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    _sut = [[HNKDiskEntity alloc] initWithPath:path];
+    _sut = [[HNKDiskFetcher alloc] initWithPath:path];
     
     [_sut cancelFetch];
 }

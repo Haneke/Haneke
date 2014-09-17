@@ -1,5 +1,5 @@
 //
-//  HNKDiskEntity.m
+//  HNKDiskFetcher.m
 //  Haneke
 //
 //  Created by Hermes Pique on 7/23/14.
@@ -18,9 +18,9 @@
 //  limitations under the License.
 //
 
-#import "HNKDiskEntity.h"
+#import "HNKDiskFetcher.h"
 
-@implementation HNKDiskEntity {
+@implementation HNKDiskFetcher {
     NSString *_path;
     BOOL _cancelled;
 }
@@ -72,7 +72,7 @@
             NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Failed to load image from data at path %@", @""), path];
             HanekeLog(@"%@", errorDescription);
             NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription , NSFilePathErrorKey : path};
-            NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorDiskEntityInvalidData userInfo:userInfo];
+            NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorDiskFetcherInvalidData userInfo:userInfo];
             dispatch_async(dispatch_get_main_queue(), ^{
                 failureBlock(error);
             });

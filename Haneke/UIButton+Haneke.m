@@ -21,7 +21,7 @@
 #import "UIButton+Haneke.h"
 #import "UIView+Haneke.h"
 #import "HNKSimpleFetcher.h"
-#import "HNKDiskEntity.h"
+#import "HNKDiskFetcher.h"
 #import "HNKNetworkEntity.h"
 #import <objc/runtime.h>
 
@@ -57,7 +57,7 @@
 
 - (void)hnk_setImageFromFile:(NSString*)path forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    id<HNKFetcher> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    id<HNKFetcher> entity = [[HNKDiskFetcher alloc] initWithPath:path];
     [self hnk_setImageFromEntity:entity forState:state placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
@@ -229,7 +229,7 @@
 
 - (void)hnk_setBackgroundImageFromFile:(NSString*)path forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    id<HNKFetcher> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    id<HNKFetcher> entity = [[HNKDiskFetcher alloc] initWithPath:path];
     [self hnk_setBackgroundImageFromEntity:entity forState:state placeholder:placeholder success:successBlock failure:failureBlock];
 }
 

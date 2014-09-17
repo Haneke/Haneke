@@ -40,7 +40,7 @@
 		A0045DCA19B226BA00B12CE4 /* NSString+HanekeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A0045DC919B226BA00B12CE4 /* NSString+HanekeTests.m */; };
 		A010752A19A6275B002A1990 /* UIView+Haneke.m in Sources */ = {isa = PBXBuildFile; fileRef = A0818B7B19A4CE4100F89CCF /* UIView+Haneke.m */; };
 		A010752B19A62761002A1990 /* UIButton+Haneke.m in Sources */ = {isa = PBXBuildFile; fileRef = A0818B7E19A4D11600F89CCF /* UIButton+Haneke.m */; };
-		A010752C19A62765002A1990 /* HNKDiskEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = A0ADE334198029AB00B75057 /* HNKDiskEntity.m */; };
+		A010752C19A62765002A1990 /* HNKDiskFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = A0ADE334198029AB00B75057 /* HNKDiskFetcher.m */; };
 		A010752D19A62768002A1990 /* HNKNetworkEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = A0ADE32E197FE0C400B75057 /* HNKNetworkEntity.m */; };
 		A010752E19A6276A002A1990 /* HNKSimpleFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = A0818B7019A3BD7A00F89CCF /* HNKSimpleFetcher.m */; };
 		A010753119A6295F002A1990 /* HNKDiskCache.m in Sources */ = {isa = PBXBuildFile; fileRef = A010753019A6295F002A1990 /* HNKDiskCache.m */; };
@@ -55,7 +55,7 @@
 		A0818B8319A4E91D00F89CCF /* UIView+HanekeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A0818B8219A4E91D00F89CCF /* UIView+HanekeTests.m */; };
 		A0818B8519A5025300F89CCF /* UIButton+HanekeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A0818B8419A5025300F89CCF /* UIButton+HanekeTests.m */; };
 		A0ADE32F197FE0C400B75057 /* HNKNetworkEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = A0ADE32E197FE0C400B75057 /* HNKNetworkEntity.m */; };
-		A0ADE335198029AB00B75057 /* HNKDiskEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = A0ADE334198029AB00B75057 /* HNKDiskEntity.m */; };
+		A0ADE335198029AB00B75057 /* HNKDiskFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = A0ADE334198029AB00B75057 /* HNKDiskFetcher.m */; };
 		F579C6CF15D748008CE26327 /* libPods-HanekeTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C900C201A56F408D8DD8854E /* libPods-HanekeTests.a */; };
 /* End PBXBuildFile section */
 
@@ -141,8 +141,8 @@
 		A0818B8419A5025300F89CCF /* UIButton+HanekeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+HanekeTests.m"; sourceTree = "<group>"; };
 		A0ADE32D197FE0C400B75057 /* HNKNetworkEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKNetworkEntity.h; sourceTree = "<group>"; };
 		A0ADE32E197FE0C400B75057 /* HNKNetworkEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKNetworkEntity.m; sourceTree = "<group>"; };
-		A0ADE333198029AB00B75057 /* HNKDiskEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKDiskEntity.h; sourceTree = "<group>"; };
-		A0ADE334198029AB00B75057 /* HNKDiskEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKDiskEntity.m; sourceTree = "<group>"; };
+		A0ADE333198029AB00B75057 /* HNKDiskFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKDiskFetcher.h; sourceTree = "<group>"; };
+		A0ADE334198029AB00B75057 /* HNKDiskFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKDiskFetcher.m; sourceTree = "<group>"; };
 		C900C201A56F408D8DD8854E /* libPods-HanekeTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-HanekeTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -220,7 +220,7 @@
 			isa = PBXGroup;
 			children = (
 				A0818B7919A4CE1200F89CCF /* UIKit+Haneke */,
-				A0818B7219A3BD7D00F89CCF /* Entities */,
+				A0818B7219A3BD7D00F89CCF /* Fetchers */,
 				874875DF18D1D33E00D02E03 /* Haneke.h */,
 				873E22B818AA8CC900E7919C /* HNKCache.h */,
 				873E22B918AA8CC900E7919C /* HNKCache.m */,
@@ -315,17 +315,17 @@
 			name = Categories;
 			sourceTree = "<group>";
 		};
-		A0818B7219A3BD7D00F89CCF /* Entities */ = {
+		A0818B7219A3BD7D00F89CCF /* Fetchers */ = {
 			isa = PBXGroup;
 			children = (
-				A0ADE333198029AB00B75057 /* HNKDiskEntity.h */,
-				A0ADE334198029AB00B75057 /* HNKDiskEntity.m */,
+				A0ADE333198029AB00B75057 /* HNKDiskFetcher.h */,
+				A0ADE334198029AB00B75057 /* HNKDiskFetcher.m */,
 				A0ADE32D197FE0C400B75057 /* HNKNetworkEntity.h */,
 				A0ADE32E197FE0C400B75057 /* HNKNetworkEntity.m */,
 				A0818B6F19A3BD7A00F89CCF /* HNKSimpleFetcher.h */,
 				A0818B7019A3BD7A00F89CCF /* HNKSimpleFetcher.m */,
 			);
-			name = Entities;
+			name = Fetchers;
 			sourceTree = "<group>";
 		};
 		A0818B7919A4CE1200F89CCF /* UIKit+Haneke */ = {
@@ -514,7 +514,7 @@
 				A0818B7C19A4CE4100F89CCF /* UIView+Haneke.m in Sources */,
 				A0ADE32F197FE0C400B75057 /* HNKNetworkEntity.m in Sources */,
 				A0818B7119A3BD7A00F89CCF /* HNKSimpleFetcher.m in Sources */,
-				A0ADE335198029AB00B75057 /* HNKDiskEntity.m in Sources */,
+				A0ADE335198029AB00B75057 /* HNKDiskFetcher.m in Sources */,
 				A0818B7F19A4D11600F89CCF /* UIButton+Haneke.m in Sources */,
 				873E22BA18AA8CC900E7919C /* HNKCache.m in Sources */,
 				A010753119A6295F002A1990 /* HNKDiskCache.m in Sources */,
@@ -558,7 +558,7 @@
 				A010753319A64480002A1990 /* HNKDiskCache.m in Sources */,
 				A010752E19A6276A002A1990 /* HNKSimpleFetcher.m in Sources */,
 				873E232418AA982F00E7919C /* HNKCache.m in Sources */,
-				A010752C19A62765002A1990 /* HNKDiskEntity.m in Sources */,
+				A010752C19A62765002A1990 /* HNKDiskFetcher.m in Sources */,
 				A010752D19A62768002A1990 /* HNKNetworkEntity.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

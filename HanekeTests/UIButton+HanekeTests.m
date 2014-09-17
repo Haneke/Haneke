@@ -7,7 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "HNKDiskEntity.h"
+#import "HNKDiskFetcher.h"
 #import "HNKNetworkEntity.h"
 #import "HNKSimpleFetcher.h"
 #import "UIView+Haneke.h"
@@ -336,7 +336,7 @@
 - (void)testSetImageFromFile_MemoryCacheHit_UIControlStateNormal
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    id<HNKFetcher> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    id<HNKFetcher> entity = [[HNKDiskFetcher alloc] initWithPath:path];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
@@ -351,7 +351,7 @@
 - (void)testSetImageFromFilePlaceholder_MemoryCacheMiss_UIControlStateSelected
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    id<HNKFetcher> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    id<HNKFetcher> entity = [[HNKDiskFetcher alloc] initWithPath:path];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     const UIControlState state = UIControlStateSelected;
     
@@ -364,7 +364,7 @@
 - (void)testSetImageFromFilePlaceholderSuccessFailure_MemoryCacheHit
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    id<HNKFetcher> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    id<HNKFetcher> entity = [[HNKDiskFetcher alloc] initWithPath:path];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
@@ -717,7 +717,7 @@
 - (void)testSetBackgroundImageFromFile_MemoryCacheHit_UIControlStateNormal
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    id<HNKFetcher> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    id<HNKFetcher> entity = [[HNKDiskFetcher alloc] initWithPath:path];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
@@ -732,7 +732,7 @@
 - (void)testSetBackgroundImageFromFilePlaceholder_MemoryCacheMiss_UIControlStateSelected
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    id<HNKFetcher> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    id<HNKFetcher> entity = [[HNKDiskFetcher alloc] initWithPath:path];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     const UIControlState state = UIControlStateSelected;
     
@@ -745,7 +745,7 @@
 - (void)testSetBackgroundImageFromFilePlaceholderSuccessFailure_MemoryCacheHit
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    id<HNKFetcher> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    id<HNKFetcher> entity = [[HNKDiskFetcher alloc] initWithPath:path];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];

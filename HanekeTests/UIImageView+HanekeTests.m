@@ -23,7 +23,7 @@
 #import "UIImage+HanekeTestUtils.h"
 #import "HNKCache+HanekeTestUtils.h"
 #import "HNKNetworkEntity.h"
-#import "HNKDiskEntity.h"
+#import "HNKDiskFetcher.h"
 #import "UIView+Haneke.h"
 #import "XCTestCase+HanekeTestUtils.h"
 #import <OHHTTPStubs/OHHTTPStubs.h>
@@ -262,7 +262,7 @@
 
     [_sut hnk_setImageFromFile:path];
 
-    HNKDiskEntity *entity = [[HNKDiskEntity alloc] initWithPath:path];
+    HNKDiskFetcher *entity = [[HNKDiskFetcher alloc] initWithPath:path];
     XCTAssertEqualObjects(_sut.hnk_entity.cacheKey, entity.cacheKey,  @"");
     XCTAssertNil(_sut.image, @"");
     
@@ -279,7 +279,7 @@
     
     [_sut hnk_setImageFromFile:path];
 
-    HNKDiskEntity *entity = [[HNKDiskEntity alloc] initWithPath:path];
+    HNKDiskFetcher *entity = [[HNKDiskFetcher alloc] initWithPath:path];
     XCTAssertEqualObjects(_sut.hnk_entity.cacheKey, entity.cacheKey,  @"");
     XCTAssertEqualObjects(_sut.image, previousImage, @"");
     
@@ -322,7 +322,7 @@
 
     [_sut hnk_setImageFromFile:path placeholder:placeholder];
     
-    HNKDiskEntity *entity = [[HNKDiskEntity alloc] initWithPath:path];
+    HNKDiskFetcher *entity = [[HNKDiskFetcher alloc] initWithPath:path];
     XCTAssertEqualObjects(_sut.hnk_entity.cacheKey, entity.cacheKey,  @"");
     UIImage *result = _sut.image;
     XCTAssertEqualObjects(result, placeholder, @"");
@@ -336,7 +336,7 @@
     
     [_sut hnk_setImageFromFile:path placeholder:nil];
     
-    HNKDiskEntity *entity = [[HNKDiskEntity alloc] initWithPath:path];
+    HNKDiskFetcher *entity = [[HNKDiskFetcher alloc] initWithPath:path];
     XCTAssertEqualObjects(_sut.hnk_entity.cacheKey, entity.cacheKey,  @"");
     UIImage *result = _sut.image;
     XCTAssertEqualObjects(result, previousImage, @"");
@@ -380,7 +380,7 @@
     
     [_sut hnk_setImageFromFile:path placeholder:nil success:nil failure:nil];
     
-    HNKDiskEntity *entity = [[HNKDiskEntity alloc] initWithPath:path];
+    HNKDiskFetcher *entity = [[HNKDiskFetcher alloc] initWithPath:path];
     XCTAssertEqualObjects(_sut.hnk_entity.cacheKey, entity.cacheKey,  @"");
     XCTAssertNil(_sut.image, @"");
 }
@@ -393,7 +393,7 @@
     
     [_sut hnk_setImageFromFile:path placeholder:nil success:nil failure:nil];
     
-    HNKDiskEntity *entity = [[HNKDiskEntity alloc] initWithPath:path];
+    HNKDiskFetcher *entity = [[HNKDiskFetcher alloc] initWithPath:path];
     XCTAssertEqualObjects(_sut.hnk_entity.cacheKey, entity.cacheKey,  @"");
     UIImage *result = _sut.image;
     XCTAssertEqualObjects(result, previousImage, @"");
@@ -430,11 +430,11 @@
          } failure:^(NSError *error) {
             XCTAssertNotNil(error);
             XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
-            XCTAssertEqual(error.code, HNKErrorDiskEntityInvalidData, @"");
+            XCTAssertEqual(error.code, HNKErrorDiskFetcherInvalidData, @"");
             dispatch_semaphore_signal(semaphore);
         }];
 
-        HNKDiskEntity *entity = [[HNKDiskEntity alloc] initWithPath:path];
+        HNKDiskFetcher *entity = [[HNKDiskFetcher alloc] initWithPath:path];
         XCTAssertEqualObjects(_sut.hnk_entity.cacheKey, entity.cacheKey,  @"");
     }];
     

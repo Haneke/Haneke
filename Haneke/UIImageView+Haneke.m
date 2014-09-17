@@ -19,7 +19,7 @@
 //
 
 #import "UIImageView+Haneke.h"
-#import "HNKDiskEntity.h"
+#import "HNKDiskFetcher.h"
 #import "HNKSimpleFetcher.h"
 #import "HNKNetworkEntity.h"
 #import "UIView+Haneke.h"
@@ -39,7 +39,7 @@
 
 - (void)hnk_setImageFromFile:(NSString*)path placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    id<HNKFetcher> entity = [[HNKDiskEntity alloc] initWithPath:path];
+    id<HNKFetcher> entity = [[HNKDiskFetcher alloc] initWithPath:path];
     [self hnk_setImageFromEntity:entity placeholder:placeholder success:successBlock failure:failureBlock];
 }
 

@@ -1,5 +1,5 @@
 //
-//  HNKDiskEntity.h
+//  HNKDiskFetcher.h
 //  Haneke
 //
 //  Created by Hermes Pique on 7/23/14.
@@ -23,13 +23,13 @@
 
 enum
 {
-    HNKErrorDiskEntityInvalidData = -500,
+    HNKErrorDiskFetcherInvalidData = -500,
 };
 
 /**
  Entity that represents a disk image. The key will be the given path.
  */
-@interface HNKDiskEntity : NSObject<HNKFetcher>
+@interface HNKDiskFetcher : NSObject<HNKFetcher>
 
 /**
  Initializes an entity with the given path.
