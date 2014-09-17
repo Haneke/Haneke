@@ -122,7 +122,7 @@
     }];
 }
 
-- (void)testFetchImage_Failure_HNKNetworkEntityInvalidDataError
+- (void)testFetchImage_Failure_HNKNetworkFetcherInvalidDataError
 {
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
         return [request.URL.absoluteString isEqualToString:_URL.absoluteString];
@@ -146,7 +146,7 @@
     }];
 }
 
-- (void)testFetchImage_Failure_HNKNetworkEntityMissingDataError
+- (void)testFetchImage_Failure_HNKNetworkFetcherMissingDataError
 {
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
         return [request.URL.absoluteString isEqualToString:_URL.absoluteString];

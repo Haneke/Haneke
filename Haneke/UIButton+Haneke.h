@@ -113,33 +113,33 @@
  */
 - (void)hnk_setImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
 
-/** Loads, resizes, displays and caches an appropiately sized foreground image from the given entity.
- @param entity Entity from which the original image will be retrieved if needed. The entity will have to provide the original image only if it can't be found in the cache.
+/** Loads, resizes, displays and caches an appropiately sized foreground image from the given fetcher.
+ @param fetcher Fetcher from which the original image will be retrieved if needed. The fetcher will have to provide the original image only if it can't be found in the cache.
  @param state Control state that will use the image.
- @see hnk_setImageFromEntity:forState:placeholder:success:failure:
+ @see hnk_setImageFromFetcher:forState:placeholder:success:failure:
  */
-- (void)hnk_setImageFromEntity:(id<HNKFetcher>)entity forState:(UIControlState)state;
+- (void)hnk_setImageFromFetcher:(id<HNKFetcher>)fetcher forState:(UIControlState)state;
 
-/** Loads, resizes, displays and caches an appropiately sized foreground image from the given entity.
- @param entity Entity from which the original image will be retrieved if needed. The entity will have to provide the original image only if it can't be found in the cache.
+/** Loads, resizes, displays and caches an appropiately sized foreground image from the given fetcher.
+ @param fetcher Fetcher from which the original image will be retrieved if needed. The fetcher will have to provide the original image only if it can't be found in the cache.
  @param state Control state that will use the image.
  @param placeholder Image to be used as a placeholder until the requested image is ready. The placeholder image will only be used if the requested image is not available in the memory cache. If nil, the button will not change its image until the requested image is ready.
- @see hnk_setImageFromEntity:forState:placeholder:success:failure:
+ @see hnk_setImageFromFetcher:forState:placeholder:success:failure:
   */
-- (void)hnk_setImageFromEntity:(id<HNKFetcher>)entity forState:(UIControlState)state placeholder:(UIImage*)placeholder;
+- (void)hnk_setImageFromFetcher:(id<HNKFetcher>)fetcher forState:(UIControlState)state placeholder:(UIImage*)placeholder;
 
-/** Loads, resizes, displays and caches an appropiately sized foreground image from the given entity. If a success block is provided you will be responsible for setting the image.
- @param entity Entity from which the original image will be retrieved if needed. The entity will have to provide the original image only if it can't be found in the cache.
+/** Loads, resizes, displays and caches an appropiately sized foreground image from the given fetcher. If a success block is provided you will be responsible for setting the image.
+ @param fetcher Fetcher from which the original image will be retrieved if needed. The fetcher will have to provide the original image only if it can't be found in the cache.
  @param state Control state that will use the image.
  @param placeholder Image to be used as a placeholder until the requested image is ready. The placeholder image will only be used if the requested image is not available in the memory cache. If nil, the button will not change its image until the requested image is ready.
  @param successBlock Block to be called when the requested image is ready to be set. If provided, the block is reponsible for setting the image. Can be nil.
- @param failureBlock Block to be called if an error occurs. The most likely cause of error is that the given entity failed to provide the original image. Can be nil.
- @discussion Retrieves an appropiately sized image (based on the bounds, insets and content alignment of the button) from the memory or disk cache. Disk access is performed in background. If not cached, fetches the original image from the given entity, produces an appropiately sized image and caches the result, everything in background.
+ @param failureBlock Block to be called if an error occurs. The most likely cause of error is that the given fetcher failed to provide the original image. Can be nil.
+ @discussion Retrieves an appropiately sized image (based on the bounds, insets and content alignment of the button) from the memory or disk cache. Disk access is performed in background. If not cached, fetches the original image from the given fetcher, produces an appropiately sized image and caches the result, everything in background.
  @discussion If no success block is provided, the requested image will be set with a short fade transition, or synchronously and without transition when retrieved from the memory cache.
  @discussion If needed, the least recently used images in the cache will be evicted in background.
  @warning If a success block is provided you will be responsible for setting the image.
  */
-- (void)hnk_setImageFromEntity:(id<HNKFetcher>)entity forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
+- (void)hnk_setImageFromFetcher:(id<HNKFetcher>)fetcher forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
 
 /**
  Cancels the current set image request, if any.
@@ -244,33 +244,33 @@
  */
 - (void)hnk_setBackgroundImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
 
-/** Loads, resizes, displays and caches an appropiately sized background image from the given entity.
- @param entity Entity from which the original image will be retrieved if needed. The entity will have to provide the original image only if it can't be found in the cache.
+/** Loads, resizes, displays and caches an appropiately sized background image from the given fetcher.
+ @param fetcher Fetcher from which the original image will be retrieved if needed. The fetcher will have to provide the original image only if it can't be found in the cache.
  @param state Control state that will use the image.
- @see hnk_setBackgroundImageFromEntity:forState:placeholder:success:failure:
+ @see hnk_setBackgroundImageFromFetcher:forState:placeholder:success:failure:
  */
-- (void)hnk_setBackgroundImageFromEntity:(id<HNKFetcher>)entity forState:(UIControlState)state;
+- (void)hnk_setBackgroundImageFromFetcher:(id<HNKFetcher>)fetcher forState:(UIControlState)state;
 
-/** Loads, resizes, displays and caches an appropiately sized background image from the given entity.
- @param entity Entity from which the original image will be retrieved if needed. The entity will have to provide the original image only if it can't be found in the cache.
+/** Loads, resizes, displays and caches an appropiately sized background image from the given fetcher.
+ @param fetcher Fetcher from which the original image will be retrieved if needed. The fetcher will have to provide the original image only if it can't be found in the cache.
  @param state Control state that will use the image.
  @param placeholder Image to be used as a placeholder until the requested image is ready. The placeholder image will only be used if the requested image is not available in the memory cache. If nil, the button will not change its image until the requested image is ready.
- @see hnk_setBackgroundImageFromEntity:forState:placeholder:success:failure:
+ @see hnk_setBackgroundImageFromFetcher:forState:placeholder:success:failure:
  */
-- (void)hnk_setBackgroundImageFromEntity:(id<HNKFetcher>)entity forState:(UIControlState)state placeholder:(UIImage*)placeholder;
+- (void)hnk_setBackgroundImageFromFetcher:(id<HNKFetcher>)fetcher forState:(UIControlState)state placeholder:(UIImage*)placeholder;
 
-/** Loads, resizes, displays and caches an appropiately sized background image from the given entity. If a success block is provided you will be responsible for setting the image.
- @param entity Entity from which the original image will be retrieved if needed. The entity will have to provide the original image only if it can't be found in the cache.
+/** Loads, resizes, displays and caches an appropiately sized background image from the given fetcher. If a success block is provided you will be responsible for setting the image.
+ @param fetcher Fetcher from which the original image will be retrieved if needed. The fetcher will have to provide the original image only if it can't be found in the cache.
  @param state Control state that will use the image.
  @param placeholder Image to be used as a placeholder until the requested image is ready. The placeholder image will only be used if the requested image is not available in the memory cache. If nil, the button will not change its image until the requested image is ready.
  @param successBlock Block to be called when the requested image is ready to be set. If provided, the block is reponsible for setting the image. Can be nil.
- @param failureBlock Block to be called if an error occurs. The most likely cause of error is that the given entity failed to provide the original image. Can be nil.
- @discussion Retrieves an appropiately sized image (based on the bounds of the button) from the memory or disk cache. Disk access is performed in background. If not cached, fetches the original image from the given entity, produces an appropiately sized image and caches the result, everything in background.
+ @param failureBlock Block to be called if an error occurs. The most likely cause of error is that the given fetcher failed to provide the original image. Can be nil.
+ @discussion Retrieves an appropiately sized image (based on the bounds of the button) from the memory or disk cache. Disk access is performed in background. If not cached, fetches the original image from the given fetcher, produces an appropiately sized image and caches the result, everything in background.
  @discussion If no success block is provided, the requested image will be set with a short fade transition, or synchronously and without transition when retrieved from the memory cache.
  @discussion If needed, the least recently used images in the cache will be evicted in background.
  @warning If a success block is provided you will be responsible for setting the image.
  */
-- (void)hnk_setBackgroundImageFromEntity:(id<HNKFetcher>)entity forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
+- (void)hnk_setBackgroundImageFromFetcher:(id<HNKFetcher>)fetcher forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
 
 /**
  Cancels the current set background image request, if any.

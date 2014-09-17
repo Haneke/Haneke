@@ -29,18 +29,18 @@ enum
 };
 
 /**
- Entity that represents a network image. The key will be the absolute string of the given URL.
+ Fetcher that can provide a network image. The key will be the absolute string of the given URL.
  */
 @interface HNKNetworkFetcher : NSObject<HNKFetcher>
 
 /**
- Initializes an entity with the given URL.
+ Initializes a fetcher with the given URL.
  @param URL Image URL.
  */
 - (instancetype)initWithURL:(NSURL*)URL;
 
 /**
- Entity URL.
+ Image URL.
  */
 @property (nonatomic, readonly) NSURL *URL;
 

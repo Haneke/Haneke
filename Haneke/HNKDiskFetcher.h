@@ -27,12 +27,12 @@ enum
 };
 
 /**
- Entity that represents a disk image. The key will be the given path.
+ Fetcher that can provide a disk image. The key will be the given path.
  */
 @interface HNKDiskFetcher : NSObject<HNKFetcher>
 
 /**
- Initializes an entity with the given path.
+ Initializes a fetcher with the given path.
  @param path Image path.
  */
 - (instancetype)initWithPath:(NSString*)path;

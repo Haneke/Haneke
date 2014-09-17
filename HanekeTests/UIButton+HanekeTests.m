@@ -18,8 +18,8 @@
 
 @interface UIButton()
 
-@property (nonatomic, readonly) id<HNKFetcher> hnk_imageEntity;
-@property (nonatomic, readonly) id<HNKFetcher> hnk_backgroundImageEntity;
+@property (nonatomic, readonly) id<HNKFetcher> hnk_imageFetcher;
+@property (nonatomic, readonly) id<HNKFetcher> hnk_backgroundImageFetcher;
 
 @end
 
@@ -209,7 +209,7 @@
     
     [_sut hnk_setImage:image withKey:key forState:UIControlStateNormal];
     
-    XCTAssertEqualObjects(_sut.hnk_imageEntity.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_imageFetcher.cacheKey, key,  @"");
     XCTAssertNil([_sut imageForState:UIControlStateNormal], @"");
 }
 
@@ -223,7 +223,7 @@
     
     [_sut hnk_setImage:image withKey:key forState:state];
     
-    XCTAssertEqualObjects(_sut.hnk_imageEntity.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_imageFetcher.cacheKey, key,  @"");
     XCTAssertEqualObjects([_sut imageForState:state], previousImage, @"");
 }
 
@@ -237,7 +237,7 @@
 
     [_sut hnk_setImage:image withKey:key forState:UIControlStateNormal placeholder:placeholder];
     
-    XCTAssertNil(_sut.hnk_imageEntity,  @"");
+    XCTAssertNil(_sut.hnk_imageFetcher,  @"");
     XCTAssertEqualObjects([_sut imageForState:UIControlStateNormal], image, @"");
 }
 
@@ -249,7 +249,7 @@
     
     [_sut hnk_setImage:image withKey:key forState:UIControlStateNormal placeholder:placeholder];
     
-    XCTAssertEqualObjects(_sut.hnk_imageEntity.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_imageFetcher.cacheKey, key,  @"");
     XCTAssertEqualObjects([_sut imageForState:UIControlStateNormal], placeholder, @"");
 }
 
@@ -264,7 +264,7 @@
     
     [_sut hnk_setImage:image withKey:key forState:state placeholder:placeholder];
     
-    XCTAssertEqualObjects(_sut.hnk_imageEntity.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_imageFetcher.cacheKey, key,  @"");
     XCTAssertEqualObjects([_sut imageForState:state], placeholder, @"");
 }
 
@@ -285,7 +285,7 @@
     }];
     
     XCTAssertTrue(success, @"");
-    XCTAssertNil(_sut.hnk_imageEntity, @"");
+    XCTAssertNil(_sut.hnk_imageFetcher, @"");
     XCTAssertNil([_sut imageForState:state], @"");
 }
 
@@ -301,7 +301,7 @@
         XCTFail(@"");
     }];
     
-    XCTAssertNil(_sut.hnk_imageEntity, @"");
+    XCTAssertNil(_sut.hnk_imageFetcher, @"");
     XCTAssertEqualObjects([_sut imageForState:state], image, @"");
 }
 
@@ -313,7 +313,7 @@
 
     [_sut hnk_setImage:image withKey:key forState:state placeholder:nil success:nil failure:nil];
     
-    XCTAssertEqualObjects(_sut.hnk_imageEntity.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_imageFetcher.cacheKey, key,  @"");
     XCTAssertNil([_sut imageForState:state], @"");
 }
 
@@ -327,7 +327,7 @@
     
     [_sut hnk_setImage:image withKey:key forState:state placeholder:nil success:nil failure:nil];
     
-    XCTAssertEqualObjects(_sut.hnk_imageEntity.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_imageFetcher.cacheKey, key,  @"");
     XCTAssertEqualObjects([_sut imageForState:state], previousImage, @"");
 }
 
@@ -336,38 +336,38 @@
 - (void)testSetImageFromFile_MemoryCacheHit_UIControlStateNormal
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    id<HNKFetcher> entity = [[HNKDiskFetcher alloc] initWithPath:path];
+    id<HNKFetcher> fetcher = [[HNKDiskFetcher alloc] initWithPath:path];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
     [_sut hnk_setImageFromFile:path forState:state];
     
-    XCTAssertNil(_sut.hnk_imageEntity,  @"");
+    XCTAssertNil(_sut.hnk_imageFetcher,  @"");
     XCTAssertEqualObjects([_sut imageForState:state], image, @"");
 }
 
 - (void)testSetImageFromFilePlaceholder_MemoryCacheMiss_UIControlStateSelected
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    id<HNKFetcher> entity = [[HNKDiskFetcher alloc] initWithPath:path];
+    id<HNKFetcher> fetcher = [[HNKDiskFetcher alloc] initWithPath:path];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     const UIControlState state = UIControlStateSelected;
     
     [_sut hnk_setImageFromFile:path forState:state placeholder:placeholder];
     
-    XCTAssertEqualObjects(_sut.hnk_imageEntity.cacheKey, entity.cacheKey,  @"");
+    XCTAssertEqualObjects(_sut.hnk_imageFetcher.cacheKey, fetcher.cacheKey,  @"");
     XCTAssertEqualObjects([_sut imageForState:state], placeholder, @"");
 }
 
 - (void)testSetImageFromFilePlaceholderSuccessFailure_MemoryCacheHit
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    id<HNKFetcher> entity = [[HNKDiskFetcher alloc] initWithPath:path];
+    id<HNKFetcher> fetcher = [[HNKDiskFetcher alloc] initWithPath:path];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
     __block BOOL success = NO;
@@ -379,7 +379,7 @@
     }];
     
     XCTAssertTrue(success, @"");
-    XCTAssertNil(_sut.hnk_imageEntity, @"");
+    XCTAssertNil(_sut.hnk_imageFetcher, @"");
     XCTAssertNil([_sut imageForState:state], @"");
 }
 
@@ -388,38 +388,38 @@
 - (void)testSetImageFromURL_MemoryCacheHit_UIControlStateNormal
 {
     NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
-    id<HNKFetcher> entity = [[HNKNetworkFetcher alloc] initWithURL:URL];
+    id<HNKFetcher> fetcher = [[HNKNetworkFetcher alloc] initWithURL:URL];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
     [_sut hnk_setImageFromURL:URL forState:state];
     
-    XCTAssertNil(_sut.hnk_imageEntity,  @"");
+    XCTAssertNil(_sut.hnk_imageFetcher,  @"");
     XCTAssertEqualObjects([_sut imageForState:state], image, @"");
 }
 
 - (void)testSetImageFromURLPlaceholder_MemoryCacheMiss_UIControlStateSelected
 {
     NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
-    id<HNKFetcher> entity = [[HNKNetworkFetcher alloc] initWithURL:URL];
+    id<HNKFetcher> fetcher = [[HNKNetworkFetcher alloc] initWithURL:URL];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     const UIControlState state = UIControlStateSelected;
     
     [_sut hnk_setImageFromURL:URL forState:state placeholder:placeholder];
     
-    XCTAssertEqualObjects(_sut.hnk_imageEntity.cacheKey, entity.cacheKey,  @"");
+    XCTAssertEqualObjects(_sut.hnk_imageFetcher.cacheKey, fetcher.cacheKey,  @"");
     XCTAssertEqualObjects([_sut imageForState:state], placeholder, @"");
 }
 
 - (void)testSetImageFromURLPlaceholderSuccessFailure_MemoryCacheHit
 {
     NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
-    id<HNKFetcher> entity = [[HNKNetworkFetcher alloc] initWithURL:URL];
+    id<HNKFetcher> fetcher = [[HNKNetworkFetcher alloc] initWithURL:URL];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
     __block BOOL success = NO;
@@ -431,48 +431,48 @@
     }];
     
     XCTAssertTrue(success, @"");
-    XCTAssertNil(_sut.hnk_imageEntity, @"");
+    XCTAssertNil(_sut.hnk_imageFetcher, @"");
     XCTAssertNil([_sut imageForState:state], @"");
 }
 
-#pragma mark setImageFromEntity
+#pragma mark setImageFromFetcher
 
-- (void)testSetImageFromEntity_MemoryCacheHit_UIControlStateNormal
+- (void)testSetImageFromFetcher_MemoryCacheHit_UIControlStateNormal
 {
-    id<HNKFetcher> entity = [[HNKSimpleFetcher alloc] initWithKey:self.name image:nil];
+    id<HNKFetcher> fetcher = [[HNKSimpleFetcher alloc] initWithKey:self.name image:nil];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
-    [_sut hnk_setImageFromEntity:entity forState:state];
+    [_sut hnk_setImageFromFetcher:fetcher forState:state];
     
-    XCTAssertNil(_sut.hnk_imageEntity,  @"");
+    XCTAssertNil(_sut.hnk_imageFetcher,  @"");
     XCTAssertEqualObjects([_sut imageForState:state], image, @"");
 }
 
-- (void)testSetImageFromEntityLPlaceholder_MemoryCacheMiss_UIControlStateSelected
+- (void)testSetImageFromFetcherLPlaceholder_MemoryCacheMiss_UIControlStateSelected
 {
-    id<HNKFetcher> entity = [[HNKSimpleFetcher alloc] initWithKey:self.name image:nil];
+    id<HNKFetcher> fetcher = [[HNKSimpleFetcher alloc] initWithKey:self.name image:nil];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     const UIControlState state = UIControlStateSelected;
     
-    [_sut hnk_setImageFromEntity:entity forState:state placeholder:placeholder];
+    [_sut hnk_setImageFromFetcher:fetcher forState:state placeholder:placeholder];
     
-    XCTAssertEqualObjects(_sut.hnk_imageEntity, entity,  @"");
+    XCTAssertEqualObjects(_sut.hnk_imageFetcher, fetcher,  @"");
     XCTAssertEqualObjects([_sut imageForState:state], placeholder, @"");
 }
 
-- (void)testSetImageFromEntityPlaceholderSuccessFailure_MemoryCacheHit
+- (void)testSetImageFromFetcherPlaceholderSuccessFailure_MemoryCacheHit
 {
-    id<HNKFetcher> entity = [[HNKSimpleFetcher alloc] initWithKey:self.name image:nil];
+    id<HNKFetcher> fetcher = [[HNKSimpleFetcher alloc] initWithKey:self.name image:nil];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
     __block BOOL success = NO;
-    [_sut hnk_setImageFromEntity:entity forState:state placeholder:nil success:^(UIImage *result) {
+    [_sut hnk_setImageFromFetcher:fetcher forState:state placeholder:nil success:^(UIImage *result) {
         XCTAssertEqualObjects(result, image, @"");
         success = YES;
     } failure:^(NSError *error) {
@@ -480,7 +480,7 @@
     }];
     
     XCTAssertTrue(success, @"");
-    XCTAssertNil(_sut.hnk_imageEntity, @"");
+    XCTAssertNil(_sut.hnk_imageFetcher, @"");
     XCTAssertNil([_sut imageForState:state], @"");
 }
 
@@ -490,7 +490,7 @@
 {
     [_sut hnk_cancelSetImage];
     
-    XCTAssertNil(_sut.hnk_imageEntity, @"");
+    XCTAssertNil(_sut.hnk_imageFetcher, @"");
 }
 
 - (void)testCancelSetImage_After
@@ -504,7 +504,7 @@
     
     [_sut hnk_cancelSetImage];
     
-    XCTAssertNil(_sut.hnk_imageEntity, @"");
+    XCTAssertNil(_sut.hnk_imageFetcher, @"");
     [self hnk_waitFor:0.1];
 }
 
@@ -590,7 +590,7 @@
     
     [_sut hnk_setBackgroundImage:image withKey:key forState:UIControlStateNormal];
     
-    XCTAssertEqualObjects(_sut.hnk_backgroundImageEntity.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.cacheKey, key,  @"");
     XCTAssertNil([_sut backgroundImageForState:UIControlStateNormal], @"");
 }
 
@@ -604,7 +604,7 @@
     
     [_sut hnk_setBackgroundImage:image withKey:key forState:state];
     
-    XCTAssertEqualObjects(_sut.hnk_backgroundImageEntity.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.cacheKey, key,  @"");
     XCTAssertEqualObjects([_sut backgroundImageForState:state], previousImage, @"");
 }
 
@@ -618,7 +618,7 @@
     
     [_sut hnk_setBackgroundImage:image withKey:key forState:UIControlStateNormal placeholder:placeholder];
     
-    XCTAssertNil(_sut.hnk_backgroundImageEntity,  @"");
+    XCTAssertNil(_sut.hnk_backgroundImageFetcher,  @"");
     XCTAssertEqualObjects([_sut backgroundImageForState:UIControlStateNormal], image, @"");
 }
 
@@ -630,7 +630,7 @@
     
     [_sut hnk_setBackgroundImage:image withKey:key forState:UIControlStateNormal placeholder:placeholder];
     
-    XCTAssertEqualObjects(_sut.hnk_backgroundImageEntity.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.cacheKey, key,  @"");
     XCTAssertEqualObjects([_sut backgroundImageForState:UIControlStateNormal], placeholder, @"");
 }
 
@@ -645,7 +645,7 @@
     
     [_sut hnk_setBackgroundImage:image withKey:key forState:state placeholder:placeholder];
     
-    XCTAssertEqualObjects(_sut.hnk_backgroundImageEntity.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.cacheKey, key,  @"");
     XCTAssertEqualObjects([_sut backgroundImageForState:state], placeholder, @"");
 }
 
@@ -666,7 +666,7 @@
     }];
     
     XCTAssertTrue(success, @"");
-    XCTAssertNil(_sut.hnk_backgroundImageEntity, @"");
+    XCTAssertNil(_sut.hnk_backgroundImageFetcher, @"");
     XCTAssertNil([_sut backgroundImageForState:state], @"");
 }
 
@@ -682,7 +682,7 @@
         XCTFail(@"");
     }];
     
-    XCTAssertNil(_sut.hnk_backgroundImageEntity, @"");
+    XCTAssertNil(_sut.hnk_backgroundImageFetcher, @"");
     XCTAssertEqualObjects([_sut backgroundImageForState:state], image, @"");
 }
 
@@ -694,7 +694,7 @@
     
     [_sut hnk_setBackgroundImage:image withKey:key forState:state placeholder:nil success:nil failure:nil];
     
-    XCTAssertEqualObjects(_sut.hnk_backgroundImageEntity.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.cacheKey, key,  @"");
     XCTAssertNil([_sut backgroundImageForState:state], @"");
 }
 
@@ -708,7 +708,7 @@
     
     [_sut hnk_setBackgroundImage:image withKey:key forState:state placeholder:nil success:nil failure:nil];
     
-    XCTAssertEqualObjects(_sut.hnk_backgroundImageEntity.cacheKey, key,  @"");
+    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.cacheKey, key,  @"");
     XCTAssertEqualObjects([_sut backgroundImageForState:state], previousImage, @"");
 }
 
@@ -717,38 +717,38 @@
 - (void)testSetBackgroundImageFromFile_MemoryCacheHit_UIControlStateNormal
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    id<HNKFetcher> entity = [[HNKDiskFetcher alloc] initWithPath:path];
+    id<HNKFetcher> fetcher = [[HNKDiskFetcher alloc] initWithPath:path];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
     [_sut hnk_setBackgroundImageFromFile:path forState:state];
     
-    XCTAssertNil(_sut.hnk_backgroundImageEntity,  @"");
+    XCTAssertNil(_sut.hnk_backgroundImageFetcher,  @"");
     XCTAssertEqualObjects([_sut backgroundImageForState:state], image, @"");
 }
 
 - (void)testSetBackgroundImageFromFilePlaceholder_MemoryCacheMiss_UIControlStateSelected
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    id<HNKFetcher> entity = [[HNKDiskFetcher alloc] initWithPath:path];
+    id<HNKFetcher> fetcher = [[HNKDiskFetcher alloc] initWithPath:path];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     const UIControlState state = UIControlStateSelected;
     
     [_sut hnk_setBackgroundImageFromFile:path forState:state placeholder:placeholder];
     
-    XCTAssertEqualObjects(_sut.hnk_backgroundImageEntity.cacheKey, entity.cacheKey,  @"");
+    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.cacheKey, fetcher.cacheKey,  @"");
     XCTAssertEqualObjects([_sut backgroundImageForState:state], placeholder, @"");
 }
 
 - (void)testSetBackgroundImageFromFilePlaceholderSuccessFailure_MemoryCacheHit
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
-    id<HNKFetcher> entity = [[HNKDiskFetcher alloc] initWithPath:path];
+    id<HNKFetcher> fetcher = [[HNKDiskFetcher alloc] initWithPath:path];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
     __block BOOL success = NO;
@@ -760,7 +760,7 @@
     }];
     
     XCTAssertTrue(success, @"");
-    XCTAssertNil(_sut.hnk_backgroundImageEntity, @"");
+    XCTAssertNil(_sut.hnk_backgroundImageFetcher, @"");
     XCTAssertNil([_sut backgroundImageForState:state], @"");
 }
 
@@ -769,38 +769,38 @@
 - (void)testSetBackgroundImageFromURL_MemoryCacheHit_UIControlStateNormal
 {
     NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
-    id<HNKFetcher> entity = [[HNKNetworkFetcher alloc] initWithURL:URL];
+    id<HNKFetcher> fetcher = [[HNKNetworkFetcher alloc] initWithURL:URL];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
     [_sut hnk_setBackgroundImageFromURL:URL forState:state];
     
-    XCTAssertNil(_sut.hnk_backgroundImageEntity,  @"");
+    XCTAssertNil(_sut.hnk_backgroundImageFetcher,  @"");
     XCTAssertEqualObjects([_sut backgroundImageForState:state], image, @"");
 }
 
 - (void)testSetBackgroundImageFromURLPlaceholder_MemoryCacheMiss_UIControlStateSelected
 {
     NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
-    id<HNKFetcher> entity = [[HNKNetworkFetcher alloc] initWithURL:URL];
+    id<HNKFetcher> fetcher = [[HNKNetworkFetcher alloc] initWithURL:URL];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     const UIControlState state = UIControlStateSelected;
     
     [_sut hnk_setBackgroundImageFromURL:URL forState:state placeholder:placeholder];
     
-    XCTAssertEqualObjects(_sut.hnk_backgroundImageEntity.cacheKey, entity.cacheKey,  @"");
+    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher.cacheKey, fetcher.cacheKey,  @"");
     XCTAssertEqualObjects([_sut backgroundImageForState:state], placeholder, @"");
 }
 
 - (void)testSetBackgroundImageFromURLPlaceholderSuccessFailure_MemoryCacheHit
 {
     NSURL *URL = [NSURL URLWithString:@"http://haneke.io/image.jpg"];
-    id<HNKFetcher> entity = [[HNKNetworkFetcher alloc] initWithURL:URL];
+    id<HNKFetcher> fetcher = [[HNKNetworkFetcher alloc] initWithURL:URL];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
     __block BOOL success = NO;
@@ -812,48 +812,48 @@
     }];
     
     XCTAssertTrue(success, @"");
-    XCTAssertNil(_sut.hnk_backgroundImageEntity, @"");
+    XCTAssertNil(_sut.hnk_backgroundImageFetcher, @"");
     XCTAssertNil([_sut backgroundImageForState:state], @"");
 }
 
-#pragma mark setBackgroundImageFromEntity
+#pragma mark setBackgroundImageFromFetcher
 
-- (void)testSetBackgroundImageFromEntity_MemoryCacheHit_UIControlStateNormal
+- (void)testSetBackgroundImageFromFetcher_MemoryCacheHit_UIControlStateNormal
 {
-    id<HNKFetcher> entity = [[HNKSimpleFetcher alloc] initWithKey:self.name image:nil];
+    id<HNKFetcher> fetcher = [[HNKSimpleFetcher alloc] initWithKey:self.name image:nil];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
-    [_sut hnk_setBackgroundImageFromEntity:entity forState:state];
+    [_sut hnk_setBackgroundImageFromFetcher:fetcher forState:state];
     
-    XCTAssertNil(_sut.hnk_backgroundImageEntity,  @"");
+    XCTAssertNil(_sut.hnk_backgroundImageFetcher,  @"");
     XCTAssertEqualObjects([_sut backgroundImageForState:state], image, @"");
 }
 
-- (void)testSetBackgroundImageFromEntityLPlaceholder_MemoryCacheMiss_UIControlStateSelected
+- (void)testSetBackgroundImageFromFetcherLPlaceholder_MemoryCacheMiss_UIControlStateSelected
 {
-    id<HNKFetcher> entity = [[HNKSimpleFetcher alloc] initWithKey:self.name image:nil];
+    id<HNKFetcher> fetcher = [[HNKSimpleFetcher alloc] initWithKey:self.name image:nil];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     const UIControlState state = UIControlStateSelected;
     
-    [_sut hnk_setBackgroundImageFromEntity:entity forState:state placeholder:placeholder];
+    [_sut hnk_setBackgroundImageFromFetcher:fetcher forState:state placeholder:placeholder];
     
-    XCTAssertEqualObjects(_sut.hnk_backgroundImageEntity, entity,  @"");
+    XCTAssertEqualObjects(_sut.hnk_backgroundImageFetcher, fetcher,  @"");
     XCTAssertEqualObjects([_sut backgroundImageForState:state], placeholder, @"");
 }
 
-- (void)testSetBackgroundImageFromEntityPlaceholderSuccessFailure_MemoryCacheHit
+- (void)testSetBackgroundImageFromFetcherPlaceholderSuccessFailure_MemoryCacheHit
 {
-    id<HNKFetcher> entity = [[HNKSimpleFetcher alloc] initWithKey:self.name image:nil];
+    id<HNKFetcher> fetcher = [[HNKSimpleFetcher alloc] initWithKey:self.name image:nil];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
-    [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
+    [[HNKCache sharedCache] setImage:image forKey:fetcher.cacheKey formatName:format.name];
     const UIControlState state = UIControlStateNormal;
     
     __block BOOL success = NO;
-    [_sut hnk_setBackgroundImageFromEntity:entity forState:state placeholder:nil success:^(UIImage *result) {
+    [_sut hnk_setBackgroundImageFromFetcher:fetcher forState:state placeholder:nil success:^(UIImage *result) {
         XCTAssertEqualObjects(result, image, @"");
         success = YES;
     } failure:^(NSError *error) {
@@ -861,7 +861,7 @@
     }];
     
     XCTAssertTrue(success, @"");
-    XCTAssertNil(_sut.hnk_backgroundImageEntity, @"");
+    XCTAssertNil(_sut.hnk_backgroundImageFetcher, @"");
     XCTAssertNil([_sut backgroundImageForState:state], @"");
 }
 
@@ -871,7 +871,7 @@
 {
     [_sut hnk_cancelSetBackgroundImage];
     
-    XCTAssertNil(_sut.hnk_backgroundImageEntity, @"");
+    XCTAssertNil(_sut.hnk_backgroundImageFetcher, @"");
 }
 
 - (void)testCancelSetBackgroundImage_After
@@ -885,7 +885,7 @@
     
     [_sut hnk_cancelSetBackgroundImage];
     
-    XCTAssertNil(_sut.hnk_backgroundImageEntity, @"");
+    XCTAssertNil(_sut.hnk_backgroundImageFetcher, @"");
     [self hnk_waitFor:0.1];
 }
 
@@ -901,7 +901,7 @@
     
     [_sut hnk_setImage:image withKey:key forState:state];
     
-    XCTAssertNil(_sut.hnk_imageEntity,  @"");
+    XCTAssertNil(_sut.hnk_imageFetcher,  @"");
     XCTAssertEqualObjects([_sut imageForState:state], image, @"");
 }
 
@@ -915,7 +915,7 @@
     
     [_sut hnk_setBackgroundImage:image withKey:key forState:state];
     
-    XCTAssertNil(_sut.hnk_backgroundImageEntity,  @"");
+    XCTAssertNil(_sut.hnk_backgroundImageFetcher,  @"");
     XCTAssertEqualObjects([_sut backgroundImageForState:state], image, @"");
 }
 

@@ -92,7 +92,7 @@
     }];
 }
 
-- (void)testFetchImage_Failure_HNKDiskEntityInvalidDataError
+- (void)testFetchImage_Failure_HNKDiskFetcherInvalidDataError
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
     _sut = [[HNKDiskFetcher alloc] initWithPath:path];

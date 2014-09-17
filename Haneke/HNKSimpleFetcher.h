@@ -22,15 +22,15 @@
 #import "HNKCache.h"
 
 /**
- Simple entity that represents a key-image pair.
+ Simple fetcher that represents a key-image pair.
  @discussion Used as a convenience by the UIKit categories.
  */
 @interface HNKSimpleFetcher : NSObject<HNKFetcher>
 
 /**
- Initializes an entity with the given key and image.
- @param key Entity key.
- @param image Entity image.
+ Initializes a fetcher with the given key and image.
+ @param key Image key.
+ @param image Image that will be returned by the fetcher.
  */
 - (instancetype)initWithKey:(NSString*)key image:(UIImage*)image;
 
