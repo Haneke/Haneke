@@ -100,6 +100,7 @@
 {
     [self _testFetchImage_Failure_InvalidStatusCode:404];
 }
+
 - (void)testFetchImage_Failure_DownloadError
 {
     NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:kCFURLErrorNotConnectedToInternet userInfo:nil];
