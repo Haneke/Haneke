@@ -1,5 +1,5 @@
 //
-//  HNKDiskEntityTests.m
+//  HNKDiskFetcherTests.m
 //  Haneke
 //
 //  Created by Hermes Pique on 8/20/14.
@@ -23,11 +23,11 @@
 #import "UIImage+HanekeTestUtils.h"
 #import "XCTestCase+HanekeTestUtils.h"
 
-@interface HNKDiskEntityTests : XCTestCase
+@interface HNKDiskFetcherTests : XCTestCase
 
 @end
 
-@implementation HNKDiskEntityTests {
+@implementation HNKDiskFetcherTests {
     HNKDiskFetcher *_sut;
     NSString *_directory;
 }

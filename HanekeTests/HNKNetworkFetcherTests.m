@@ -1,5 +1,5 @@
 //
-//  HNKNetworkEntityTests.m
+//  HNKNetworkFetcherTests.m
 //  Haneke
 //
 //  Created by Hermes Pique on 8/20/14.
@@ -24,11 +24,11 @@
 #import "XCTestCase+HanekeTestUtils.h"
 #import <OHHTTPStubs/OHHTTPStubs.h>
 
-@interface HNKNetworkEntityTests : XCTestCase
+@interface HNKNetworkFetcherTests : XCTestCase
 
 @end
 
-@implementation HNKNetworkEntityTests {
+@implementation HNKNetworkFetcherTests {
     HNKNetworkFetcher *_sut;
     NSURL *_URL;
 }

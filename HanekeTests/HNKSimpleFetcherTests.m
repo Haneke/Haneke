@@ -1,5 +1,5 @@
 //
-//  HNKSimpleEntityTests.m
+//  HNKSimpleFetcherTests.m
 //  Haneke
 //
 //  Created by Hermes Pique on 8/20/14.
@@ -22,11 +22,11 @@
 #import "HNKSimpleFetcher.h"
 #import "UIImage+HanekeTestUtils.h"
 
-@interface HNKSimpleEntityTests : XCTestCase
+@interface HNKSimpleFetcherTests : XCTestCase
 
 @end
 
-@implementation HNKSimpleEntityTests {
+@implementation HNKSimpleFetcherTests {
     HNKSimpleFetcher *_sut;
 }
 
