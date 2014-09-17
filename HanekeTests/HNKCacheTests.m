@@ -65,14 +65,14 @@
     XCTAssertTrue(format.diskSize == 0, @"");
 }
 
-- (void)testFetchImageForEntity_OpaqueImage
+- (void)testFetchImageForFetcher_OpaqueImage
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
-    id entity = [HNKCache entityWithKey:@"1" image:image];
+    id fetcher = [HNKCache fetcherWithKey:@"1" image:image];
     HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(1, 1)];
  
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageForFetcher:entity formatName:format.name success:^(UIImage *result) {
+        [_sut fetchImageForFetcher:fetcher formatName:format.name success:^(UIImage *result) {
             CGSize resultSize = result.size;
             
             XCTAssertNotNil(result, @"");
@@ -87,14 +87,14 @@
     }];
 }
 
-- (void)testFetchImageForEntity_ImageWithAlpha
+- (void)testFetchImageForFetcher_ImageWithAlpha
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10) opaque:NO];
-    id entity = [HNKCache entityWithKey:@"1" image:image];
+    id fetcher = [HNKCache fetcherWithKey:@"1" image:image];
     HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(1, 1)];
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageForFetcher:entity formatName:format.name success:^(UIImage *result) {
+        [_sut fetchImageForFetcher:fetcher formatName:format.name success:^(UIImage *result) {
             CGSize resultSize = result.size;
             
             XCTAssertNotNil(result, @"");
@@ -109,16 +109,16 @@
     }];
 }
 
-- (void)testFetchImageForEntity_HNKScaleModeAspectFill
+- (void)testFetchImageForFetcher_HNKScaleModeAspectFill
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 2)];
-    id entity = [HNKCache entityWithKey:@"1" image:image];
+    id fetcher = [HNKCache fetcherWithKey:@"1" image:image];
     
     HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(10, 10)];
     format.allowUpscaling = YES;
     format.scaleMode = HNKScaleModeAspectFill;
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageForFetcher:entity formatName:format.name success:^(UIImage *result) {
+        [_sut fetchImageForFetcher:fetcher formatName:format.name success:^(UIImage *result) {
             CGSize resultSize = result.size;
             
             XCTAssertNotNil(result, @"");
@@ -132,14 +132,14 @@
     }];
 }
 
-- (void)testFetchImageForEntity_HNKScaleModeFill
+- (void)testFetchImageForFetcher_HNKScaleModeFill
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
-    id entity = [HNKCache entityWithKey:@"1" image:image];
+    id fetcher = [HNKCache fetcherWithKey:@"1" image:image];
     
     HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(1, 1)];
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageForFetcher:entity formatName:format.name success:^(UIImage *result) {
+        [_sut fetchImageForFetcher:fetcher formatName:format.name success:^(UIImage *result) {
             const CGSize resultSize = result.size;
             XCTAssertTrue(CGSizeEqualToSize(resultSize, format.size), @"");
             dispatch_semaphore_signal(semaphore);
@@ -150,12 +150,12 @@
     }];
 }
 
-- (void)testFetchImageForEntity_PreResizeBlock
+- (void)testFetchImageForFetcher_PreResizeBlock
 {
     HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(1, 1)];
     UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
     NSString *key = self.name;
-    id entity = [HNKCache entityWithKey:key image:originalImage];
+    id fetcher = [HNKCache fetcherWithKey:key image:originalImage];
     UIImage *preResizeImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:format.size];
 
     format.preResizeBlock = ^UIImage* (NSString *givenKey, UIImage *givenImage) {
@@ -165,7 +165,7 @@
     };
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageForFetcher:entity formatName:format.name success:^(UIImage *result) {
+        [_sut fetchImageForFetcher:fetcher formatName:format.name success:^(UIImage *result) {
             
             XCTAssertEqualObjects(result, preResizeImage, @"");
             
@@ -177,12 +177,12 @@
     }];
 }
 
-- (void)testFetchImageForEntity_PostResizeBlock
+- (void)testFetchImageForFetcher_PostResizeBlock
 {
     HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(1, 1)];
     UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
     NSString *key = self.name;
-    id entity = [HNKCache entityWithKey:key image:originalImage];
+    id fetcher = [HNKCache fetcherWithKey:key image:originalImage];
     UIImage *postResizeImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:format.size];
     
     format.postResizeBlock = ^UIImage* (NSString *givenKey, UIImage *givenImage) {
@@ -192,7 +192,7 @@
     };
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageForFetcher:entity formatName:format.name success:^(UIImage *result) {
+        [_sut fetchImageForFetcher:fetcher formatName:format.name success:^(UIImage *result) {
             
             XCTAssertEqualObjects(result, postResizeImage, @"");
             
@@ -204,15 +204,15 @@
     }];
 }
 
-- (void)testFetchImageForEntity_MemoryCacheHit
+- (void)testFetchImageForFetcher_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
-    id<HNKFetcher> entity = [HNKCache entityWithKey:@"1" image:image];
+    id<HNKFetcher> fetcher = [HNKCache fetcherWithKey:@"1" image:image];
     HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(1, 1)];
     NSString *formatName = format.name;
-    [_sut setImage:image forKey:entity.cacheKey formatName:formatName];
+    [_sut setImage:image forKey:fetcher.cacheKey formatName:formatName];
 
-    BOOL result = [_sut fetchImageForFetcher:entity formatName:format.name success:^(UIImage *result) {
+    BOOL result = [_sut fetchImageForFetcher:fetcher formatName:format.name success:^(UIImage *result) {
         XCTAssertEqualObjects(result, image, @"");
     } failure:^(NSError *error) {
         XCTFail(@"Expected success");
@@ -221,24 +221,24 @@
     XCTAssertTrue(result, @"");
 }
 
-- (void)testFetchImageForEntity_MemoryCacheMiss
+- (void)testFetchImageForFetcher_MemoryCacheMiss
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
-    id<HNKFetcher> entity = [HNKCache entityWithKey:@"1" image:image];
+    id<HNKFetcher> fetcher = [HNKCache fetcherWithKey:@"1" image:image];
     HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(1, 1)];
     NSString *formatName = format.name;
     
-    BOOL result = [_sut fetchImageForFetcher:entity formatName:formatName success:nil failure:nil];
+    BOOL result = [_sut fetchImageForFetcher:fetcher formatName:formatName success:nil failure:nil];
     
     XCTAssertFalse(result, @"");
 }
 
-- (void)testFetchImageForEntity_PreResizeBlock_MemoryCacheMiss
+- (void)testFetchImageForFetcher_PreResizeBlock_MemoryCacheMiss
 {
     HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(1, 1)];
     UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
     NSString *key = self.name;
-    id<HNKFetcher> entity = [HNKCache entityWithKey:key image:originalImage];
+    id<HNKFetcher> fetcher = [HNKCache fetcherWithKey:key image:originalImage];
     
     UIImage *preResizeImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:format.size];
     
@@ -249,7 +249,7 @@
     };
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        BOOL result = [_sut fetchImageForFetcher:entity formatName:format.name success:^(UIImage *result) {
+        BOOL result = [_sut fetchImageForFetcher:fetcher formatName:format.name success:^(UIImage *result) {
             XCTAssertEqualObjects(result, preResizeImage, @"");
             dispatch_semaphore_signal(semaphore);
         } failure:^(NSError *error) {
@@ -260,12 +260,12 @@
     }];
 }
 
-- (void)testFetchImageForEntity_PostResizeBlock_MemoryCacheMiss
+- (void)testFetchImageForFetcher_PostResizeBlock_MemoryCacheMiss
 {
     HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(1, 1)];
     UIImage *originalImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:format.size];
     NSString *key = self.name;
-    id<HNKFetcher> entity = [HNKCache entityWithKey:key image:originalImage];
+    id<HNKFetcher> fetcher = [HNKCache fetcherWithKey:key image:originalImage];
     
     UIImage *postResizeImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:format.size];
     
@@ -276,7 +276,7 @@
     };
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        BOOL result = [_sut fetchImageForFetcher:entity formatName:format.name success:^(UIImage *result) {
+        BOOL result = [_sut fetchImageForFetcher:fetcher formatName:format.name success:^(UIImage *result) {
             XCTAssertEqualObjects(result, postResizeImage, @"");
             dispatch_semaphore_signal(semaphore);
         } failure:^(NSError *error) {

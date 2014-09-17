@@ -447,7 +447,7 @@
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = self.name;
-    id<HNKFetcher> entity = [HNKCache entityWithKey:key image:image];
+    id<HNKFetcher> entity = [HNKCache fetcherWithKey:key image:image];
     [_sut hnk_setImageFromEntity:entity];
     
     XCTAssertEqualObjects(_sut.hnk_entity, entity,  @"");
@@ -460,7 +460,7 @@
     NSString *key = @"test";
     HNKCacheFormat *format = _sut.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
-    id<HNKFetcher> entity = [HNKCache entityWithKey:key image:image];
+    id<HNKFetcher> entity = [HNKCache fetcherWithKey:key image:image];
     
     [_sut hnk_setImageFromEntity:entity];
     
@@ -475,7 +475,7 @@
     _sut.image = previousImage;
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = self.name;
-    id<HNKFetcher> entity = [HNKCache entityWithKey:key image:image];
+    id<HNKFetcher> entity = [HNKCache fetcherWithKey:key image:image];
     
     [_sut hnk_setImageFromEntity:entity];
     
@@ -488,7 +488,7 @@
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = self.name;
-    id<HNKFetcher> entity = [HNKCache entityWithKey:key image:image];
+    id<HNKFetcher> entity = [HNKCache fetcherWithKey:key image:image];
     
     [_sut hnk_setImageFromEntity:entity placeholder:placeholder];
     
@@ -503,7 +503,7 @@
     NSString *key = @"test";
     HNKCacheFormat *format = _sut.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
-    id<HNKFetcher> entity = [HNKCache entityWithKey:key image:image];
+    id<HNKFetcher> entity = [HNKCache fetcherWithKey:key image:image];
     
     [_sut hnk_setImageFromEntity:entity placeholder:placeholder];
     
@@ -518,7 +518,7 @@
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     _sut.image = previousImage;
     NSString *key = self.name;
-    id<HNKFetcher> entity = [HNKCache entityWithKey:key image:image];
+    id<HNKFetcher> entity = [HNKCache fetcherWithKey:key image:image];
     
     [_sut hnk_setImageFromEntity:entity placeholder:nil];
     

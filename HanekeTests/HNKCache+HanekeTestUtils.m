@@ -24,7 +24,7 @@
 
 @implementation HNKCache (HanekeTestUtils)
 
-+ (id)entityWithKey:(NSString*)key image:(UIImage*)image
++ (id)fetcherWithKey:(NSString*)key image:(UIImage*)image
 {
     return [[HNKSimpleFetcher alloc] initWithKey:key image:image];
 }
