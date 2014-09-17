@@ -20,7 +20,7 @@
 
 #import "UIButton+Haneke.h"
 #import "UIView+Haneke.h"
-#import "HNKSimpleEntity.h"
+#import "HNKSimpleFetcher.h"
 #import "HNKDiskEntity.h"
 #import "HNKNetworkEntity.h"
 #import <objc/runtime.h>
@@ -73,7 +73,7 @@
 
 - (void)hnk_setImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    id<HNKFetcher> entity = [[HNKSimpleEntity alloc] initWithKey:key image:image];
+    id<HNKFetcher> entity = [[HNKSimpleFetcher alloc] initWithKey:key image:image];
     [self hnk_setImageFromEntity:entity forState:state placeholder:placeholder success:successBlock failure:failureBlock];
 }
 
@@ -235,7 +235,7 @@
 
 - (void)hnk_setBackgroundImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    id<HNKFetcher> entity = [[HNKSimpleEntity alloc] initWithKey:key image:image];
+    id<HNKFetcher> entity = [[HNKSimpleFetcher alloc] initWithKey:key image:image];
     [self hnk_setBackgroundImageFromEntity:entity forState:state placeholder:placeholder success:successBlock failure:failureBlock];
 }
 

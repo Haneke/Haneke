@@ -9,7 +9,7 @@
 #import <XCTest/XCTest.h>
 #import "HNKDiskEntity.h"
 #import "HNKNetworkEntity.h"
-#import "HNKSimpleEntity.h"
+#import "HNKSimpleFetcher.h"
 #import "UIView+Haneke.h"
 #import "UIButton+Haneke.h"
 #import "UIImage+HanekeTestUtils.h"
@@ -439,7 +439,7 @@
 
 - (void)testSetImageFromEntity_MemoryCacheHit_UIControlStateNormal
 {
-    id<HNKFetcher> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
+    id<HNKFetcher> entity = [[HNKSimpleFetcher alloc] initWithKey:self.name image:nil];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
@@ -453,7 +453,7 @@
 
 - (void)testSetImageFromEntityLPlaceholder_MemoryCacheMiss_UIControlStateSelected
 {
-    id<HNKFetcher> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
+    id<HNKFetcher> entity = [[HNKSimpleFetcher alloc] initWithKey:self.name image:nil];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     const UIControlState state = UIControlStateSelected;
     
@@ -465,7 +465,7 @@
 
 - (void)testSetImageFromEntityPlaceholderSuccessFailure_MemoryCacheHit
 {
-    id<HNKFetcher> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
+    id<HNKFetcher> entity = [[HNKSimpleFetcher alloc] initWithKey:self.name image:nil];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_imageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
@@ -820,7 +820,7 @@
 
 - (void)testSetBackgroundImageFromEntity_MemoryCacheHit_UIControlStateNormal
 {
-    id<HNKFetcher> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
+    id<HNKFetcher> entity = [[HNKSimpleFetcher alloc] initWithKey:self.name image:nil];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];
@@ -834,7 +834,7 @@
 
 - (void)testSetBackgroundImageFromEntityLPlaceholder_MemoryCacheMiss_UIControlStateSelected
 {
-    id<HNKFetcher> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
+    id<HNKFetcher> entity = [[HNKSimpleFetcher alloc] initWithKey:self.name image:nil];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     const UIControlState state = UIControlStateSelected;
     
@@ -846,7 +846,7 @@
 
 - (void)testSetBackgroundImageFromEntityPlaceholderSuccessFailure_MemoryCacheHit
 {
-    id<HNKFetcher> entity = [[HNKSimpleEntity alloc] initWithKey:self.name image:nil];
+    id<HNKFetcher> entity = [[HNKSimpleFetcher alloc] initWithKey:self.name image:nil];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     HNKCacheFormat *format = _sut.hnk_backgroundImageFormat;
     [[HNKCache sharedCache] setImage:image forKey:entity.cacheKey formatName:format.name];

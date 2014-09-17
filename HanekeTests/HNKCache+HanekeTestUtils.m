@@ -19,14 +19,14 @@
 //
 
 #import "HNKCache+HanekeTestUtils.h"
-#import "HNKSimpleEntity.h"
+#import "HNKSimpleFetcher.h"
 #import <OCMock/OCMock.h>
 
 @implementation HNKCache (HanekeTestUtils)
 
 + (id)entityWithKey:(NSString*)key image:(UIImage*)image
 {
-    return [[HNKSimpleEntity alloc] initWithKey:key image:image];
+    return [[HNKSimpleFetcher alloc] initWithKey:key image:image];
 }
 
 - (HNKCacheFormat*)registerFormatWithSize:(CGSize)size

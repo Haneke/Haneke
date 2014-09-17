@@ -19,7 +19,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "HNKSimpleEntity.h"
+#import "HNKSimpleFetcher.h"
 #import "UIImage+HanekeTestUtils.h"
 
 @interface HNKSimpleEntityTests : XCTestCase
@@ -27,14 +27,14 @@
 @end
 
 @implementation HNKSimpleEntityTests {
-    HNKSimpleEntity *_sut;
+    HNKSimpleFetcher *_sut;
 }
 
 - (void)testCacheKey
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 10)];
     NSString *key = self.name;
-    _sut = [[HNKSimpleEntity alloc] initWithKey:key image:image];
+    _sut = [[HNKSimpleFetcher alloc] initWithKey:key image:image];
     
     XCTAssertEqualObjects(_sut.cacheKey, key, @"");
 }
@@ -43,7 +43,7 @@
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 10)];
     NSString *key = self.name;
-    _sut = [[HNKSimpleEntity alloc] initWithKey:key image:image];
+    _sut = [[HNKSimpleFetcher alloc] initWithKey:key image:image];
 
     __block BOOL success = NO;
     [_sut fetchImageWithSuccess:^(UIImage *resultImage) {

@@ -1,5 +1,5 @@
 //
-//  HNKSimpleEntity.h
+//  HNKSimpleFetcher.h
 //  Haneke
 //
 //  Created by Hermes Pique on 8/19/14.
@@ -25,7 +25,7 @@
  Simple entity that represents a key-image pair.
  @discussion Used as a convenience by the UIKit categories.
  */
-@interface HNKSimpleEntity : NSObject<HNKFetcher>
+@interface HNKSimpleFetcher : NSObject<HNKFetcher>
 
 /**
  Initializes an entity with the given key and image.

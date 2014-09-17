@@ -1,5 +1,5 @@
 //
-//  HNKSimpleEntity.m
+//  HNKSimpleFetcher.m
 //  Haneke
 //
 //  Created by Hermes Pique on 8/19/14.
@@ -18,9 +18,9 @@
 //  limitations under the License.
 //
 
-#import "HNKSimpleEntity.h"
+#import "HNKSimpleFetcher.h"
 
-@implementation HNKSimpleEntity {
+@implementation HNKSimpleFetcher {
     NSString *_key;
     UIImage *_image;
 }
