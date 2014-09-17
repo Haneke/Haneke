@@ -483,7 +483,7 @@
     XCTAssertEqualObjects(_sut.image, previousImage, @"");
 }
 
-- (void)testSetImageFromEntityplaceholder_MemoryCacheMiss
+- (void)testSetImageFromEntityPlaceholder_MemoryCacheMiss
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
@@ -496,7 +496,7 @@
     XCTAssertEqualObjects(_sut.image, placeholder, @"");
 }
 
-- (void)testSetImageFromEntityplaceholder_MemoryCacheHit
+- (void)testSetImageFromEntityPlaceholder_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
