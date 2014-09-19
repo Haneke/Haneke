@@ -1,8 +1,8 @@
 //
-//  XCTestCase+HanekeTestUtils.h
+//  UIView+Haneke.h
 //  Haneke
 //
-//  Created by Hermés Piqué on 09/03/14.
+//  Created by Hermes Pique on 8/20/14.
 //  Copyright (c) 2014 Hermes Pique. All rights reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,12 +18,25 @@
 //  limitations under the License.
 //
 
-#import <XCTest/XCTest.h>
+#import <UIKit/UIKit.h>
+#import "HNKCache.h"
 
-@interface XCTestCase (HanekeTestUtils)
+extern const CGFloat HNKViewFormatCompressionQuality;
+extern const unsigned long long HNKViewFormatDiskCapacity;
 
-- (void)hnk_testAsyncBlock:(void(^)(dispatch_semaphore_t))block;
+/**
+ Convenience category used in the other UIKit categories to avoid repeating code. Intended for internal use.
+ */
+@interface UIView (Haneke)
 
-- (void)hnk_waitFor:(NSTimeInterval)timeInterval;
+@property (nonatomic, readonly) HNKScaleMode hnk_scaleMode;
+
+@end
+
+@interface HNKCache(UIView)
+
++ (void)registerSharedFormat:(HNKCacheFormat*)format;
+
++ (HNKCacheFormat*)sharedFormatWithSize:(CGSize)size scaleMode:(HNKScaleMode)scaleMode;
 
 @end

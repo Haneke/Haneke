@@ -71,8 +71,9 @@
 
 - (NSData*)hnk_normalizedData
 {
-    UIGraphicsBeginImageContext(self.size);
-    [self drawInRect:CGRectMake(0, 0, self.size.width, self.size.height)];
+    const CGSize pixelSize = CGSizeMake(self.size.width * self.scale, self.size.height * self.scale);
+    UIGraphicsBeginImageContext(pixelSize);
+    [self drawInRect:CGRectMake(0, 0, pixelSize.width, pixelSize.height)];
     UIImage *drawnImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return UIImagePNGRepresentation(drawnImage);

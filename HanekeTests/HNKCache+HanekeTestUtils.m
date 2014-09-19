@@ -19,17 +19,14 @@
 //
 
 #import "HNKCache+HanekeTestUtils.h"
+#import "HNKSimpleFetcher.h"
 #import <OCMock/OCMock.h>
 
 @implementation HNKCache (HanekeTestUtils)
 
-+ (id)entityWithKey:(NSString*)key data:(NSData*)data image:(UIImage*)image
++ (id)fetcherWithKey:(NSString*)key image:(UIImage*)image
 {
-    id entity = [OCMockObject mockForProtocol:@protocol(HNKCacheEntity)];
-    [[[entity stub] andReturn:key] cacheKey];
-    [[[entity stub] andReturn:data] cacheOriginalData];
-    [[[entity stub] andReturn:image] cacheOriginalImage];
-    return entity;
+    return [[HNKSimpleFetcher alloc] initWithKey:key image:image];
 }
 
 - (HNKCacheFormat*)registerFormatWithSize:(CGSize)size

@@ -1,8 +1,8 @@
 //
-//  XCTestCase+HanekeTestUtils.h
+//  HNKSimpleFetcher.h
 //  Haneke
 //
-//  Created by Hermés Piqué on 09/03/14.
+//  Created by Hermes Pique on 8/19/14.
 //  Copyright (c) 2014 Hermes Pique. All rights reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,12 +18,20 @@
 //  limitations under the License.
 //
 
-#import <XCTest/XCTest.h>
+#import <Foundation/Foundation.h>
+#import "HNKCache.h"
 
-@interface XCTestCase (HanekeTestUtils)
+/**
+ Simple fetcher that represents a key-image pair.
+ @discussion Used as a convenience by the UIKit categories.
+ */
+@interface HNKSimpleFetcher : NSObject<HNKFetcher>
 
-- (void)hnk_testAsyncBlock:(void(^)(dispatch_semaphore_t))block;
-
-- (void)hnk_waitFor:(NSTimeInterval)timeInterval;
+/**
+ Initializes a fetcher with the given key and image.
+ @param key Image key.
+ @param image Image that will be returned by the fetcher.
+ */
+- (instancetype)initWithKey:(NSString*)key image:(UIImage*)image;
 
 @end

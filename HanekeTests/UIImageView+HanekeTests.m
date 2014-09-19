@@ -22,13 +22,15 @@
 #import "UIImageView+Haneke.h"
 #import "UIImage+HanekeTestUtils.h"
 #import "HNKCache+HanekeTestUtils.h"
+#import "HNKNetworkFetcher.h"
+#import "HNKDiskFetcher.h"
+#import "UIView+Haneke.h"
 #import "XCTestCase+HanekeTestUtils.h"
 #import <OHHTTPStubs/OHHTTPStubs.h>
 
 @interface UIImageView(HanekeTest)
 
-@property (nonatomic, strong) NSString *hnk_requestedCacheKey;
-@property (nonatomic, strong) NSString *hnk_URLSessionDataTask;
+@property (nonatomic, strong) id<HNKFetcher> hnk_fetcher;
 
 @end
 
@@ -37,22 +39,22 @@
 @end
 
 @implementation UIImageView_HanekeTests {
-    UIImageView *_imageView;
+    UIImageView *_sut;
 }
 
 - (void)setUp
 {
     [super setUp];
-    _imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    _sut = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
 }
 
 - (void)tearDown
 {
     [super tearDown];
-    [_imageView hnk_cancelImageRequest];
+    [_sut hnk_cancelSetImage];
     [OHHTTPStubs removeAllStubs];
     
-    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    HNKCacheFormat *format = _sut.hnk_cacheFormat;
     [[HNKCache sharedCache] removeImagesOfFormatNamed:format.name];
 }
 
@@ -60,49 +62,42 @@
 
 - (void)testCacheFormat_Default
 {
-    HNKCacheFormat *result = _imageView.hnk_cacheFormat;
+    HNKCacheFormat *result = _sut.hnk_cacheFormat;
     XCTAssertNotNil(result, @"");
     XCTAssertEqual(result.allowUpscaling, YES, @"");
-    XCTAssertTrue(result.compressionQuality == 0.75, @"");
-    XCTAssertTrue(result.diskCapacity == 10 * 1024 * 1024, @"");
+    XCTAssertTrue(result.compressionQuality == HNKViewFormatCompressionQuality, @"");
+    XCTAssertTrue(result.diskCapacity == HNKViewFormatDiskCapacity, @"");
     XCTAssertEqual(result.scaleMode, HNKScaleModeFill, @"");
-    XCTAssertTrue(CGSizeEqualToSize(result.size, _imageView.bounds.size), @"");
+    XCTAssertTrue(CGSizeEqualToSize(result.size, _sut.bounds.size), @"");
 }
 
 - (void)testCacheFormat_UIViewContentModeScaleAspectFit
 {
-    _imageView.contentMode = UIViewContentModeScaleAspectFit;
-    HNKCacheFormat *result = _imageView.hnk_cacheFormat;
+    _sut.contentMode = UIViewContentModeScaleAspectFit;
+    HNKCacheFormat *result = _sut.hnk_cacheFormat;
     XCTAssertEqual(result.scaleMode, HNKScaleModeAspectFit, @"");
 }
 
 - (void)testCacheFormat_UIViewContentModeScaleAspectFill
 {
-    _imageView.contentMode = UIViewContentModeScaleAspectFill;
-    HNKCacheFormat *result = _imageView.hnk_cacheFormat;
+    _sut.contentMode = UIViewContentModeScaleAspectFill;
+    HNKCacheFormat *result = _sut.hnk_cacheFormat;
     XCTAssertEqual(result.scaleMode, HNKScaleModeAspectFill, @"");
-}
-
-- (void)testCacheFormat_AnotherUIViewContentMode
-{
-    _imageView.contentMode = UIViewContentModeCenter;
-    HNKCacheFormat *result = _imageView.hnk_cacheFormat;
-    XCTAssertEqual(result.scaleMode, HNKScaleModeFill, @"");
 }
 
 - (void)testSetCacheFormat_Nil
 {
-    _imageView.hnk_cacheFormat = nil;
-    XCTAssertNotNil(_imageView.hnk_cacheFormat, @"");
+    _sut.hnk_cacheFormat = nil;
+    XCTAssertNotNil(_sut.hnk_cacheFormat, @"");
 }
 
 - (void)testSetCacheFormat_NilAfterValue
 {
     HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"test"];
-    _imageView.hnk_cacheFormat = format;
+    _sut.hnk_cacheFormat = format;
     
-    _imageView.hnk_cacheFormat = nil;
-    HNKCacheFormat *result = _imageView.hnk_cacheFormat;
+    _sut.hnk_cacheFormat = nil;
+    HNKCacheFormat *result = _sut.hnk_cacheFormat;
     XCTAssertNotNil(result, @"");
     XCTAssertNotEqualObjects(result, format, @"");
 }
@@ -110,9 +105,9 @@
 - (void)testSetCacheFormat_Value
 {
     HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"test"];
-    _imageView.hnk_cacheFormat = format;
+    _sut.hnk_cacheFormat = format;
     
-    HNKCacheFormat *result = _imageView.hnk_cacheFormat;
+    HNKCacheFormat *result = _sut.hnk_cacheFormat;
     XCTAssertEqualObjects(result, format, @"");
 }
 
@@ -121,135 +116,139 @@
 - (void)testSetImageWithKey_MemoryCacheMiss
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    NSString *key = self.name;
+    
+    [_sut hnk_setImage:image withKey:key];
 
-    [_imageView hnk_setImage:image withKey:key];
-
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
-    XCTAssertNil(_imageView.image, @"");
+    XCTAssertEqualObjects(_sut.hnk_fetcher.key, key,  @"");
+    XCTAssertNil(_sut.image, @"");
 }
 
 - (void)testSetImageWithKey_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
-    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    NSString *key = self.name;
+    HNKCacheFormat *format = _sut.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
     
-    [_imageView hnk_setImage:image withKey:key];
+    [_sut hnk_setImage:image withKey:key];
 
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
-    XCTAssertEqualObjects(_imageView.image, image, @"");
+    XCTAssertNil(_sut.hnk_fetcher,  @"");
+    XCTAssertEqualObjects(_sut.image, image, @"");
 }
 
 - (void)testSetImageWithKey_ImageSet_MemoryCacheMiss
 {
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
-    _imageView.image = previousImage;
+    _sut.image = previousImage;
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    NSString *key = self.name;
     
-    [_imageView hnk_setImage:image withKey:key];
+    [_sut hnk_setImage:image withKey:key];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
-    XCTAssertEqualObjects(_imageView.image, previousImage, @"");
+    XCTAssertEqualObjects(_sut.hnk_fetcher.key, key,  @"");
+    XCTAssertEqualObjects(_sut.image, previousImage, @"");
 }
 
-- (void)testSetImageWithKeyPlaceholderImage_MemoryCacheMiss
+- (void)testSetImageWithKeyPlaceholder_MemoryCacheMiss
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    UIImage *placeholderImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
+    NSString *key = self.name;
     
-    [_imageView hnk_setImage:image withKey:key placeholderImage:placeholderImage];
+    [_sut hnk_setImage:image withKey:key placeholder:placeholder];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
-    XCTAssertEqualObjects(_imageView.image, placeholderImage, @"");
+    XCTAssertEqualObjects(_sut.hnk_fetcher.key, key,  @"");
+    XCTAssertEqualObjects(_sut.image, placeholder, @"");
 }
 
-- (void)testSetImageWithKeyPlaceholderImage_MemoryCacheHit
+- (void)testSetImageWithKeyPlaceholder_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
-    UIImage *placeholderImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
-    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    NSString *key = self.name;
+    HNKCacheFormat *format = _sut.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
     
-    [_imageView hnk_setImage:image withKey:key placeholderImage:placeholderImage];
+    [_sut hnk_setImage:image withKey:key placeholder:placeholder];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
-    UIImage *result = _imageView.image;
+    XCTAssertNil(_sut.hnk_fetcher, @"");
+    UIImage *result = _sut.image;
     XCTAssertEqualObjects(image, result, @"");
 }
 
-- (void)testSetImageWithKeyPlaceholderImage_ImageSet_NilPlaceholder_MemoryCacheMiss
+- (void)testSetImageWithKeyPlaceholder_ImageSet_NilPlaceholder_MemoryCacheMiss
 {
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    _imageView.image = previousImage;
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    _sut.image = previousImage;
+    NSString *key = self.name;
     
-    [_imageView hnk_setImage:image withKey:key];
+    [_sut hnk_setImage:image withKey:key];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
-    UIImage *result = _imageView.image;
+    XCTAssertEqualObjects(_sut.hnk_fetcher.key, key,  @"");
+    UIImage *result = _sut.image;
     XCTAssertEqualObjects(result, previousImage, @"");
 }
 
-- (void)testSetImageWithKeySuccessFailure_MemoryCacheHit
+- (void)testSetImageWithKeyPlaceholderSuccessFailure_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
-    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    HNKCacheFormat *format = _sut.hnk_cacheFormat;
+    NSString *key = self.name;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
     
-    [_imageView hnk_setImage:image withKey:key success:^(UIImage *result) {
+    __block BOOL success = NO;
+    [_sut hnk_setImage:image withKey:key placeholder:nil success:^(UIImage *result) {
         XCTAssertEqualObjects(result, image, @"");
+        success = YES;
     } failure:^(NSError *error) {
         XCTFail(@"");
     }];
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
-    XCTAssertNil(_imageView.image, @"");
+    
+    XCTAssertTrue(success, @"");
+    XCTAssertNil(_sut.hnk_fetcher, @"");
+    XCTAssertNil(_sut.image, @"");
 }
 
-- (void)testSetImageWithKeySuccessFailure_SuccessNil_MemoryCacheHit
+- (void)testSetImageWithKeyPlaceholderSuccessFailure_SuccessNil_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
-    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    NSString *key = self.name;
+    HNKCacheFormat *format = _sut.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
     
-    [_imageView hnk_setImage:image withKey:key success:nil failure:^(NSError *error) {
+    [_sut hnk_setImage:image withKey:key placeholder:nil success:nil failure:^(NSError *error) {
         XCTFail(@"");
     }];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
-    UIImage *result = _imageView.image;
+    XCTAssertNil(_sut.hnk_fetcher, @"");
+    UIImage *result = _sut.image;
     XCTAssertEqualObjects(result, image, @"");
 }
 
-- (void)testSetImageWithKeySuccessFailure_MemoryCacheMiss
+- (void)testSetImageWithKeyPlaceholderSuccessFailure_MemoryCacheMiss
 {
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    NSString *key = self.name;
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
 
-    [_imageView hnk_setImage:image withKey:key success:nil failure:nil];
+    [_sut hnk_setImage:image withKey:key placeholder:nil success:nil failure:nil];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
-    XCTAssertNil(_imageView.image, @"");
+    XCTAssertEqualObjects(_sut.hnk_fetcher.key, key,  @"");
+    XCTAssertNil(_sut.image, @"");
 }
 
-- (void)testSetImageWithKeySuccessFailure_ImageSet_MemoryCacheMiss
+- (void)testSetImageWithKeyPlaceholderSuccessFailure_ImageSet_MemoryCacheMiss
 {
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    _imageView.image = previousImage;
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
+    _sut.image = previousImage;
+    NSString *key = self.name;
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
 
-    [_imageView hnk_setImage:image withKey:key success:nil failure:nil];
+    [_sut hnk_setImage:image withKey:key placeholder:nil success:nil failure:nil];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
-    UIImage *result = _imageView.image;
+    XCTAssertEqualObjects(_sut.hnk_fetcher.key, key,  @"");
+    UIImage *result = _sut.image;
     XCTAssertEqualObjects(result, previousImage, @"");
 }
 
@@ -261,9 +260,11 @@
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     [UIImagePNGRepresentation(image) writeToFile:path atomically:YES];
 
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
-    [_imageView hnk_setImageFromFile:path];
-    XCTAssertNil(_imageView.image, @"");
+    [_sut hnk_setImageFromFile:path];
+
+    HNKDiskFetcher *fetcher = [[HNKDiskFetcher alloc] initWithPath:path];
+    XCTAssertEqualObjects(_sut.hnk_fetcher.key, fetcher.key,  @"");
+    XCTAssertNil(_sut.image, @"");
     
     [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
 }
@@ -274,12 +275,13 @@
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     [UIImagePNGRepresentation(image) writeToFile:path atomically:YES];
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    _imageView.image = previousImage;
+    _sut.image = previousImage;
     
-    [_imageView hnk_setImageFromFile:path];
+    [_sut hnk_setImageFromFile:path];
 
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, path,  @"");
-    XCTAssertEqualObjects(_imageView.image, previousImage, @"");
+    HNKDiskFetcher *fetcher = [[HNKDiskFetcher alloc] initWithPath:path];
+    XCTAssertEqualObjects(_sut.hnk_fetcher.key, fetcher.key,  @"");
+    XCTAssertEqualObjects(_sut.image, previousImage, @"");
     
     [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
 }
@@ -288,117 +290,121 @@
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = [self fixturePathWithName:@"image.png"];
-    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    HNKCacheFormat *format = _sut.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
     
-    [_imageView hnk_setImageFromFile:key];
+    [_sut hnk_setImageFromFile:key];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
-    UIImage *result = _imageView.image;
+    XCTAssertNil(_sut.hnk_fetcher, @"");
+    UIImage *result = _sut.image;
     XCTAssertEqualObjects(image, result, @"");
 }
 
-- (void)testSetImageFromFilePlaceholderImage_MemoryCacheHit
+- (void)testSetImageFromFileplaceholder_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
-    UIImage *placeholderImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = [self fixturePathWithName:@"image.png"];
-    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    HNKCacheFormat *format = _sut.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
     
-    [_imageView hnk_setImageFromFile:key placeholderImage:placeholderImage];
+    [_sut hnk_setImageFromFile:key placeholder:placeholder];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
-    UIImage *result = _imageView.image;
+    XCTAssertNil(_sut.hnk_fetcher, @"");
+    UIImage *result = _sut.image;
     XCTAssertEqualObjects(result, image, @"");
 }
 
-- (void)testSetImageFromFilePlaceholderImage_MemoryCacheMiss
+- (void)testSetImageFromFilePlaceholder_MemoryCacheMiss
 {
-    UIImage *placeholderImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    NSString *key = [self fixturePathWithName:@"image.png"];
+    UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    NSString *path = [self fixturePathWithName:@"image.png"];
 
-    [_imageView hnk_setImageFromFile:key placeholderImage:placeholderImage];
+    [_sut hnk_setImageFromFile:path placeholder:placeholder];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
-    UIImage *result = _imageView.image;
-    XCTAssertEqualObjects(result, placeholderImage, @"");
+    HNKDiskFetcher *fetcher = [[HNKDiskFetcher alloc] initWithPath:path];
+    XCTAssertEqualObjects(_sut.hnk_fetcher.key, fetcher.key,  @"");
+    UIImage *result = _sut.image;
+    XCTAssertEqualObjects(result, placeholder, @"");
 }
 
-- (void)testSetImageFromFilePlaceholderImage_ImageSet_NilPlaceholder_MemoryCacheMiss
+- (void)testSetImageFromFilePlaceholder_ImageSet_NilPlaceholder_MemoryCacheMiss
 {
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    _imageView.image = previousImage;
-    NSString *key = [self fixturePathWithName:@"image.png"];
+    _sut.image = previousImage;
+    NSString *path = [self fixturePathWithName:@"image.png"];
     
-    [_imageView hnk_setImageFromFile:key placeholderImage:nil];
+    [_sut hnk_setImageFromFile:path placeholder:nil];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
-    UIImage *result = _imageView.image;
+    HNKDiskFetcher *fetcher = [[HNKDiskFetcher alloc] initWithPath:path];
+    XCTAssertEqualObjects(_sut.hnk_fetcher.key, fetcher.key,  @"");
+    UIImage *result = _sut.image;
     XCTAssertEqualObjects(result, previousImage, @"");
 }
 
-- (void)testSetImageFromFileSuccessFailure_MemoryCacheHit
+- (void)testSetImageFromFilePlaceholderSuccessFailure_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     NSString *key = [self fixturePathWithName:@"image.png"];
-    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    HNKCacheFormat *format = _sut.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
     
-    [_imageView hnk_setImageFromFile:key success:^(UIImage *result) {
+    [_sut hnk_setImageFromFile:key placeholder:nil success:^(UIImage *result) {
         XCTAssertEqualObjects(result, image, @"");
     } failure:^(NSError *error) {
         XCTFail(@"");
     }];
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
-    XCTAssertNil(_imageView.image, @"");
+    XCTAssertNil(_sut.hnk_fetcher, @"");
+    XCTAssertNil(_sut.image, @"");
 }
 
-- (void)testSetImageFromFileSuccessFailure_SuccessNil_MemoryCacheHit
+- (void)testSetImageFromFilePlaceholderSuccessFailure_SuccessNil_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     NSString *key = [self fixturePathWithName:@"image.png"];
-    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    HNKCacheFormat *format = _sut.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
     
-    [_imageView hnk_setImageFromFile:key success:nil failure:^(NSError *error) {
+    [_sut hnk_setImageFromFile:key placeholder:nil success:nil failure:^(NSError *error) {
         XCTFail(@"");
     }];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
-    UIImage *result = _imageView.image;
+    XCTAssertNil(_sut.hnk_fetcher, @"");
+    UIImage *result = _sut.image;
     XCTAssertEqualObjects(result, image, @"");
 }
 
-- (void)testSetImageFromFileSuccessFailure_MemoryCacheMiss
+- (void)testSetImageFromFilePlaceholderSuccessFailure_MemoryCacheMiss
 {
-    NSString *key = [self fixturePathWithName:@"image.png"];
+    NSString *path = [self fixturePathWithName:@"image.png"];
     
-    [_imageView hnk_setImageFromFile:key success:nil failure:nil];
+    [_sut hnk_setImageFromFile:path placeholder:nil success:nil failure:nil];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
-    XCTAssertNil(_imageView.image, @"");
+    HNKDiskFetcher *fetcher = [[HNKDiskFetcher alloc] initWithPath:path];
+    XCTAssertEqualObjects(_sut.hnk_fetcher.key, fetcher.key,  @"");
+    XCTAssertNil(_sut.image, @"");
 }
 
-- (void)testSetImageFromFileSuccessFailure_ImageSet_MemoryCacheMiss
+- (void)testSetImageFromFilePlaceholderSuccessFailure_ImageSet_MemoryCacheMiss
 {
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    _imageView.image = previousImage;
-    NSString *key = [self fixturePathWithName:@"image.png"];
+    _sut.image = previousImage;
+    NSString *path = [self fixturePathWithName:@"image.png"];
     
-    [_imageView hnk_setImageFromFile:key success:nil failure:nil];
+    [_sut hnk_setImageFromFile:path placeholder:nil success:nil failure:nil];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
-    UIImage *result = _imageView.image;
+    HNKDiskFetcher *fetcher = [[HNKDiskFetcher alloc] initWithPath:path];
+    XCTAssertEqualObjects(_sut.hnk_fetcher.key, fetcher.key,  @"");
+    UIImage *result = _sut.image;
     XCTAssertEqualObjects(result, previousImage, @"");
 }
 
-- (void)testSetImageFromFileSuccessFailure_NoSuchFileError
+- (void)testSetImageFromFilePlaceholderSuccessFailure_NoSuchFileError
 {
     NSString *key = [self fixturePathWithName:@"image.png"];
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_imageView hnk_setImageFromFile:key success:^(UIImage *result) {
+        [_sut hnk_setImageFromFile:key placeholder:nil success:^(UIImage *result) {
             XCTFail(@"");
             dispatch_semaphore_signal(semaphore);
         } failure:^(NSError *error) {
@@ -408,115 +414,116 @@
         }];
     }];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
+    XCTAssertNil(_sut.hnk_fetcher, @"");
 }
 
-- (void)testSetImageFromFileSuccessFailure_CannotReadImageFromData
+- (void)testSetImageFromFilePlaceholderSuccessFailure_InvalidData
 {
     NSString *path = [self fixturePathWithName:@"image.png"];
-    NSData *data = [NSData data];
+    NSData *data = [@"Hello" dataUsingEncoding:NSUTF8StringEncoding];
     [data writeToFile:path atomically:YES];
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_imageView hnk_setImageFromFile:path success:^(UIImage *result) {
+        [_sut hnk_setImageFromFile:path placeholder:nil success:^(UIImage *result) {
             XCTFail(@"hnk_setImageFromFile succeded with invalid data");
             dispatch_semaphore_signal(semaphore);
          } failure:^(NSError *error) {
             XCTAssertNotNil(error);
             XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
-            XCTAssertEqual(error.code, HNKErrorEntityCannotReadImageFromData, @"");
+            XCTAssertEqual(error.code, HNKErrorDiskFetcherInvalidData, @"");
             dispatch_semaphore_signal(semaphore);
         }];
+
+        HNKDiskFetcher *fetcher = [[HNKDiskFetcher alloc] initWithPath:path];
+        XCTAssertEqualObjects(_sut.hnk_fetcher.key, fetcher.key,  @"");
     }];
-    
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
     
     [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
 }
 
-#pragma mark setImageFromEntity:
+#pragma mark setImageFromFetcher:
 
-- (void)testSetImageFromEntity_MemoryCacheMiss
+- (void)testSetImageFromFetcher_MemoryCacheMiss
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:image];
-    [_imageView hnk_setImageFromEntity:entity];
+    NSString *key = self.name;
+    id<HNKFetcher> fetcher = [HNKCache fetcherWithKey:key image:image];
+    [_sut hnk_setImageFromFetcher:fetcher];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
-    XCTAssertNil(_imageView.image, @"");
+    XCTAssertEqualObjects(_sut.hnk_fetcher, fetcher,  @"");
+    XCTAssertNil(_sut.image, @"");
 }
 
-- (void)testSetImageFromEntity_MemoryCacheHit
+- (void)testSetImageFromFetcher_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = @"test";
-    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    HNKCacheFormat *format = _sut.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:image];
+    id<HNKFetcher> fetcher = [HNKCache fetcherWithKey:key image:image];
     
-    [_imageView hnk_setImageFromEntity:entity];
+    [_sut hnk_setImageFromFetcher:fetcher];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
-    UIImage *result = _imageView.image;
+    XCTAssertNil(_sut.hnk_fetcher, @"");
+    UIImage *result = _sut.image;
     XCTAssertEqualObjects(image, result, @"");
 }
 
-- (void)testSetImageFromEntity_ImageSet_MemoryCacheMiss
+- (void)testSetImageFromFetcher_ImageSet_MemoryCacheMiss
 {
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
-    _imageView.image = previousImage;
+    _sut.image = previousImage;
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:image];
+    NSString *key = self.name;
+    id<HNKFetcher> fetcher = [HNKCache fetcherWithKey:key image:image];
     
-    [_imageView hnk_setImageFromEntity:entity];
+    [_sut hnk_setImageFromFetcher:fetcher];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
-    XCTAssertEqualObjects(_imageView.image, previousImage, @"");
+    XCTAssertEqualObjects(_sut.hnk_fetcher, fetcher,  @"");
+    XCTAssertEqualObjects(_sut.image, previousImage, @"");
 }
 
-- (void)testSetImageFromEntityPlaceholderImage_MemoryCacheMiss
+- (void)testSetImageFromFetcherPlaceholder_MemoryCacheMiss
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
-    UIImage *placeholderImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:image];
+    UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    NSString *key = self.name;
+    id<HNKFetcher> fetcher = [HNKCache fetcherWithKey:key image:image];
     
-    [_imageView hnk_setImageFromEntity:entity placeholderImage:placeholderImage];
+    [_sut hnk_setImageFromFetcher:fetcher placeholder:placeholder];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
-    XCTAssertEqualObjects(_imageView.image, placeholderImage, @"");
+    XCTAssertEqualObjects(_sut.hnk_fetcher, fetcher,  @"");
+    XCTAssertEqualObjects(_sut.image, placeholder, @"");
 }
 
-- (void)testSetImageFromEntityPlaceholderImage_MemoryCacheHit
+- (void)testSetImageFromFetcherPlaceholder_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
-    UIImage *placeholderImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = @"test";
-    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    HNKCacheFormat *format = _sut.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:image];
+    id<HNKFetcher> fetcher = [HNKCache fetcherWithKey:key image:image];
     
-    [_imageView hnk_setImageFromEntity:entity placeholderImage:placeholderImage];
+    [_sut hnk_setImageFromFetcher:fetcher placeholder:placeholder];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
-    UIImage *result = _imageView.image;
+    XCTAssertNil(_sut.hnk_fetcher, @"");
+    UIImage *result = _sut.image;
     XCTAssertEqualObjects(image, result, @"");
 }
 
-- (void)testSetImageFromEntityImage_ImageSet_NilPlaceholder_MemoryCacheMiss
+- (void)testSetImageFromFetcher_ImageSet_NilPlaceholder_MemoryCacheMiss
 {
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    _imageView.image = previousImage;
-    NSString *key = [NSString stringWithFormat:@"%s", __PRETTY_FUNCTION__];
-    id<HNKCacheEntity> entity = [HNKCache entityWithKey:key data:nil image:image];
+    _sut.image = previousImage;
+    NSString *key = self.name;
+    id<HNKFetcher> fetcher = [HNKCache fetcherWithKey:key image:image];
     
-    [_imageView hnk_setImageFromEntity:entity placeholderImage:nil];
+    [_sut hnk_setImageFromFetcher:fetcher placeholder:nil];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, key,  @"");
-    UIImage *result = _imageView.image;
+    XCTAssertEqualObjects(_sut.hnk_fetcher, fetcher,  @"");
+    UIImage *result = _sut.image;
     XCTAssertEqualObjects(result, previousImage, @"");
 }
 
@@ -526,145 +533,147 @@
 {
     NSURL *url = [NSURL URLWithString:@"http://imgs.xkcd.com/comics/election.png"];
     
-    [_imageView hnk_setImageFromURL:url];
+    [_sut hnk_setImageFromURL:url];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, url.absoluteString,  @"");
-    XCTAssertNil(_imageView.image, @"");
+    id<HNKFetcher> fetcher = [[HNKNetworkFetcher alloc] initWithURL:url];
+    XCTAssertEqualObjects(_sut.hnk_fetcher.key, fetcher.key,  @"");
+    XCTAssertNil(_sut.image, @"");
 }
 
 - (void)testSetImageFromURL_ImageSet_MemoryCacheMiss
 {
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    _imageView.image = previousImage;
+    _sut.image = previousImage;
     NSURL *url = [NSURL URLWithString:@"http://imgs.xkcd.com/comics/election.png"];
 
-    [_imageView hnk_setImageFromURL:url];
+    [_sut hnk_setImageFromURL:url];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, url.absoluteString,  @"");
-    XCTAssertEqualObjects(_imageView.image, previousImage, @"");
+    id<HNKFetcher> fetcher = [[HNKNetworkFetcher alloc] initWithURL:url];
+    XCTAssertEqualObjects(_sut.hnk_fetcher.key, fetcher.key,  @"");
+    XCTAssertEqualObjects(_sut.image, previousImage, @"");
 }
 
 - (void)testSetImageFromURL_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = @"http://imgs.xkcd.com/comics/election.png";
-    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    HNKCacheFormat *format = _sut.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
     NSURL *url = [NSURL URLWithString:key];
     
-    [_imageView hnk_setImageFromURL:url];
+    [_sut hnk_setImageFromURL:url];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
-    XCTAssertNil(_imageView.hnk_URLSessionDataTask, @"");
-    UIImage *result = _imageView.image;
+    XCTAssertNil(_sut.hnk_fetcher, @"");
+    UIImage *result = _sut.image;
     XCTAssertEqualObjects(image, result, @"");
 }
 
-- (void)testSetImageFromURLPlaceholderImage_MemoryCacheHit
+- (void)testSetImageFromURLPlaceholder_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
-    UIImage *placeholderImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = @"http://imgs.xkcd.com/comics/election.png";
-    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    HNKCacheFormat *format = _sut.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
     NSURL *url = [NSURL URLWithString:key];
     
-    [_imageView hnk_setImageFromURL:url placeholderImage:placeholderImage];
+    [_sut hnk_setImageFromURL:url placeholder:placeholder];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
-    XCTAssertNil(_imageView.hnk_URLSessionDataTask, @"");
-    UIImage *result = _imageView.image;
+    XCTAssertNil(_sut.hnk_fetcher, @"");
+    UIImage *result = _sut.image;
     XCTAssertEqualObjects(result, image, @"");
 }
 
-- (void)testSetImageFromURLPlaceholderImage_MemoryCacheMiss
+- (void)testSetImageFromURLPlaceholder_MemoryCacheMiss
 {
-    UIImage *placeholderImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
+    UIImage *placeholder = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = @"http://imgs.xkcd.com/comics/election.png";
     NSURL *url = [NSURL URLWithString:key];
     
-    [_imageView hnk_setImageFromURL:url placeholderImage:placeholderImage];
+    [_sut hnk_setImageFromURL:url placeholder:placeholder];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, url.absoluteString,  @"");
-    UIImage *result = _imageView.image;
-    XCTAssertEqualObjects(result, placeholderImage, @"");
+    id<HNKFetcher> fetcher = [[HNKNetworkFetcher alloc] initWithURL:url];
+    XCTAssertEqualObjects(_sut.hnk_fetcher.key, fetcher.key,  @"");
+    UIImage *result = _sut.image;
+    XCTAssertEqualObjects(result, placeholder, @"");
 }
 
-- (void)testSetImageFromURLPlaceholderImage_ImageSet_NilPlaceholder_MemoryCacheMiss
+- (void)testSetImageFromURLPlaceholder_ImageSet_NilPlaceholder_MemoryCacheMiss
 {
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    _imageView.image = previousImage;
+    _sut.image = previousImage;
     NSString *key = @"http://imgs.xkcd.com/comics/election.png";
     NSURL *url = [NSURL URLWithString:key];
     
-    [_imageView hnk_setImageFromURL:url placeholderImage:nil];
+    [_sut hnk_setImageFromURL:url placeholder:nil];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, url.absoluteString,  @"");
-    UIImage *result = _imageView.image;
+    id<HNKFetcher> fetcher = [[HNKNetworkFetcher alloc] initWithURL:url];
+    XCTAssertEqualObjects(_sut.hnk_fetcher.key, fetcher.key,  @"");
+    UIImage *result = _sut.image;
     XCTAssertEqualObjects(result, previousImage, @"");
 }
 
-- (void)testSetImageFromURLSuccessFailure_MemoryCacheMiss
+- (void)testSetImageFromURLPlaceholderSuccessFailure_MemoryCacheMiss
 {
     NSURL *url = [NSURL URLWithString:@"http://imgs.xkcd.com/comics/election.png"];
     
-    [_imageView hnk_setImageFromURL:url success:nil failure:nil];
+    [_sut hnk_setImageFromURL:url placeholder:nil success:nil failure:nil];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, url.absoluteString,  @"");
-    XCTAssertNil(_imageView.image, @"");
+    id<HNKFetcher> fetcher = [[HNKNetworkFetcher alloc] initWithURL:url];
+    XCTAssertEqualObjects(_sut.hnk_fetcher.key, fetcher.key,  @"");
+    XCTAssertNil(_sut.image, @"");
 }
 
-- (void)testSetImageFromURLSuccessFailure_ImageSet_MemoryCacheMiss
+- (void)testSetImageFromURLPlaceholderSuccessFailure_ImageSet_MemoryCacheMiss
 {
     UIImage *previousImage = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
-    _imageView.image = previousImage;
+    _sut.image = previousImage;
     NSURL *url = [NSURL URLWithString:@"http://imgs.xkcd.com/comics/election.png"];
     
-    [_imageView hnk_setImageFromURL:url success:nil failure:nil];
+    [_sut hnk_setImageFromURL:url placeholder:nil success:nil failure:nil];
     
-    XCTAssertEqualObjects(_imageView.hnk_requestedCacheKey, url.absoluteString,  @"");
-    UIImage *result = _imageView.image;
+    id<HNKFetcher> fetcher = [[HNKNetworkFetcher alloc] initWithURL:url];
+    XCTAssertEqualObjects(_sut.hnk_fetcher.key, fetcher.key,  @"");
+    UIImage *result = _sut.image;
     XCTAssertEqualObjects(result, previousImage, @"");
 }
 
-- (void)testSetImageFromURLSuccessFailure_MemoryCacheHit
+- (void)testSetImageFromURLPlaceholderSuccessFailure_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = @"http://imgs.xkcd.com/comics/election.png";
-    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    HNKCacheFormat *format = _sut.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
     NSURL *url = [NSURL URLWithString:key];
     
-    [_imageView hnk_setImageFromURL:url success:^(UIImage *result) {
+    [_sut hnk_setImageFromURL:url placeholder:nil success:^(UIImage *result) {
         XCTAssertEqualObjects(result, image, @"");
     } failure:^(NSError *error) {
         XCTFail(@"");
     }];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
-    XCTAssertNil(_imageView.hnk_URLSessionDataTask, @"");
-    XCTAssertNil(_imageView.image, @"");
+    XCTAssertNil(_sut.hnk_fetcher, @"");
+    XCTAssertNil(_sut.image, @"");
 }
 
-- (void)testSetImageFromURLSuccessFailure_SuccesNil_MemoryCacheHit
+- (void)testSetImageFromURLPlaceholderSuccessFailure_SuccesNil_MemoryCacheHit
 {
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(1, 1)];
     NSString *key = @"http://imgs.xkcd.com/comics/election.png";
-    HNKCacheFormat *format = _imageView.hnk_cacheFormat;
+    HNKCacheFormat *format = _sut.hnk_cacheFormat;
     [[HNKCache sharedCache] setImage:image forKey:key formatName:format.name];
     NSURL *url = [NSURL URLWithString:key];
     
-    [_imageView hnk_setImageFromURL:url success:nil failure:^(NSError *error) {
+    [_sut hnk_setImageFromURL:url placeholder:nil success:nil failure:^(NSError *error) {
         XCTFail(@"");
     }];
     
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
-    XCTAssertNil(_imageView.hnk_URLSessionDataTask, @"");
-    UIImage *result = _imageView.image;
+    XCTAssertNil(_sut.hnk_fetcher, @"");
+    UIImage *result = _sut.image;
     XCTAssertEqualObjects(result, image, @"");
 }
 
-- (void)testSetImageFromURLSuccessFailure_DownloadSuccess
+- (void)testSetImageFromURLPlaceholderSuccessFailure_DownloadSuccess
 {
     NSURL *URL = [NSURL URLWithString:@"http://haneke.com/image.jpg"];
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
@@ -677,7 +686,7 @@
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore)
      {
-         [_imageView hnk_setImageFromURL:URL success:^(UIImage *image) {
+         [_sut hnk_setImageFromURL:URL placeholder:nil success:^(UIImage *image) {
              dispatch_semaphore_signal(semaphore);
          } failure:^(NSError *error) {
              XCTFail(@"");
@@ -686,7 +695,7 @@
      }];
 }
 
-- (void)testSetImageFromURLSuccessFailure_DownloadFailure
+- (void)testSetImageFromURLPlaceholderSuccessFailure_DownloadFailure
 {
     NSURL *URL = [NSURL URLWithString:@"http://haneke.com/image.jpg"];
     NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:kCFURLErrorNotConnectedToInternet userInfo:nil];
@@ -698,7 +707,7 @@
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore)
      {
-         [_imageView hnk_setImageFromURL:URL success:^(UIImage *image) {
+         [_sut hnk_setImageFromURL:URL placeholder:nil success:^(UIImage *image) {
              XCTFail(@"");
              dispatch_semaphore_signal(semaphore);
          } failure:^(NSError *result) {
@@ -718,7 +727,7 @@
         
         UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(5, 5)];
         NSData *data = UIImageJPEGRepresentation(image, 1);
-        NSString *contentLengthString = [NSString stringWithFormat:@"%lu", data.length * 10];
+        NSString *contentLengthString = [NSString stringWithFormat:@"%ld", (long)data.length * 10];
         OHHTTPStubsResponse *response = [OHHTTPStubsResponse responseWithData:data statusCode:200 headers:nil];
         response.httpHeaders = @{@"Content-Length": contentLengthString}; // See: https://github.com/AliSoftware/OHHTTPStubs/pull/62
         return response;
@@ -726,37 +735,39 @@
     
     [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore)
      {
-         [_imageView hnk_setImageFromURL:URL success:^(UIImage *image) {
+         [_sut hnk_setImageFromURL:URL placeholder:nil success:^(UIImage *image) {
              XCTFail(@"");
              dispatch_semaphore_signal(semaphore);
          } failure:^(NSError *error) {
              dispatch_semaphore_signal(semaphore);
              XCTAssertNotNil(error, @"");
-             XCTAssertEqual(HNKErrorImageFromURLMissingData, error.code, @"");
+             XCTAssertEqual(HNKErrorNetworkFetcherMissingData, error.code, @"");
          }];
      }];
 }
 
-#pragma mark cancelImageRequest
+#pragma mark cancelSetImage
 
-- (void)testCancelImageRequest_NoRequest
+- (void)testCancelSetImage_NoRequest
 {
-    [_imageView hnk_cancelImageRequest];
+    [_sut hnk_cancelSetImage];
 
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
-    XCTAssertNil(_imageView.hnk_URLSessionDataTask, @"");
+    XCTAssertNil(_sut.hnk_fetcher, @"");
 }
 
-- (void)testCancelImageRequest_AfterRequest
+- (void)testCancelSetImage_After
 {
     NSURL *url = [NSURL URLWithString:@"http://imgs.xkcd.com/comics/election.png"];
-    [_imageView hnk_setImageFromURL:url];
+    [_sut hnk_setImageFromURL:url placeholder:nil success:^(UIImage *image) {
+        XCTFail(@"Unexpected success");
+    } failure:^(NSError *error) {
+        XCTFail(@"Unexpected success");
+    }];
     
-    [_imageView hnk_cancelImageRequest];
+    [_sut hnk_cancelSetImage];
 
-    XCTAssertNil(_imageView.hnk_requestedCacheKey, @"");
-    XCTAssertNil(_imageView.hnk_URLSessionDataTask, @"");
-
+    XCTAssertNil(_sut.hnk_fetcher, @"");
+    [self hnk_waitFor:0.1];
 }
 
 #pragma mark Utils

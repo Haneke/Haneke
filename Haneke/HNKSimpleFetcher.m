@@ -1,8 +1,8 @@
 //
-//  XCTestCase+HanekeTestUtils.h
+//  HNKSimpleFetcher.m
 //  Haneke
 //
-//  Created by Hermés Piqué on 09/03/14.
+//  Created by Hermes Pique on 8/19/14.
 //  Copyright (c) 2014 Hermes Pique. All rights reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,12 +18,31 @@
 //  limitations under the License.
 //
 
-#import <XCTest/XCTest.h>
+#import "HNKSimpleFetcher.h"
 
-@interface XCTestCase (HanekeTestUtils)
+@implementation HNKSimpleFetcher {
+    NSString *_key;
+    UIImage *_image;
+}
 
-- (void)hnk_testAsyncBlock:(void(^)(dispatch_semaphore_t))block;
+- (instancetype)initWithKey:(NSString*)key image:(UIImage*)image
+{
+    if (self = [super init])
+    {
+        _key = [key copy];
+        _image = image;
+    }
+    return self;
+}
 
-- (void)hnk_waitFor:(NSTimeInterval)timeInterval;
+- (NSString*)key
+{
+    return _key;
+}
+
+- (void)fetchImageWithSuccess:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
+{
+    successBlock(_image);
+}
 
 @end

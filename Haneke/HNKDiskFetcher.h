@@ -1,8 +1,8 @@
 //
-//  XCTestCase+HanekeTestUtils.h
+//  HNKDiskFetcher.h
 //  Haneke
 //
-//  Created by Hermés Piqué on 09/03/14.
+//  Created by Hermes Pique on 7/23/14.
 //  Copyright (c) 2014 Hermes Pique. All rights reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,12 +18,29 @@
 //  limitations under the License.
 //
 
-#import <XCTest/XCTest.h>
+#import <Foundation/Foundation.h>
+#import "HNKCache.h"
 
-@interface XCTestCase (HanekeTestUtils)
+enum
+{
+    HNKErrorDiskFetcherInvalidData = -500,
+};
 
-- (void)hnk_testAsyncBlock:(void(^)(dispatch_semaphore_t))block;
+/**
+ Fetcher that can provide a disk image. The key will be the given path.
+ */
+@interface HNKDiskFetcher : NSObject<HNKFetcher>
 
-- (void)hnk_waitFor:(NSTimeInterval)timeInterval;
+/**
+ Initializes a fetcher with the given path.
+ @param path Image path.
+ */
+- (instancetype)initWithPath:(NSString*)path;
+
+/**
+ Cancels the current fetch. When a fetch is cancelled it should not call any of the provided blocks.
+ @discussion This will be typically used by UI logic to cancel fetches during view reuse.
+ */
+- (void)cancelFetch;
 
 @end

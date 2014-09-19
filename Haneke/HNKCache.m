@@ -19,13 +19,9 @@
 //
 
 #import "HNKCache.h"
-#import <CommonCrypto/CommonDigest.h> // For hnk_MD5String
-#import <sys/xattr.h> // For hnk_setValue:forExtendedFileAttribute:
-@import ImageIO;
+#import "HNKDiskCache.h"
 
 NSString *const HNKErrorDomain = @"com.hpique.haneke";
-
-NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
 
 #define hnk_dispatch_sync_main_queue_if_needed(block)\
     if ([NSThread isMainThread])\
@@ -37,48 +33,23 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
         dispatch_sync(dispatch_get_main_queue(), block);\
     }
 
-@interface HNKCache(Disk)
-
-- (void)calculateDiskSizeOfFormat:(HNKCacheFormat*)format;
-- (void)controlDiskCapacityOfFormat:(HNKCacheFormat*)format;
-- (void)enumeratePreloadImagesOfFormat:(HNKCacheFormat*)format usingBlock:(void(^)(NSString *key, UIImage *image))block;
-- (NSString*)pathForKey:(NSString*)key format:(HNKCacheFormat*)format;
-- (void)setDiskImage:(UIImage*)image forKey:(NSString*)key format:(HNKCacheFormat*)format;
-- (void)updateAccessDateOfImage:(UIImage*)image key:(NSString*)key format:(HNKCacheFormat*)format;
-
-@end
-
-@interface NSFileManager (hnk_utils)
-
-- (void)hnk_enumerateContentsOfDirectoryAtPath:(NSString*)path orderedByProperty:(NSString*)property ascending:(BOOL)ascending usingBlock:(void(^)(NSURL *url, NSUInteger idx, BOOL *stop))block;
-
-@end
-
-@interface NSString (hnk_utils)
-
-- (NSString*)hnk_MD5String;
-- (BOOL)hnk_setValue:(NSString*)value forExtendedFileAttribute:(NSString*)attribute;
-- (NSString*)hnk_valueForExtendedFileAttribute:(NSString*)attribute;
-
-@end
-
-@interface UIImage (hnk_utils)
+@interface UIImage (Haneke)
 
 - (CGSize)hnk_aspectFillSizeForSize:(CGSize)size;
 - (CGSize)hnk_aspectFitSizeForSize:(CGSize)size;
+- (NSData*)hnk_dataWithCompressionQuality:(CGFloat)compressionQuality;
+- (UIImage *)hnk_decompressedImage;
 - (UIImage *)hnk_imageByScalingToSize:(CGSize)newSize;
 - (BOOL)hnk_hasAlpha;
-+ (UIImage *)hnk_decompressedImageWithData:(NSData*)data;
 
 @end
 
 @interface HNKCacheFormat()
 
-@property (nonatomic, assign) unsigned long long diskSize;
 @property (nonatomic, weak) HNKCache *cache;
 @property (nonatomic, readonly) NSString *directory;
-@property (nonatomic, strong) dispatch_queue_t diskQueue;
 @property (nonatomic, assign) NSUInteger requestCount;
+@property (nonatomic, strong) HNKDiskCache *diskCache;
 
 @end
 
@@ -138,17 +109,10 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
     }
     _formats[formatName] = format;
     format.cache = self;
-    NSString *queueName = [NSString stringWithFormat:@"com.hpique.haneke.disk.%@", formatName];
-    format.diskQueue = dispatch_queue_create(queueName.UTF8String, NULL);
-    dispatch_async(format.diskQueue, ^{
-        [self calculateDiskSizeOfFormat:format];
-        [self controlDiskCapacityOfFormat:format];
-        [self enumeratePreloadImagesOfFormat:format usingBlock:^(NSString *key, UIImage *image) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self setMemoryImage:image forKey:key format:format];
-            });
-        }];
-    });
+    format.diskCache = [[HNKDiskCache alloc] initWithDirectory:format.directory capacity:format.diskCapacity];
+    [self enumeratePreloadImagesOfFormat:format usingBlock:^(NSString *key, UIImage *image) {
+        [self setMemoryImage:image forKey:key format:format];
+    }];
 }
 
 - (NSDictionary*)formats
@@ -158,89 +122,36 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
 
 #pragma mark Getting images
 
-- (UIImage*)imageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName error:(NSError *__autoreleasing *)errorPtr
+- (BOOL)fetchImageForFetcher:(id<HNKFetcher>)fetcher formatName:(NSString *)formatName success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
-    HNKCacheFormat *format = _formats[formatName];
-    NSAssert(format, @"Unknown format %@", formatName);
-    format.requestCount++;
-    
-    NSString *key = entity.cacheKey;
-    UIImage *image = [self memoryImageForKey:key format:format];
-    if (image)
-    {
-        HanekeLog(@"Memory cache hit: %@/%@", formatName, key.lastPathComponent);
-        dispatch_async(format.diskQueue, ^{
-            [self updateAccessDateOfImage:image key:key format:format];
-        });
-        return image;
-    }
-    HanekeLog(@"Memory cache miss: %@/%@", formatName, key.lastPathComponent);
-    
-    NSString *path = [self pathForKey:key format:format];
-    __block NSData *imageData;
-    dispatch_sync(format.diskQueue, ^{
-        imageData = [NSData dataWithContentsOfFile:path];
-    });
-    if (imageData)
-    {
-        image = [UIImage hnk_decompressedImageWithData:imageData];
-        if (image)
-        {
-            HanekeLog(@"Disk cache hit: %@/%@", formatName, key.lastPathComponent);
-            dispatch_async(format.diskQueue, ^{
-                [self updateAccessDateOfImage:image key:key format:format];
-            });
-            [self setMemoryImage:image forKey:key format:format];
-            return image;
-        }
-    }
-    HanekeLog(@"Disk cache miss: %@/%@", formatName, key.lastPathComponent);
-    
-    UIImage *originalImage = [self imageFromEntity:entity error:errorPtr];
-    if (!originalImage) return nil;
-    
-    image = [self imageFromOriginal:originalImage key:key format:format];
-    [self setMemoryImage:image forKey:key format:format];
-    dispatch_async(format.diskQueue, ^{
-        [self setDiskImage:image forKey:key format:format];
-    });
-    return image;
-}
-
-- (BOOL)retrieveImageForEntity:(id<HNKCacheEntity>)entity formatName:(NSString *)formatName completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock
-{
-    NSString *key = entity.cacheKey;
-    return [self retrieveImageForKey:key formatName:formatName completionBlock:^(UIImage *image, NSError *error) {
-        if (image)
-        {
-            completionBlock(image, error);
-            return;
-        }
+    NSString *key = fetcher.key;
+    return [self fetchImageForKey:key formatName:formatName success:^(UIImage *image) {
+        if (successBlock) successBlock(image);
+    } failure:^(NSError *error) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             HNKCacheFormat *format = _formats[formatName];
-
-            NSError *error = nil;
-            UIImage *originalImage = [self imageFromEntity:entity error:&error];
-            if (!originalImage)
-            {
-                dispatch_sync(dispatch_get_main_queue(), ^{
-                    completionBlock(nil, error);
+            
+            [self fetchImageFromFetcher:fetcher completionBlock:^(UIImage *originalImage, NSError *error) {
+                if (!originalImage)
+                {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        if (failureBlock) failureBlock(error);
+                    });
+                    return;
+                }
+                
+                UIImage *image = [self imageFromOriginal:originalImage key:key format:format];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self setMemoryImage:image forKey:key format:format];
+                    if (successBlock) successBlock(image);
                 });
-                return;
-            }
-            UIImage *image = [self imageFromOriginal:originalImage key:key format:format];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self setMemoryImage:image forKey:key format:format];
-                completionBlock(image, error);
-            });
-            dispatch_async(format.diskQueue, ^{
                 [self setDiskImage:image forKey:key format:format];
-            });
+            }];
         });
     }];
 }
 
-- (BOOL)retrieveImageForKey:(NSString*)key formatName:(NSString *)formatName completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock
+- (BOOL)fetchImageForKey:(NSString*)key formatName:(NSString *)formatName success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     HNKCacheFormat *format = _formats[formatName];
     NSAssert(format, @"Unknown format %@", formatName);
@@ -250,70 +161,48 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
     if (image)
     {
         HanekeLog(@"Memory cache hit: %@/%@", formatName, key.lastPathComponent);
-        completionBlock(image, nil);
-        dispatch_async(format.diskQueue, ^{
-            [self updateAccessDateOfImage:image key:key format:format];
-        });
+        if (successBlock) successBlock(image);
+        [self updateAccessDateOfImage:image key:key format:format];
         return YES;
     }
     HanekeLog(@"Memory cache miss: %@/%@", formatName, key.lastPathComponent);
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSString *path = [self pathForKey:key format:format];
-        __block NSData *imageData;
-        __block NSError *error = nil;
-        dispatch_sync(format.diskQueue, ^{
-            imageData = [NSData dataWithContentsOfFile:path options:kNilOptions error:&error];
-        });
-        if (imageData)
+    [format.diskCache fetchDataForKey:key success:^(NSData *data) {
+        HanekeLog(@"Disk cache hit: %@/%@", formatName, key.lastPathComponent);
+        UIImage *image = [UIImage imageWithData:data];
+        if (image)
         {
-            HanekeLog(@"Disk cache hit: %@/%@", formatName, key.lastPathComponent);
-            UIImage *image = [UIImage hnk_decompressedImageWithData:imageData];
-            if (image)
-            {
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                UIImage *decompressedImage = [image hnk_decompressedImage];
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [self setMemoryImage:image forKey:key format:format];
-                    completionBlock(image, nil);
+                    [self setMemoryImage:decompressedImage forKey:key format:format];
+                    if (successBlock) successBlock(decompressedImage);
                 });
-                dispatch_async(format.diskQueue, ^{
-                    [self updateAccessDateOfImage:image key:key format:format];
-                });
-            }
-            else
-            {
-                NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Disk cache: Cannot read image from data at path %@", @""), path];
-                HanekeLog(@"%@", errorDescription);
-                NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription , NSFilePathErrorKey : path};
-                NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorDiskCacheCannotReadImageFromData userInfo:userInfo];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    completionBlock(nil, error);
-                });
-            }
+            });
+            [self updateAccessDateOfImage:image key:key format:format];
         }
         else
         {
-            if (error.code == NSFileReadNoSuchFileError)
-            {
-                HanekeLog(@"Disk cache miss: %@/%@", formatName, key.lastPathComponent);
-                NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Disk cache: Miss at path %@", @""), path];
-                NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription , NSFilePathErrorKey : path};
-                NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorDiskCacheMiss userInfo:userInfo];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    completionBlock(nil, error);
-                });
-            }
-            else
-            {
-                NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Disk cache: Cannot read from file at path %@", @""), path];
-                HanekeLog(@"%@", errorDescription);
-                NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription , NSFilePathErrorKey : path, NSUnderlyingErrorKey : error};
-                NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorDiskCacheCannotReadFromFile userInfo:userInfo];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    completionBlock(nil, error);
-                });
-            }
+            NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Disk cache: Cannot read image for key %@", @""), key.lastPathComponent];
+            HanekeLog(@"%@", errorDescription);
+            NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription};
+            NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorDiskCacheCannotReadImageFromData userInfo:userInfo];
+            if (failureBlock) failureBlock(error);
         }
-    });
+    } failure:^(NSError *error) {
+        if (error.code == NSFileReadNoSuchFileError)
+        {
+            HanekeLog(@"Disk cache miss: %@/%@", formatName, key.lastPathComponent);
+            NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Image not found for key %@", @""), key.lastPathComponent];
+            NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
+            NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorImageNotFound userInfo:userInfo];
+            if (failureBlock) failureBlock(error);
+        }
+        else
+        {
+            if (failureBlock) failureBlock(error);
+        }
+    }];
     return NO;
 }
 
@@ -325,9 +214,7 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
     NSAssert(format, @"Unknown format %@", formatName);
     
     [self setMemoryImage:image forKey:key format:format];
-    dispatch_async(format.diskQueue, ^{
-        [self setDiskImage:image forKey:key format:format];
-    });
+    [self setDiskImage:image forKey:key format:format];
 }
 
 #pragma mark Removing images
@@ -338,26 +225,7 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
     if (!format) return;
     NSCache *cache = [_memoryCaches objectForKey:formatName];
     [cache removeAllObjects];
-    NSString *directory = format.directory;
-    dispatch_async(format.diskQueue, ^{
-        NSError *error;
-        if ([[NSFileManager defaultManager] removeItemAtPath:directory error:&error])
-        {
-            format.diskSize = 0;
-        }
-        else
-        {
-            BOOL isDirectory = NO;
-            if (![[NSFileManager defaultManager] fileExistsAtPath:directory isDirectory:&isDirectory])
-            {
-                format.diskSize = 0;
-            }
-            else
-            {
-                NSLog(@"Failed to remove directory with error %@", error);
-            }
-        }
-    });
+    [format.diskCache removeAllData];
 }
 
 - (void)removeAllImages
@@ -368,61 +236,41 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
      }];
 }
 
-- (void)removeImagesOfEntity:(id<HNKCacheEntity>)entity
+- (void)removeImagesForKey:(NSString *)key
 {
-    NSString *cacheKey = entity.cacheKey;
-    [_memoryCaches enumerateKeysAndObjectsUsingBlock:^(id key, NSCache *cache, BOOL *stop) {
-        [cache removeObjectForKey:cacheKey];
+    [_memoryCaches enumerateKeysAndObjectsUsingBlock:^(id _, NSCache *cache, BOOL *stop) {
+        [cache removeObjectForKey:key];
     }];
     NSDictionary *formats = _formats.copy;
-    [formats enumerateKeysAndObjectsUsingBlock:^(id key, HNKCacheFormat *format, BOOL *stop) {
-        dispatch_async(format.diskQueue, ^{
-            [self setDiskImage:nil forKey:key format:format];
-        });
+    [formats enumerateKeysAndObjectsUsingBlock:^(id _, HNKCacheFormat *format, BOOL *stop) {
+        [self setDiskImage:nil forKey:key format:format];
     }];
 }
 
 #pragma mark Private (utils)
 
-- (UIImage*)imageFromEntity:(id<HNKCacheEntity>)entity error:(NSError*__autoreleasing *)errorPtr
+- (void)fetchImageFromFetcher:(id<HNKFetcher>)fetcher completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock;
 {
-    __block UIImage *image = nil;
-    hnk_dispatch_sync_main_queue_if_needed(^{
-        image = [entity respondsToSelector:@selector(cacheOriginalImage)] ? entity.cacheOriginalImage : nil;
-    });
-    if (!image)
-    {
-        __block NSData *data = nil;
-        hnk_dispatch_sync_main_queue_if_needed(^{
-            data = [entity respondsToSelector:@selector(cacheOriginalData)] ? entity.cacheOriginalData : nil;
-        });
-        if (!data)
-        {
-            NSString *key = entity.cacheKey;
-            NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Invalid entity %@: Must return non-nil object in either cacheOriginalImage or cacheOriginalData", @""), key.lastPathComponent];
-            HanekeLog(@"%@", errorDescription);
-            if (errorPtr != NULL)
+    hnk_dispatch_sync_main_queue_if_needed((^{
+        [fetcher fetchImageWithSuccess:^(UIImage *image) {
+            if (image)
             {
-                NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
-                *errorPtr = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorEntityMustReturnImageOrData userInfo:userInfo];
+                completionBlock(image, nil);
             }
-            return nil;
-        }
-        image = [UIImage hnk_decompressedImageWithData:data];
-        if (!image)
-        {
-            NSString *key = entity.cacheKey;
-            NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Invalid entity %@: Cannot read image from data", @""), key.lastPathComponent];
-            HanekeLog(@"%@", errorDescription);
-            if (errorPtr != NULL)
+            else
             {
+                NSString *key = fetcher.key;
+                NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Invalid fetcher %@: Must return non-nil in success block", @""), key.lastPathComponent];
+                HanekeLog(@"%@", errorDescription);
                 NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
-                *errorPtr = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorEntityCannotReadImageFromData userInfo:userInfo];
+                NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorFetcherMustReturnImage userInfo:userInfo];
+                completionBlock(nil, error);
+                return;
             }
-            return nil;
-        }
-    }
-    return image;
+        } failure:^(NSError *error) {
+            completionBlock(nil, error);
+        }];
+    }));
 }
 
 - (UIImage*)imageFromOriginal:(UIImage*)original key:(NSString*)key format:(HNKCacheFormat*)format
@@ -430,6 +278,10 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
     UIImage *image = format.preResizeBlock ? format.preResizeBlock(key, original) : original;
     image = [format resizedImageFromImage:image];
     if (format.postResizeBlock) image = format.postResizeBlock(key, image);
+    if (image == original)
+    {
+        image = [image hnk_decompressedImage];
+    }
     return image;
 }
 
@@ -460,107 +312,40 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
     }
 }
 
-#pragma mark Notifications
-
-- (void)didReceiveMemoryWarning:(NSNotification*)notification
-{
-    [_memoryCaches enumerateKeysAndObjectsUsingBlock:^(id key, NSCache *cache, BOOL *stop) {
-        [cache removeAllObjects];
-    }];
-}
-
-@end
-
-@implementation HNKCache(Disk)
-
-- (void)calculateDiskSizeOfFormat:(HNKCacheFormat*)format
-{
-    NSString *directory = format.directory;
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    format.diskSize = 0;
-    NSError *error;
-    NSArray *contents = [fileManager contentsOfDirectoryAtPath:directory error:&error];
-    if (!contents)
-    {
-        NSLog(@"Failed to list directory with error %@", error);
-        return;
-    }
-    for (NSString *pathComponent in contents)
-    {
-        NSString *path = [directory stringByAppendingPathComponent:pathComponent];
-        NSDictionary *attributes = [fileManager attributesOfItemAtPath:path error:&error];
-        if (!attributes) continue;
-        
-        format.diskSize += attributes.fileSize;
-    }
-}
-
-- (void)controlDiskCapacityOfFormat:(HNKCacheFormat*)format
-{
-    if (format.diskSize <= format.diskCapacity) return;
-    
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    [fileManager hnk_enumerateContentsOfDirectoryAtPath:format.directory orderedByProperty:NSURLContentModificationDateKey ascending:YES usingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
-        NSString *path = url.path;
-        [self removeFileAtPath:path format:format];
-        if (format.diskSize <= format.diskCapacity)
-        {
-            *stop = YES;
-        }
-    }];
-}
+#pragma mark Private (disk)
 
 - (void)enumeratePreloadImagesOfFormat:(HNKCacheFormat*)format usingBlock:(void(^)(NSString *key, UIImage *image))block
 {
     HNKPreloadPolicy preloadPolicy = format.preloadPolicy;
     if (preloadPolicy == HNKPreloadPolicyNone) return;
-    
-    NSString *directory = format.directory;
     __block NSDate *maxDate = preloadPolicy == HNKPreloadPolicyAll ? [NSDate distantPast] : nil;
-    [[NSFileManager defaultManager] hnk_enumerateContentsOfDirectoryAtPath:directory orderedByProperty:NSURLContentModificationDateKey ascending:NO usingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
+    [format.diskCache enumerateDataByAccessDateUsingBlock:^(NSString *key, NSData *data, NSDate *accessDate, BOOL *stop) {
         if (format.requestCount > 0)
         {
             *stop = YES;
             return;
         }
-        NSDate *urlDate;
-        [url getResourceValue:&urlDate forKey:NSURLContentModificationDateKey error:nil];
+        
         if (!maxDate)
         {
             static const NSTimeInterval hourInterval = 3600;
-            maxDate = [urlDate dateByAddingTimeInterval:-hourInterval];
+            maxDate = [accessDate dateByAddingTimeInterval:-hourInterval];
         }
-        if ([urlDate earlierDate:maxDate] == urlDate)
+        if ([accessDate earlierDate:maxDate] == accessDate)
         {
             *stop = YES;
             return;
         }
         
-        NSString *path = url.path;
-        NSString *key = [path hnk_valueForExtendedFileAttribute:HNKExtendedFileAttributeKey];
-        if (!key) return;
-
-        NSData *data = [NSData dataWithContentsOfFile:path];
-        if (!data) return;
-
-        UIImage *image = [UIImage hnk_decompressedImageWithData:data];
-        if (!image) return;
-        
-        block(key, image);
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            UIImage *image = [UIImage imageWithData:data];
+            if (!image) return;
+            image = [image hnk_decompressedImage];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                block(key, image);
+            });
+        });
     }];
-}
-
-- (NSString*)pathForKey:(NSString*)key format:(HNKCacheFormat*)format
-{
-    NSString *filename = CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,(CFStringRef)key, NULL, CFSTR("/:"), kCFStringEncodingUTF8));
-    if (filename.length >= NAME_MAX)
-    {
-        NSString *MD5 = [key hnk_MD5String];
-        NSString *pathExtension = key.pathExtension;
-        filename = pathExtension.length > 0 ? [MD5 stringByAppendingPathExtension:pathExtension] : MD5;
-    }
-    NSString *path = [format.directory stringByAppendingPathComponent:filename];
-    return path;
 }
 
 - (void)setDiskImage:(UIImage*)image forKey:(NSString*)key format:(HNKCacheFormat*)format
@@ -569,69 +354,30 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
     {
         if (format.diskCapacity == 0) return;
         
-        const BOOL hasAlpha = [image hnk_hasAlpha];
-        NSData *imageData = hasAlpha ? UIImagePNGRepresentation(image) : UIImageJPEGRepresentation(image, format.compressionQuality);
-
-        NSError *error;
-        NSString *path = [self pathForKey:key format:format];
-        if ([imageData writeToFile:path options:kNilOptions error:&error])
-        {
-            [path hnk_setValue:key forExtendedFileAttribute:HNKExtendedFileAttributeKey];
-            NSUInteger byteCount = imageData.length;
-            format.diskSize += byteCount;
-            [self controlDiskCapacityOfFormat:format];
-        }
-        else
-        {
-            NSLog(@"Failed to write to file %@", error);
-        }
+        NSData *data = [image hnk_dataWithCompressionQuality:format.compressionQuality];
+        [format.diskCache setData:data forKey:key];
     }
     else
     {
-        NSString *path = [self pathForKey:key format:format];
-        [self removeFileAtPath:path format:format];
+        [format.diskCache removeDataForKey:key];
     }
 }
 
 - (void)updateAccessDateOfImage:(UIImage*)image key:(NSString*)key format:(HNKCacheFormat*)format
 {
-    NSString *path = [self pathForKey:key format:format];
-    NSDate *now = [NSDate date];
-    NSDictionary* attributes = @{NSFileModificationDate : now};
-    NSError *error;
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    if (![[NSFileManager defaultManager] setAttributes:attributes ofItemAtPath:path error:&error])
-    {
-        if ([fileManager fileExistsAtPath:path isDirectory:nil])
-        {
-            NSLog(@"Set attributes failed with error %@", [error localizedDescription]);
-        }
-        else
-        { // The image was removed from disk cache but is still in the memory cache
-            [self setDiskImage:image forKey:key format:format];
-        }
-    }
+    [format.diskCache updateAccessDateForKey:key data:^NSData *{
+        NSData *data = [image hnk_dataWithCompressionQuality:format.compressionQuality];
+        return data;
+    }];
 }
 
-#pragma mark Utils
+#pragma mark Notifications
 
-- (void)removeFileAtPath:(NSString*)path format:(HNKCacheFormat*)format
+- (void)didReceiveMemoryWarning:(NSNotification*)notification
 {
-    NSError *error;
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSDictionary *attributes = [fileManager attributesOfItemAtPath:path error:&error];
-    if (attributes)
-    {
-        unsigned long long fileSize = attributes.fileSize;
-        if ([fileManager removeItemAtPath:path error:&error])
-        {
-            format.diskSize -= fileSize;
-        }
-        else
-        {
-            NSLog(@"Failed to remove file with error %@", error);
-        }
-    }
+    [_memoryCaches enumerateKeysAndObjectsUsingBlock:^(id key, NSCache *cache, BOOL *stop) {
+        [cache removeAllObjects];
+    }];
 }
 
 @end
@@ -682,6 +428,17 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
     return image;
 }
 
+- (unsigned long long)diskSize
+{
+    return self.diskCache.size;
+}
+
+- (void)setDiskCapacity:(unsigned long long)diskCapacity
+{
+    _diskCapacity = diskCapacity;
+    self.diskCache.capacity = _diskCapacity;
+}
+
 #pragma mark Private
 
 - (NSString*)directory
@@ -711,6 +468,13 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
     return CGSizeMake(ceil(resultSize.width), ceil(resultSize.height));
 }
 
+- (NSData*)hnk_dataWithCompressionQuality:(CGFloat)compressionQuality
+{
+    const BOOL hasAlpha = [self hnk_hasAlpha];
+    NSData *data = hasAlpha ? UIImagePNGRepresentation(self) : UIImageJPEGRepresentation(self, compressionQuality);
+    return data;
+}
+
 - (CGSize)hnk_aspectFitSizeForSize:(CGSize)size
 {
     const CGFloat targetAspect = size.width / size.height;
@@ -727,37 +491,13 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
     return CGSizeMake(ceil(resultSize.width), ceil(resultSize.height));
 }
 
-- (BOOL)hnk_hasAlpha
-{
-    const CGImageAlphaInfo alpha = CGImageGetAlphaInfo(self.CGImage);
-    return (alpha == kCGImageAlphaFirst ||
-            alpha == kCGImageAlphaLast ||
-            alpha == kCGImageAlphaPremultipliedFirst ||
-            alpha == kCGImageAlphaPremultipliedLast);
-}
-
-- (UIImage *)hnk_imageByScalingToSize:(CGSize)newSize
-{
-    const BOOL hasAlpha = [self hnk_hasAlpha];
-    UIGraphicsBeginImageContextWithOptions(newSize, !hasAlpha, 0.0);
-    [self drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
-    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return newImage;
-}
-
-+ (UIImage*)hnk_decompressedImageWithData:(NSData*)data
+- (UIImage *)hnk_decompressedImage;
 {
     // Ideally we would simply use kCGImageSourceShouldCacheImmediately but as of iOS 7.1 it locks on copyImageBlockSetJPEG which makes it dangerous.
     // const CGImageSourceRef sourceRef = CGImageSourceCreateWithData((__bridge CFDataRef)data, NULL);
     // CGImageRef imageRef = CGImageSourceCreateImageAtIndex(sourceRef, 0, (__bridge CFDictionaryRef)@{(id)kCGImageSourceShouldCacheImmediately: @YES});
-
-    // We use UIImage instead of CGImageRef directly because UIImage takes orientation into account for us.
-    // We ignore scale because we want to draw the image in its original resolution.
-    UIImage *originalImage = [UIImage imageWithData:data];
-    if (!originalImage) return nil;
     
-    CGImageRef originalImageRef = originalImage.CGImage;
+    CGImageRef originalImageRef = self.CGImage;
     const CGBitmapInfo originalBitmapInfo = CGImageGetBitmapInfo(originalImageRef);
     
     // See: http://stackoverflow.com/questions/23723564/which-cgimagealphainfo-should-we-use
@@ -778,16 +518,16 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
         case kCGImageAlphaLast:
         case kCGImageAlphaFirst:
         { // Unsupported
-            return originalImage;
+            return self;
         }
             break;
     }
     
     const CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    const CGSize imageSize = originalImage.size;
+    const CGSize pixelSize = CGSizeMake(self.size.width * self.scale, self.size.height * self.scale);
     const CGContextRef context = CGBitmapContextCreate(NULL,
-                                                       imageSize.width,
-                                                       imageSize.height,
+                                                       pixelSize.width,
+                                                       pixelSize.height,
                                                        CGImageGetBitsPerComponent(originalImageRef),
                                                        0,
                                                        colorSpace,
@@ -795,17 +535,17 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
     CGColorSpaceRelease(colorSpace);
     
     UIImage *image;
-    if (!context) return originalImage;
+    if (!context) return self;
     
-    const CGRect imageRect = CGRectMake(0, 0, imageSize.width, imageSize.height);
+    const CGRect imageRect = CGRectMake(0, 0, pixelSize.width, pixelSize.height);
     UIGraphicsPushContext(context);
     
     // Flip coordinate system. See: http://stackoverflow.com/questions/506622/cgcontextdrawimage-draws-image-upside-down-when-passed-uiimage-cgimage
-    CGContextTranslateCTM(context, 0, imageSize.height);
+    CGContextTranslateCTM(context, 0, pixelSize.height);
     CGContextScaleCTM(context, 1.0, -1.0);
     
-    // drawInRect takes into account image orientation, unlike CGContextDrawImage.
-    [originalImage drawInRect:imageRect];
+    // UIImage and drawInRect takes into account image orientation, unlike CGContextDrawImage.
+    [self drawInRect:imageRect];
     UIGraphicsPopContext();
     const CGImageRef decompressedImageRef = CGBitmapContextCreateImage(context);
     CGContextRelease(context);
@@ -813,78 +553,27 @@ NSString *const HNKExtendedFileAttributeKey = @"com.hpique.haneke.key";
     const CGFloat scale = [UIScreen mainScreen].scale;
     image = [UIImage imageWithCGImage:decompressedImageRef scale:scale orientation:UIImageOrientationUp];
     CGImageRelease(decompressedImageRef);
-
+    
     return image;
 }
 
-@end
-
-@implementation NSFileManager(hnk_utils)
-
-- (void)hnk_enumerateContentsOfDirectoryAtPath:(NSString*)path orderedByProperty:(NSString*)property ascending:(BOOL)ascending usingBlock:(void(^)(NSURL *url, NSUInteger idx, BOOL *stop))block
+- (BOOL)hnk_hasAlpha
 {
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSURL *directoryURL = [NSURL fileURLWithPath:path];
-    NSError *error;
-    NSArray *contents = [fileManager contentsOfDirectoryAtURL:directoryURL includingPropertiesForKeys:@[property] options:kNilOptions error:&error];
-    if (!contents)
-    {
-        NSLog(@"Failed to list directory with error %@", error);
-        return;
-    }
-    contents = [contents sortedArrayUsingComparator:^NSComparisonResult(NSURL *url1, NSURL *url2) {
-        id value1;
-        [url1 getResourceValue:&value1 forKey:property error:nil];
-        id value2;
-        [url2 getResourceValue:&value2 forKey:property error:nil] ;
-        return ascending ? [value1 compare:value2] : [value2 compare:value1];
-    }];
-    [contents enumerateObjectsUsingBlock:block];
+    const CGImageAlphaInfo alpha = CGImageGetAlphaInfo(self.CGImage);
+    return (alpha == kCGImageAlphaFirst ||
+            alpha == kCGImageAlphaLast ||
+            alpha == kCGImageAlphaPremultipliedFirst ||
+            alpha == kCGImageAlphaPremultipliedLast);
 }
 
-@end
-
-@implementation NSString(hnk_utils)
-
-- (NSString*)hnk_MD5String
+- (UIImage *)hnk_imageByScalingToSize:(CGSize)newSize
 {
-    NSData *data = [self dataUsingEncoding:NSUTF8StringEncoding];
-    unsigned char result[CC_MD5_DIGEST_LENGTH];
-    CC_MD5(data.bytes, (CC_LONG)data.length, result);
-    NSMutableString *MD5String = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
-    for (int i = 0; i < CC_MD5_DIGEST_LENGTH; i++)
-    {
-        [MD5String appendFormat:@"%02x",result[i]];
-    }
-    return MD5String;
-}
-
-- (BOOL)hnk_setValue:(NSString*)value forExtendedFileAttribute:(NSString*)attribute
-{
-    const char *attributeC = [attribute UTF8String];
-    const char *path = [self fileSystemRepresentation];
-    const char *valueC = [value UTF8String];
-    const int result = setxattr(path, attributeC, valueC, strlen(valueC), 0, 0);
-    return result == 0;
-}
-
-- (NSString*)hnk_valueForExtendedFileAttribute:(NSString*)attribute
-{
-	const char *attributeC = [attribute UTF8String];
-    const char *path = [self fileSystemRepresentation];
-    
-	const ssize_t length = getxattr(path, attributeC, NULL, 0, 0, 0);
-    
-	if (length <= 0) return nil;
-
-	char *buffer = malloc(length);
-	getxattr(path, attributeC, buffer, length, 0, 0);
-    
-	NSString *value = [[NSString alloc] initWithBytes:buffer length:length encoding:NSUTF8StringEncoding];
-
-	free(buffer);
-    
-	return value;
+    const BOOL hasAlpha = [self hnk_hasAlpha];
+    UIGraphicsBeginImageContextWithOptions(newSize, !hasAlpha, 0.0);
+    [self drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newImage;
 }
 
 @end

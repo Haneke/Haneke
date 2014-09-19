@@ -22,7 +22,7 @@
 
 @interface HNKCache (HanekeTestUtils)
 
-+ (id)entityWithKey:(NSString*)key data:(NSData*)data image:(UIImage*)image;
++ (id)fetcherWithKey:(NSString*)key image:(UIImage*)image;
 
 - (HNKCacheFormat*)registerFormatWithSize:(CGSize)size;
 
