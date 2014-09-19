@@ -1,10 +1,8 @@
-Haneke
-======
+![Haneke](https://raw.githubusercontent.com/Haneke/Haneke/master/Assets/github-header.png)
+
 [![Version](https://cocoapod-badges.herokuapp.com/v/Haneke/badge.png)](http://cocoadocs.org/docsets/Haneke) [![Platform](https://cocoapod-badges.herokuapp.com/p/Haneke/badge.png)](http://cocoadocs.org/docsets/Haneke) [![Build Status](https://travis-ci.org/hpique/Haneke.png)](https://travis-ci.org/hpique/Haneke)
 
-A lightweight zero-config image cache for iOS.
-
-<img src="https://raw.github.com/hpique/Haneke/master/screenshot.png" width="75%" "alt="Screenshot" />
+A lightweight zero-config image cache for iOS written in Objective-C. A [Swift](https://github.com/Haneke/HanekeSwift) version is also available.
 
 Haneke resizes images and caches the result on memory and disk. Everything is done in background, allowing for fast, responsive scrolling. Asking Haneke to load, resize, cache and display an *appropriately sized image* is as simple as:
 
@@ -32,7 +30,7 @@ _Really._
 Using [CocoaPods](http://cocoapods.org/):
 
 ```ruby
-pod 'Haneke', '~> 0.1'
+pod 'Haneke', '~> 1.0'
 ```
 
 Alternatively, you can simply add the files from the [Haneke](https://github.com/hpique/Haneke/tree/master/Haneke) directory to your project.
@@ -136,10 +134,6 @@ To turn logging on you must set the preprocessor macro `HANEKE_DEBUG` to 1. The 
 Haneke requires iOS 7.0 or above and ARC. 
 
 iOS 6 compatibility can be achieved with very few [changes](https://github.com/hpique/Haneke/pull/17). You can use [@shkutkov](https://github.com/shkutkov)'s [fork](https://github.com/shkutkov/Haneke) that adds it by replacing `NSURLSession` with [AFNetworking](https://github.com/AFNetworking/AFNetworking).
-
-##Roadmap
-
-Haneke is in initial development and its public API should not be considered stable.
 
 ##License
 
