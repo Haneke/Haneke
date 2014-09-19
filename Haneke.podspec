@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'Haneke'
-  s.version = '1.0'
+  s.version = '1.0.0'
   s.license = 'Apache 2.0'
   s.summary = 'A lightweight zero-config image cache for iOS.'
   s.description = <<-DESC
@@ -12,8 +12,8 @@ Haneke resizes images and caches the result on memory and disk. Everything is do
 
 * First-level memory cache using NSCache.
 * Second-level LRU disk cache using the file system.
-* Zero-config UIImageView category to use the cache, optimized for UITableView and UICollectionView cell reuse.
-* Asynchronous and synchronous image retrieval.
+* Zero-config UIImageView and UIButton categories to use the cache, optimized for UITableView and UICollectionView cell reuse.
+* Asynchronous image retrieval.
 * Background image resizing and file reading.
 * Image decompression.
 * Custom image transformations before and after resizing.
