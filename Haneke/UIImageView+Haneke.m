@@ -109,7 +109,7 @@
     if (format) return format;
 
     CGSize viewSize = self.bounds.size;
-    NSAssert(viewSize.width > 0 && viewSize.height > 0, @"%s: UImageView size is zero. Set its frame, call sizeToFit or force layout first.", __PRETTY_FUNCTION__);
+    NSAssert(viewSize.width > 0 && viewSize.height > 0, @"%s: UImageView size is zero. Set its frame, call sizeToFit or force layout first. You can also set a custom format with a defined size if you don't want to force layout.", __PRETTY_FUNCTION__);
     HNKScaleMode scaleMode = self.hnk_scaleMode;
     format = [HNKCache sharedFormatWithSize:viewSize scaleMode:scaleMode];
     return format;
