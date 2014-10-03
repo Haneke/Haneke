@@ -308,7 +308,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     }
     else
     {
-        [cache removeObjectForKey:image];
+        [cache removeObjectForKey:key];
     }
 }
 

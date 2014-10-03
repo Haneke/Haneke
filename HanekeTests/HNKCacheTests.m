@@ -469,6 +469,31 @@
     }];
 }
 
+- (void)testSetImage_NilImage
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor redColor] size:CGSizeMake(10, 10)];
+    id<HNKFetcher> fetcher = [HNKCache fetcherWithKey:@"1" image:image];
+    HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(1, 1)];
+    NSString *formatName = format.name;
+    [_sut setImage:image forKey:fetcher.key formatName:formatName];
+   
+    // Invalidate object in cache.
+    [_sut setImage:nil forKey:fetcher.key formatName:formatName];
+
+    BOOL result = [_sut fetchImageForKey:fetcher.key formatName:formatName success:nil failure:nil];
+    XCTAssertFalse(result, @"");
+    
+    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
+        [_sut fetchImageForKey:fetcher.key formatName:format.name success:^(UIImage *image) {
+            XCTFail(@"Expected failure");
+            dispatch_semaphore_signal(semaphore);
+        } failure:^(NSError *error) {
+            XCTAssertEqual(error.code, HNKErrorImageNotFound, @"");
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }];
+}
+
 #pragma mark Notifications
 
 - (void)testNotification_UIApplicationDidReceiveMemoryWarningNotification
