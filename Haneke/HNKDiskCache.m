@@ -123,6 +123,11 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
         if ([[NSFileManager defaultManager] removeItemAtPath:_directory error:&error])
         {
             _size = 0;
+            
+            if (![[NSFileManager defaultManager] createDirectoryAtPath:_directory withIntermediateDirectories:YES attributes:nil error:&error])
+            {
+                NSLog(@"Failed to recreate directory with error %@", error);
+            }
         }
         else
         {
