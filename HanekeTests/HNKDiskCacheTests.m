@@ -280,6 +280,18 @@
     });
 }
 
+- (void)testRemoveAllData_ThenSetData {
+    _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
+
+    [_sut removeAllData];
+
+    NSData *data = [self _dataWithSize:23];
+    [_sut setData:data forKey:@"1"];
+    dispatch_sync(_sut.queue, ^{
+        XCTAssertTrue(_sut.size > 0, @"");
+    });
+}
+
 - (void)testEnumerateDataByAccessDateUsingBlock_One
 {
     _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
