@@ -119,28 +119,22 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
 - (void)removeAllData
 {
     dispatch_async(_queue, ^{
+        NSFileManager *fileManager = [NSFileManager defaultManager];
         NSError *error;
-        if ([[NSFileManager defaultManager] removeItemAtPath:_directory error:&error])
+        NSArray *contents = [fileManager contentsOfDirectoryAtPath:_directory error:&error];
+        if (!contents) {
+            NSLog(@"Failed to list directory with error %@", error);
+            return;
+        }
+        for (NSString *pathComponent in contents)
         {
-            _size = 0;
-            
-            if (![[NSFileManager defaultManager] createDirectoryAtPath:_directory withIntermediateDirectories:YES attributes:nil error:&error])
+            NSString *path = [_directory stringByAppendingPathComponent:pathComponent];
+            if (![fileManager removeItemAtPath:path error:&error])
             {
-                NSLog(@"Failed to recreate directory with error %@", error);
+                NSLog(@"Failed to remove file with error %@", error);
             }
         }
-        else
-        {
-            BOOL isDirectory = NO;
-            if (![[NSFileManager defaultManager] fileExistsAtPath:_directory isDirectory:&isDirectory])
-            {
-                _size = 0;
-            }
-            else
-            {
-                NSLog(@"Failed to remove directory with error %@", error);
-            }
-        }
+        [self calculateSize];
     });
 }
 
