@@ -120,6 +120,20 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     return _formats.copy;
 }
 
+#pragma mark Checking images
+
+- (BOOL)isImageExistsForKey:(NSString*)key formatName:(NSString *)formatName
+{
+    HNKCacheFormat *format = _formats[formatName];
+    NSAssert(format, @"Unknown format %@", formatName);
+    
+    if ([self memoryImageForKey:key format:format]) {
+        return YES;
+    }
+    
+    return [format.diskCache isDataExistsForKey:key];
+}
+
 #pragma mark Getting images
 
 - (BOOL)fetchImageForFetcher:(id<HNKFetcher>)fetcher formatName:(NSString *)formatName success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock

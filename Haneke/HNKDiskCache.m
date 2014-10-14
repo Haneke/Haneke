@@ -69,6 +69,14 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
     });
 }
 
+#pragma mark Checking data
+
+- (BOOL)isDataExistsForKey:(NSString*)key
+{
+    NSString *path = [self pathForKey:key];
+    return [[NSFileManager defaultManager] fileExistsAtPath:path];
+}
+
 #pragma mark Setting and fetching data
 
 - (void)setData:(NSData*)data forKey:(NSString*)key

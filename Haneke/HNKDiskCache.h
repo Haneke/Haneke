@@ -54,6 +54,19 @@
  */
 @property (nonatomic, readonly) dispatch_queue_t queue;
 
+#pragma mark Checking data
+///---------------------------------------------
+/// @name Checking data
+///---------------------------------------------
+
+/**
+ Check the data associated with the given key exists.
+ @param key Key associated with requested data.
+ @return YES if data exists in the disk cache.
+ */
+- (BOOL)isDataExistsForKey:(NSString*)key;
+
+
 #pragma mark Setting and fetching data
 ///---------------------------------------------
 /// @name Setting and fetching data

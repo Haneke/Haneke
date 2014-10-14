@@ -64,6 +64,19 @@
  */
 @property (nonatomic, readonly) NSDictionary *formats;
 
+#pragma mark Checking images
+///---------------------------------------------
+/// @name Checking images
+///---------------------------------------------
+
+/**
+ Check if image exists in the memory or the disk cache.
+ @param key Image cache key.
+ @param formatName Name of the format in which the image is desired. The format must have been previously registered with the cache.
+ @return YES if image exists in the memory cache or the disk cache.
+ */
+- (BOOL)isImageExistsForKey:(NSString*)key formatName:(NSString *)formatName;
+
 #pragma mark Getting images
 ///---------------------------------------------
 /// @name Getting images
