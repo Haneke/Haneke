@@ -55,6 +55,8 @@ enum
 
 @interface HNKNetworkFetcher (Subclassing)
 
+- (void)prepareURLSessionDataTask:(NSURLSessionDataTask *)task;
+
 /**
  Returns the URL sessions used to download the image. Override to use a custom session. Uses sharedSession by default.
  */
