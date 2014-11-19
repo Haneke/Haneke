@@ -355,7 +355,9 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
         if (format.diskCapacity == 0) return;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             NSData *data = [image hnk_dataWithCompressionQuality:format.compressionQuality];
-            [format.diskCache setData:data forKey:key];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [format.diskCache setData:data forKey:key];
+            });
         });
     }
     else
