@@ -24,6 +24,8 @@
     NSURL *_URL;
     BOOL _cancelled;
     NSURLSessionDataTask *_dataTask;
+    NSDate *_startDate;
+    NSDate *_finishDate;
 }
 
 - (instancetype)initWithURL:(NSURL*)URL
@@ -50,6 +52,8 @@
         if (!strongSelf) return;
 
         if (strongSelf->_cancelled) return;
+        
+        strongSelf->_finishDate = [NSDate new];
         
         NSURL *URL = strongSelf->_URL;
         
@@ -106,6 +110,8 @@
         });
         
     }];
+    _finishDate = nil;
+    _startDate = [NSDate new];
     [_dataTask resume];
 }
 
@@ -113,6 +119,11 @@
 {
     [_dataTask cancel];
     _cancelled = YES;
+}
+
+- (NSTimeInterval)duration 
+{
+    return [_finishDate timeIntervalSinceDate:_startDate];
 }
 
 - (void)dealloc
