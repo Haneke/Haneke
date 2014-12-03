@@ -262,7 +262,21 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
     }
     else
     {
-        NSLog(@"Failed to write to file %@", error);
+        BOOL isDir = NO;
+        if (![[NSFileManager defaultManager] fileExistsAtPath:_directory isDirectory:&isDir]) 
+        {
+            NSError *newError;
+            if ([[NSFileManager defaultManager] createDirectoryAtPath:_directory withIntermediateDirectories:YES attributes:nil error:&newError])
+            {
+                [self syncSetData:data forKey:key];
+            }
+            else {
+             NSLog(@"Failed to create directory with error %@", newError);   
+            }
+        }
+        else {
+            NSLog(@"Failed to write to file %@", error);
+        }
     }
 }
 
