@@ -101,8 +101,6 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
                 successBlock(data);
             });
         }
-        
-        [self syncUpdateAccessDateForKey:key data:^NSData *{ return data; }];
     });
 }
 
@@ -166,13 +164,6 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
     });
 }
 
-- (void)updateAccessDateForKey:(NSString*)key data:(NSData* (^)())lazyData
-{
-    dispatch_async(_queue, ^{
-        [self syncUpdateAccessDateForKey:key data:lazyData];
-    });
-}
-
 #pragma mark Private (in _queue)
 
 - (void)calculateSize
@@ -204,7 +195,7 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
     [fileManager hnk_enumerateContentsOfDirectoryAtPath:_directory orderedByProperty:NSURLContentModificationDateKey ascending:YES usingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
         NSString *path = url.path;
         [self removeFileAtPath:path];
-        if (self.size <= self.capacity)
+        if (self.size <= (self.capacity / 2.))
         {
             *stop = YES;
         }
@@ -249,7 +240,7 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
     NSString *path = [self pathForKey:key];
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSDictionary *previousAttributes = [fileManager attributesOfItemAtPath:path error:nil];
-    if ([data writeToFile:path options:kNilOptions error:&error])
+    if ([data writeToFile:path options:NSDataWritingAtomic error:&error])
     {
         [path hnk_setValue:key forExtendedFileAttribute:HNKExtendedFileAttributeKey];
         const NSUInteger byteCount = data.length;
@@ -276,27 +267,6 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
         }
         else {
             NSLog(@"Failed to write to file %@", error);
-        }
-    }
-}
-
-- (void)syncUpdateAccessDateForKey:(NSString*)key data:(NSData* (^)())lazyData
-{
-    NSString *path = [self pathForKey:key];
-    NSDate *now = [NSDate date];
-    NSDictionary* attributes = @{NSFileModificationDate : now};
-    NSError *error;
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    if (![[NSFileManager defaultManager] setAttributes:attributes ofItemAtPath:path error:&error])
-    {
-        if ([fileManager fileExistsAtPath:path isDirectory:nil])
-        {
-            NSLog(@"Set attributes failed with error %@", [error localizedDescription]);
-        }
-        else if (lazyData)
-        { // The data was removed from disk cache but is still in memory
-            NSData *data = lazyData();
-            [self syncSetData:data forKey:key];
         }
     }
 }

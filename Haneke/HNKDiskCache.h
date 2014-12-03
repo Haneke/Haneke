@@ -102,12 +102,4 @@
  */
 - (void)enumerateDataByAccessDateUsingBlock:(void(^)(NSString *key, NSData *data, NSDate *accessDate, BOOL *stop))block;
 
-/**
- Asynchronously updates the access date for the given key.
- @param key Key associated with the data whose access date will be updated.
- @param lazyData Block to be called if there is no data associated with the given key, in which case it must return it. Called from the cache queue.
- @discussion Calling this method is equivalent to calling setData:forKey: with the difference that the data is only requested if it isn't already cached.
- */
-- (void)updateAccessDateForKey:(NSString*)key data:(NSData* (^)())lazyData ;
-
 @end

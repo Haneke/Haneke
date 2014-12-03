@@ -135,7 +135,10 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
                 if (!originalImage)
                 {
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        if (failureBlock) failureBlock(error);
+                        if (failureBlock) 
+                        {
+                            failureBlock(error);
+                        }
                     });
                     return;
                 }
@@ -145,7 +148,10 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
                     
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [self setMemoryImage:image forKey:key format:format];
-                        if (successBlock) successBlock(image);
+                        if (successBlock) 
+                        {
+                            successBlock(image);
+                        }
                         [self setDiskImage:image forKey:key format:format];
                     });
                 });
@@ -164,8 +170,10 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     if (image)
     {
         HanekeLog(@"Memory cache hit: %@/%@", formatName, key.lastPathComponent);
-        if (successBlock) successBlock(image);
-        [self updateAccessDateOfImage:image key:key format:format];
+        if (successBlock) 
+        {
+            successBlock(image);
+        }
         return YES;
     }
     HanekeLog(@"Memory cache miss: %@/%@", formatName, key.lastPathComponent);
@@ -178,7 +186,10 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
                 UIImage *decompressedImage = [image hnk_decompressedImage];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self setMemoryImage:decompressedImage forKey:key format:format];
-                    if (successBlock) successBlock(decompressedImage);
+                    if (successBlock) 
+                    {
+                        successBlock(decompressedImage);
+                    }
                 });
             }
             else {
@@ -187,7 +198,10 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
                     HanekeLog(@"%@", errorDescription);
                     NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription};
                     NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorDiskCacheCannotReadImageFromData userInfo:userInfo];
-                    if (failureBlock) failureBlock(error);
+                    if (failureBlock) 
+                    {
+                        failureBlock(error);
+                    }
                 });
             }
         });
@@ -198,11 +212,17 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
             NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Image not found for key %@", @""), key.lastPathComponent];
             NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
             NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorImageNotFound userInfo:userInfo];
-            if (failureBlock) failureBlock(error);
+            if (failureBlock) 
+            {
+                failureBlock(error);
+            }
         }
         else
         {
-            if (failureBlock) failureBlock(error);
+            if (failureBlock) 
+            {
+                failureBlock(error);
+            }
         }
     }];
     return NO;
@@ -366,14 +386,6 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     {
         [format.diskCache removeDataForKey:key];
     }
-}
-
-- (void)updateAccessDateOfImage:(UIImage*)image key:(NSString*)key format:(HNKCacheFormat*)format
-{
-    [format.diskCache updateAccessDateForKey:key data:^NSData *{
-        NSData *data = [image hnk_dataWithCompressionQuality:format.compressionQuality];
-        return data;
-    }];
 }
 
 #pragma mark Notifications
