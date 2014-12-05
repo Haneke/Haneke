@@ -33,6 +33,8 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
         dispatch_sync(dispatch_get_main_queue(), block);\
     }
 
+#define hnk_enqueue_block(block) [_operationQueue addOperation:[NSBlockOperation blockOperationWithBlock:block]];
+
 @interface UIImage (Haneke)
 
 - (CGSize)hnk_aspectFillSizeForSize:(CGSize)size;
@@ -56,6 +58,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 @interface HNKCache()
 
 @property (nonatomic, readonly) NSString *rootDirectory;
+@property (nonatomic) NSOperationQueue *operationQueue;
 
 @end
 
@@ -79,6 +82,8 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
         static NSString *cachePathComponent = @"com.hpique.haneke";
         NSString *path = [cachesDirectory stringByAppendingPathComponent:cachePathComponent];
         _rootDirectory = [path stringByAppendingPathComponent:name];
+        _operationQueue = [[NSOperationQueue alloc] init];
+        _operationQueue.maxConcurrentOperationCount = 5;
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveMemoryWarning:) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
     }
@@ -128,7 +133,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     return [self fetchImageForKey:key formatName:formatName success:^(UIImage *image) {
         if (successBlock) successBlock(image);
     } failure:^(NSError *error) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        hnk_enqueue_block(^{
             HNKCacheFormat *format = _formats[formatName];
             
             [self fetchImageFromFetcher:fetcher completionBlock:^(UIImage *originalImage, NSError *error) {
@@ -143,7 +148,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
                     return;
                 }
                 
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^() {
+                hnk_enqueue_block(^() {
                     UIImage *image = [self imageFromOriginal:originalImage key:key format:format];
                     
                     dispatch_async(dispatch_get_main_queue(), ^{
@@ -180,7 +185,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     
     [format.diskCache fetchDataForKey:key success:^(NSData *data) {
         HanekeLog(@"Disk cache hit: %@/%@", formatName, key.lastPathComponent);
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^() {
+        hnk_enqueue_block( ^() {
             UIImage *image = [UIImage imageWithData:data];
             if (image) {
                 UIImage *decompressedImage = [image hnk_decompressedImage];
@@ -359,7 +364,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
             return;
         }
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        hnk_enqueue_block(^{
             UIImage *image = [UIImage imageWithData:data];
             if (!image) return;
             image = [image hnk_decompressedImage];
@@ -375,7 +380,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     if (image)
     {
         if (format.diskCapacity == 0) return;
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        hnk_enqueue_block(^{
             NSData *data = [image hnk_dataWithCompressionQuality:format.compressionQuality];
             dispatch_async(dispatch_get_main_queue(), ^{
                 [format.diskCache setData:data forKey:key];
