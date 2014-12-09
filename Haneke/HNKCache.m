@@ -23,16 +23,6 @@
 
 NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
-#define hnk_dispatch_sync_main_queue_if_needed(block)\
-    if ([NSThread isMainThread])\
-    {\
-        block();\
-    }\
-    else\
-    {\
-        dispatch_sync(dispatch_get_main_queue(), block);\
-    }
-
 #define hnk_enqueue_block(block) [_operationQueue addOperation:[NSBlockOperation blockOperationWithBlock:block]];
 
 @interface UIImage (Haneke)
@@ -147,18 +137,15 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
                     });
                     return;
                 }
+                UIImage *image = [self imageFromOriginal:originalImage key:key format:format];
                 
-                hnk_enqueue_block(^() {
-                    UIImage *image = [self imageFromOriginal:originalImage key:key format:format];
-                    
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [self setMemoryImage:image forKey:key format:format];
-                        if (successBlock) 
-                        {
-                            successBlock(image);
-                        }
-                        [self setDiskImage:image forKey:key format:format];
-                    });
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self setMemoryImage:image forKey:key format:format];
+                    if (successBlock) 
+                    {
+                        successBlock(image);
+                    }
+                    [self setDiskImage:image forKey:key format:format];
                 });
             }];
         });
@@ -171,17 +158,23 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     NSAssert(format, @"Unknown format %@", formatName);
     format.requestCount++;
     
+    BOOL cacheHit = NO;
+    
     UIImage *image = [self memoryImageForKey:key format:format];
     if (image)
     {
         HanekeLog(@"Memory cache hit: %@/%@", formatName, key.lastPathComponent);
-        if (successBlock) 
+        if (successBlock)
         {
             successBlock(image);
         }
-        return YES;
+        cacheHit = YES;
     }
-    HanekeLog(@"Memory cache miss: %@/%@", formatName, key.lastPathComponent);
+    else {
+        HanekeLog(@"Memory cache miss: %@/%@", formatName, key.lastPathComponent);
+
+        cacheHit = [format.diskCache dataExistsForKey:key];
+    }
     
     [format.diskCache fetchDataForKey:key success:^(NSData *data) {
         HanekeLog(@"Disk cache hit: %@/%@", formatName, key.lastPathComponent);
@@ -230,7 +223,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
             }
         }
     }];
-    return NO;
+    return cacheHit;
 }
 
 #pragma mark Setting images
@@ -278,26 +271,26 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
 - (void)fetchImageFromFetcher:(id<HNKFetcher>)fetcher completionBlock:(void(^)(UIImage *image, NSError *error))completionBlock;
 {
-    hnk_dispatch_sync_main_queue_if_needed((^{
-        [fetcher fetchImageWithSuccess:^(UIImage *image) {
-            if (image)
-            {
-                completionBlock(image, nil);
-            }
-            else
-            {
-                NSString *key = fetcher.key;
-                NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Invalid fetcher %@: Must return non-nil in success block", @""), key.lastPathComponent];
-                HanekeLog(@"%@", errorDescription);
-                NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
-                NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorFetcherMustReturnImage userInfo:userInfo];
-                completionBlock(nil, error);
-                return;
-            }
-        } failure:^(NSError *error) {
+    [fetcher fetchImageWithSuccess:^(UIImage *image) {
+ 
+        NSAssert1([NSThread isMainThread], @"Haneke: completion not called on main thread! Thread: %@", [NSThread currentThread]);
+        if (image)
+        {
+            completionBlock(image, nil);
+        }
+        else
+        {
+            NSString *key = fetcher.key;
+            NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Invalid fetcher %@: Must return non-nil in success block", @""), key.lastPathComponent];
+            HanekeLog(@"%@", errorDescription);
+            NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription };
+            NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorFetcherMustReturnImage userInfo:userInfo];
             completionBlock(nil, error);
-        }];
-    }));
+            return;
+        }
+    } failure:^(NSError *error) {
+        completionBlock(nil, error);
+    }];
 }
 
 - (UIImage*)imageFromOriginal:(UIImage*)original key:(NSString*)key format:(HNKCacheFormat*)format

@@ -104,6 +104,10 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
     });
 }
 
+- (BOOL)dataExistsForKey:(NSString *)key {
+    return [[NSFileManager defaultManager] fileExistsAtPath:[self pathForKey:key]];
+}
+
 #pragma mark Removing data
 
 - (void)removeDataForKey:(NSString*)key

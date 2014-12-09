@@ -75,6 +75,14 @@
  */
 - (void)fetchDataForKey:(NSString*)key success:(void (^)(NSData *data))successBlock failure:(void (^)(NSError *error))failureBlock;
 
+/** 
+ Checks the disk for data presence for a given key.
+ @param key Key associated with data.
+ */
+
+- (BOOL)dataExistsForKey:(NSString *)key;
+
+
 #pragma mark Removing data
 ///---------------------------------------------
 /// @name Removing data
