@@ -158,10 +158,16 @@
     }
     else
     {
-        const NSTimeInterval duration = animated ? 0.1 : 0;
-        [UIView transitionWithView:self duration:duration options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+        if (animated)
+        {
+            [UIView transitionWithView:self duration:0.1 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+                self.image = image;
+            } completion:nil];
+        }
+        else
+        {
             self.image = image;
-        } completion:nil];
+        }
     }
 }
 
