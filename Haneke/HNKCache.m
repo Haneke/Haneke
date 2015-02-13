@@ -162,7 +162,6 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
         if (successBlock) successBlock(image);
         return YES;
     }
-    HanekeLog(@"Memory cache miss: %@/%@", formatName, key.lastPathComponent);
     
     [format.diskCache fetchDataForKey:key success:^(NSData *data) {
         HanekeLog(@"Disk cache hit: %@/%@", formatName, key.lastPathComponent);
@@ -213,6 +212,8 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     {
         HanekeLog(@"Memory cache hit: %@/%@", formatName, key.lastPathComponent);
         [self updateAccessDateOfImage:image key:key format:format];
+    } else {
+        HanekeLog(@"Memory cache miss: %@/%@", formatName, key.lastPathComponent);
     }
     return image;
 }
