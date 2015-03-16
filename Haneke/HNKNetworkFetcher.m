@@ -20,6 +20,10 @@
 
 #import "HNKNetworkFetcher.h"
 
+NSString * const HNKNetworkFetcherDidStartNotification = @"com.hpique.haneke.networkfetcher.start";
+
+NSString * const HNKNetworkFetcherDidCompleteNotification = @"com.hpique.haneke.networkfetcher.complete";
+
 @implementation HNKNetworkFetcher {
     NSURL *_URL;
     BOOL _cancelled;
