@@ -20,6 +20,10 @@
 
 #import "HNKNetworkFetcher.h"
 
+NSString * const HNKNetworkFetcherDidStartNotification = @"com.hpique.haneke.networkfetcher.start";
+
+NSString * const HNKNetworkFetcherDidCompleteNotification = @"com.hpique.haneke.networkfetcher.complete";
+
 @implementation HNKNetworkFetcher {
     NSURL *_URL;
     BOOL _cancelled;
@@ -45,8 +49,13 @@
     _cancelled = NO;
     __weak __typeof__(self) weakSelf = self;
     _dataTask = [self.URLSession dataTaskWithURL:_URL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        
         __strong __typeof__(weakSelf) strongSelf = weakSelf;
 
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[NSNotificationCenter defaultCenter] postNotificationName:HNKNetworkFetcherDidCompleteNotification object:strongSelf];
+        });
+        
         if (!strongSelf) return;
 
         if (strongSelf->_cancelled) return;
@@ -107,6 +116,10 @@
         
     }];
     [_dataTask resume];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:HNKNetworkFetcherDidStartNotification object:self];
+    });
 }
 
 - (void)cancelFetch

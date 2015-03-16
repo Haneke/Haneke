@@ -28,6 +28,17 @@ enum
     HNKErrorNetworkFetcherInvalidStatusCode = -402
 };
 
+
+/**
+ *  Posted when a network fetcher starts fetching a image.
+ */
+extern NSString * const HNKNetworkFetcherDidStartNotification;
+
+/**
+ *  Posted when a network fetcher ends fetching a image.
+ */
+extern NSString * const HNKNetworkFetcherDidCompleteNotification;
+
 /**
  Fetcher that can provide a network image. The key will be the absolute string of the given URL.
  */
