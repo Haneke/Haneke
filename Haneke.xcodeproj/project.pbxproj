@@ -82,7 +82,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2FEB33A025DD4246905320CA /* Pods-HanekeTests.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HanekeTests.xcconfig"; path = "Pods/Pods-HanekeTests.xcconfig"; sourceTree = "<group>"; };
+		2F77D96DA57F343CA72782B5 /* Pods-HanekeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HanekeTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-HanekeTests/Pods-HanekeTests.release.xcconfig"; sourceTree = "<group>"; };
 		8711F1B518F6F35600F27EC1 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		87260AB718CCDB7000D3680F /* XCTestCase+HanekeTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XCTestCase+HanekeTestUtils.h"; sourceTree = "<group>"; };
 		87260AB818CCDB7000D3680F /* XCTestCase+HanekeTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XCTestCase+HanekeTestUtils.m"; sourceTree = "<group>"; };
@@ -144,6 +144,7 @@
 		A0ADE333198029AB00B75057 /* HNKDiskFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKDiskFetcher.h; sourceTree = "<group>"; };
 		A0ADE334198029AB00B75057 /* HNKDiskFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKDiskFetcher.m; sourceTree = "<group>"; };
 		C900C201A56F408D8DD8854E /* libPods-HanekeTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-HanekeTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF9653C5D6FAFE9119B7A040 /* Pods-HanekeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HanekeTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-HanekeTests/Pods-HanekeTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -181,6 +182,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1F31D2FD3B1881D43D4C6164 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				DF9653C5D6FAFE9119B7A040 /* Pods-HanekeTests.debug.xcconfig */,
+				2F77D96DA57F343CA72782B5 /* Pods-HanekeTests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		873E228618AA8C7C00E7919C = {
 			isa = PBXGroup;
 			children = (
@@ -189,7 +199,7 @@
 				873E22F718AA90F000E7919C /* HanekeDemo */,
 				873E229118AA8C7C00E7919C /* Frameworks */,
 				873E229018AA8C7C00E7919C /* Products */,
-				2FEB33A025DD4246905320CA /* Pods-HanekeTests.xcconfig */,
+				1F31D2FD3B1881D43D4C6164 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -500,7 +510,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Pods-HanekeTests-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-HanekeTests/Pods-HanekeTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -695,7 +705,7 @@
 		};
 		873E22B618AA8C7C00E7919C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2FEB33A025DD4246905320CA /* Pods-HanekeTests.xcconfig */;
+			baseConfigurationReference = DF9653C5D6FAFE9119B7A040 /* Pods-HanekeTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -732,7 +742,7 @@
 		};
 		873E22B718AA8C7C00E7919C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2FEB33A025DD4246905320CA /* Pods-HanekeTests.xcconfig */;
+			baseConfigurationReference = 2F77D96DA57F343CA72782B5 /* Pods-HanekeTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "";
 				FRAMEWORK_SEARCH_PATHS = (
