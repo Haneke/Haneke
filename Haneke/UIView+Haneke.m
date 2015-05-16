@@ -23,7 +23,7 @@
 #import <objc/runtime.h>
 
 const CGFloat HNKViewFormatCompressionQuality = 0.75;
-const unsigned long long HNKViewFormatDiskCapacity = 10 * 1024 * 1024;
+const unsigned long long HNKViewFormatDiskCapacity = 200 * 1024 * 1024;
 
 static NSString *NSStringFromHNKScaleMode(HNKScaleMode scaleMode)
 {
