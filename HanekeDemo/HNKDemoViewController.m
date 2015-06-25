@@ -25,6 +25,148 @@
 
 #define HNK_USE_CUSTOM_FORMAT 0
 #define HNK_LOCAL_IMAGES 0
+#define HNK_USE_GIFS 1
+
+#if HNK_USE_GIFS
+// This is a Gif serilaization snippet taken from https://github.com/mattt/AnimatedGIFImageSerialization
+
+#import <ImageIO/ImageIO.h>
+#import <MobileCoreServices/MobileCoreServices.h>
+
+NSString * const AnimatedGIFImageErrorDomain = @"com.compuserve.gif.image.error";
+
+__attribute__((overloadable)) UIImage * UIImageWithAnimatedGIFData(NSData *data, CGFloat scale, NSTimeInterval duration, NSError * __autoreleasing *error) {
+    if (!data) {
+        return nil;
+    }
+    
+    NSDictionary *userInfo = nil;
+    {
+        NSMutableDictionary *mutableOptions = [NSMutableDictionary dictionary];
+        [mutableOptions setObject:@(YES) forKey:(NSString *)kCGImageSourceShouldCache];
+        [mutableOptions setObject:(NSString *)kUTTypeGIF forKey:(NSString *)kCGImageSourceTypeIdentifierHint];
+        
+        CGImageSourceRef imageSource = CGImageSourceCreateWithData((__bridge CFDataRef)data, (__bridge CFDictionaryRef)mutableOptions);
+        
+        size_t numberOfFrames = CGImageSourceGetCount(imageSource);
+        NSMutableArray *mutableImages = [NSMutableArray arrayWithCapacity:numberOfFrames];
+        
+        NSTimeInterval calculatedDuration = 0.0f;
+        for (size_t idx = 0; idx < numberOfFrames; idx++) {
+            CGImageRef imageRef = CGImageSourceCreateImageAtIndex(imageSource, idx, (__bridge CFDictionaryRef)mutableOptions);
+            
+            NSDictionary *properties = (__bridge_transfer NSDictionary *)CGImageSourceCopyPropertiesAtIndex(imageSource, idx, NULL);
+            calculatedDuration += [[[properties objectForKey:(__bridge NSString *)kCGImagePropertyGIFDictionary] objectForKey:(__bridge  NSString *)kCGImagePropertyGIFDelayTime] doubleValue];
+            
+            [mutableImages addObject:[UIImage imageWithCGImage:imageRef scale:scale orientation:UIImageOrientationUp]];
+            
+            CGImageRelease(imageRef);
+        }
+        
+        CFRelease(imageSource);
+        
+        if (numberOfFrames == 1) {
+            return [mutableImages firstObject];
+        } else {
+            return [UIImage animatedImageWithImages:mutableImages duration:(duration <= 0.0f ? calculatedDuration : duration)];
+        }
+    }
+_error: {
+    if (error) {
+        *error = [[NSError alloc] initWithDomain:AnimatedGIFImageErrorDomain code:-1 userInfo:userInfo];
+    }
+    
+    return nil;
+}
+}
+
+__attribute__((overloadable)) UIImage * UIImageWithAnimatedGIFData(NSData *data) {
+    return UIImageWithAnimatedGIFData(data, [[UIScreen mainScreen] scale], 0.0f, nil);
+}
+
+static BOOL AnimatedGifDataIsValid(NSData *data) {
+    if (data.length > 4) {
+        const unsigned char * bytes = [data bytes];
+        
+        return bytes[0] == 0x47 && bytes[1] == 0x49 && bytes[2] == 0x46;
+    }
+    
+    return NO;
+}
+
+__attribute__((overloadable)) NSData * UIImageAnimatedGIFRepresentation(UIImage *image, NSTimeInterval duration, NSUInteger loopCount, NSError * __autoreleasing *error) {
+    if (!image.images) {
+        return nil;
+    }
+    
+    NSDictionary *userInfo = nil;
+    {
+        size_t frameCount = image.images.count;
+        NSTimeInterval frameDuration = (duration <= 0.0 ? image.duration / frameCount : duration / frameCount);
+        NSDictionary *frameProperties = @{
+                                          (__bridge NSString *)kCGImagePropertyGIFDictionary: @{
+                                                  (__bridge NSString *)kCGImagePropertyGIFDelayTime: @(frameDuration)
+                                                  }
+                                          };
+        
+        NSMutableData *mutableData = [NSMutableData data];
+        CGImageDestinationRef destination = CGImageDestinationCreateWithData((__bridge CFMutableDataRef)mutableData, kUTTypeGIF, frameCount, NULL);
+        
+        NSDictionary *imageProperties = @{ (__bridge NSString *)kCGImagePropertyGIFDictionary: @{
+                                                   (__bridge NSString *)kCGImagePropertyGIFLoopCount: @(loopCount)
+                                                   }
+                                           };
+        CGImageDestinationSetProperties(destination, (__bridge CFDictionaryRef)imageProperties);
+        
+        for (size_t idx = 0; idx < image.images.count; idx++) {
+            CGImageDestinationAddImage(destination, [[image.images objectAtIndex:idx] CGImage], (__bridge CFDictionaryRef)frameProperties);
+        }
+        
+        BOOL success = CGImageDestinationFinalize(destination);
+        CFRelease(destination);
+        
+        if (!success) {
+            userInfo = @{
+                         NSLocalizedDescriptionKey: NSLocalizedString(@"Could not finalize image destination", nil)
+                         };
+            
+            goto _error;
+        }
+        
+        return [NSData dataWithData:mutableData];
+    }
+_error: {
+    if (error) {
+        *error = [[NSError alloc] initWithDomain:AnimatedGIFImageErrorDomain code:-1 userInfo:userInfo];
+    }
+    
+    return nil;
+}
+}
+
+__attribute__((overloadable)) NSData * UIImageAnimatedGIFRepresentation(UIImage *image) {
+    return UIImageAnimatedGIFRepresentation(image, 0.0f, 0, nil);
+}
+
+@interface HNKGifNetworkFetcher : HNKNetworkFetcher
+
+@end
+
+@implementation HNKGifNetworkFetcher
+
+- (UIImage *)imageFromData:(NSData *)data
+{
+    if (AnimatedGifDataIsValid(data)) {
+        return UIImageWithAnimatedGIFData(data);
+    } else {
+        return [super imageFromData:data];
+    }
+}
+
+@end
+
+
+#endif
 
 @implementation HNKDemoViewController {
     NSArray *_items;
@@ -58,6 +200,37 @@
         title = [title stringByReplacingOccurrencesOfString:@"sample" withString:@""];
         UIImage *modifiedImage = [image demo_imageByDrawingColoredText:title];
         return modifiedImage;
+    };
+    
+    [[HNKCache sharedCache] registerFormat:format];
+}
+
+#elif HNK_USE_GIFS
+
++ (void)initialize
+{
+    HNKCacheFormat *format = [[HNKCacheFormat alloc] initWithName:@"GIF"];
+    
+    format.diskCapacity = 50 * 1024 * 1024;
+    // UIImageView category default: 10 * 1024 * 1024 (10MB), -[HNKCacheFormat initWithName:] default: 0 (no disk cache).
+    
+    format.preloadPolicy = HNKPreloadPolicyLastSession;
+    // Default: HNKPreloadPolicyNone.
+    
+    format.scaleMode = HNKScaleModeAspectFill;
+    // UIImageView category default: -[UIImageView contentMode], -[HNKCacheFormat initWithName:] default: HNKScaleModeFill.
+    
+    format.size = CGSizeMake(100, 100);
+    // UIImageView category default: -[UIImageView bounds].size, -[HNKCacheFormat initWithName:] default: CGSizeZero.
+    
+    // This is to create animated UIImages from gif data.
+    format.deserializeImageBlock = ^UIImage* (NSString *key, NSData *data) {
+        return UIImageWithAnimatedGIFData(data);
+    };
+    
+    // This saves the images to disk as Gifs
+    format.serializeImageBlock = ^NSData* (NSString *key, UIImage *image) {
+        return UIImageAnimatedGIFRepresentation(image);
     };
     
     [[HNKCache sharedCache] registerFormat:format];
@@ -106,7 +279,13 @@
 #else
     NSString *urlString = _items[indexPath.row];
     NSURL *url = [NSURL URLWithString:urlString];
+#if HNK_USE_GIFS
+    cell.imageView.hnk_cacheFormat = [HNKCache sharedCache].formats[@"GIF"];
+    HNKGifNetworkFetcher *fetcher = [[HNKGifNetworkFetcher alloc] initWithURL:url];
+    [cell.imageView hnk_setImageFromFetcher:fetcher];
+#else
     [cell.imageView hnk_setImageFromURL:url];
+#endif
 #endif
     return cell;
 }
@@ -145,6 +324,38 @@
 
 - (void)initializeItemsWithURLs
 {
+#if HNK_USE_GIFS
+    _items = @[@"http://media.giphy.com/media/5xaOcLx8A5zjZzUTSx2/giphy.gif",
+               @"http://media.giphy.com/media/TlK63EBGpEZy7vwwF68/giphy.gif",
+               @"http://media.giphy.com/media/TlK63EvcvghyJU105zy/giphy.gif",
+               @"http://media.giphy.com/media/TlK63EGsLT8BMkFehLW/giphy.gif",
+               @"http://media.giphy.com/media/5xaOcLt873f8hAq44nu/giphy.gif",
+               @"http://media.giphy.com/media/3rgXBN8IFhnt4agoSI/giphy.gif",
+               @"http://media.giphy.com/media/3rgXBAe5ZCUNrc952o/giphy.gif",
+               @"http://media.giphy.com/media/5xaOcLxHchkTXFyCV4k/giphy.gif",
+               @"http://media.giphy.com/media/5xaOcLv9wcDZA3WRWco/giphy.gif",
+               @"http://media.giphy.com/media/5xaOcLrmz6zmDZSZs40/giphy.gif",
+               @"http://media.giphy.com/media/5xaOcLDazF4tShPf2us/giphy.gif",
+               @"http://media.giphy.com/media/Kljo2HSHCta36/giphy.gif",
+               @"http://media2.giphy.com/media/12eLcLqw13e6WY/giphy.gif",
+               @"http://media.giphy.com/media/11caEgnSDg0avS/giphy.gif",
+               @"http://media.giphy.com/media/yO8qLCUbTfiBG/giphy.gif",
+               @"http://media.giphy.com/media/aDTM8BkD9hhgQ/giphy.gif",
+               @"http://media.giphy.com/media/oIR6xeOffCEBa/giphy.gif",
+               @"http://media.giphy.com/media/N3xTwLRGAzPTW/giphy.gif",
+               @"http://media.giphy.com/media/B0mIM25D8fpOo/giphy.gif",
+               @"http://media.giphy.com/media/ydwKWHRCwFT5S/giphy.gif",
+               @"http://media.giphy.com/media/kf7SvRAUB25Ww/giphy.gif",
+               @"http://media.giphy.com/media/Tr10zt02CSMOQ/giphy.gif",
+               @"http://media.giphy.com/media/AiGuigOqE5ot2/giphy.gif",
+               @"http://media.giphy.com/media/ghVtt3BfMwYhi/giphy.gif",
+               @"http://media1.giphy.com/media/u36Ow6jBvWCFW/giphy.gif",
+               @"http://media.giphy.com/media/lcmYVxHTvkOLC/giphy.gif",
+               @"http://media1.giphy.com/media/ghAbYUswkmXHq/200w.gif",
+               @"http://media4.giphy.com/media/l41lIvPtFdU3cLQjK/200w.gif",
+               @"http://media1.giphy.com/media/2aAcLrYtiX8YM/giphy.gif",
+               @"http://media2.giphy.com/media/RO9VDe4SULS7K/200w.gif"];
+#else
     _items = @[@"http://imgs.xkcd.com/comics/election.png",
                @"http://imgs.xkcd.com/comics/scantron.png",
                @"http://imgs.xkcd.com/comics/secretary_part_5.png",
@@ -245,7 +456,7 @@
                @"http://imgs.xkcd.com/comics/1000_miles_north.png",
                @"http://imgs.xkcd.com/comics/large_hadron_collider.png",
                @"http://imgs.xkcd.com/comics/important_life_lesson.png"];
+#endif
 }
-
 
 @end
