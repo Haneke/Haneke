@@ -169,7 +169,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     
     [format.diskCache fetchDataForKey:key success:^(NSData *data) {
         HanekeLog(@"Disk cache hit: %@/%@", formatName, key.lastPathComponent);
-        UIImage *image = [UIImage imageWithData:data];
+        UIImage *image = format.deserializeImageBlock ? format.deserializeImageBlock(key, data) : [UIImage imageWithData:data];
         if (image)
         {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -338,7 +338,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
         }
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            UIImage *image = [UIImage imageWithData:data];
+            UIImage *image = format.deserializeImageBlock ? format.deserializeImageBlock(key, data) : [UIImage imageWithData:data];
             if (!image) return;
             image = [image hnk_decompressedImage];
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -354,7 +354,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     {
         if (format.diskCapacity == 0) return;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            NSData *data = [image hnk_dataWithCompressionQuality:format.compressionQuality];
+            NSData *data = format.serializeImageBlock ? format.serializeImageBlock(key, image) : [image hnk_dataWithCompressionQuality:format.compressionQuality];
             dispatch_async(dispatch_get_main_queue(), ^{
                 [format.diskCache setData:data forKey:key];
             });
@@ -369,7 +369,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 - (void)updateAccessDateOfImage:(UIImage*)image key:(NSString*)key format:(HNKCacheFormat*)format
 {
     [format.diskCache updateAccessDateForKey:key data:^NSData *{
-        NSData *data = [image hnk_dataWithCompressionQuality:format.compressionQuality];
+        NSData *data = format.serializeImageBlock ? format.serializeImageBlock(key, image) : [image hnk_dataWithCompressionQuality:format.compressionQuality];
         return data;
     }];
 }
