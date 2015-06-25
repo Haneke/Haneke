@@ -92,7 +92,7 @@
             }
         }
         
-        UIImage *image = [UIImage imageWithData:data];
+        UIImage *image = [self imageFromData:data];
         
         if (!image)
         {
@@ -141,6 +141,11 @@
 - (NSURLSession*)URLSession
 {
     return [NSURLSession sharedSession];
+}
+
+- (UIImage *)imageFromData:(NSData *)data
+{
+    return [UIImage imageWithData:data];
 }
 
 @end
