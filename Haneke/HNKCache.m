@@ -69,15 +69,20 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
 - (id)initWithName:(NSString*)name
 {
+    NSString *cachesDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
+    return [self initWithName:name directory:cachesDirectory];
+}
+
+- (id)initWithName:(NSString*)name directory:(NSString *)directory
+{
     self = [super init];
     if (self)
     {
         _memoryCaches = [NSMutableDictionary dictionary];
         _formats = [NSMutableDictionary dictionary];
         
-        NSString *cachesDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
-        static NSString *cachePathComponent = @"com.hpique.haneke";
-        NSString *path = [cachesDirectory stringByAppendingPathComponent:cachePathComponent];
+        static NSString *subdirectoryPathComponent = @"com.hpique.haneke";
+        NSString *path = [directory stringByAppendingPathComponent:subdirectoryPathComponent];
         _rootDirectory = [path stringByAppendingPathComponent:name];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveMemoryWarning:) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
@@ -90,15 +95,30 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
 }
 
+static HNKCache *sharedCache = nil;
+
 + (HNKCache*)sharedCache
 {
-    static HNKCache *instance = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        instance = [[HNKCache alloc] initWithName:@"shared"];
-    });
-    return instance;
+    if (sharedCache)
+    {
+        return sharedCache;
+    }
+    else
+    {
+        static HNKCache *instance = nil;
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            instance = [[HNKCache alloc] initWithName:@"shared"];
+        });
+        return instance;
+    }
 }
+
++ (void)setSharedCache:(HNKCache *)cache
+{
+    sharedCache = cache;
+}
+
 
 - (void)registerFormat:(HNKCacheFormat *)format
 {
