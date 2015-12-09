@@ -22,21 +22,28 @@
 
 @implementation HNKDiskFetcher {
     NSString *_path;
+    NSString *_key;
     BOOL _cancelled;
 }
 
 - (instancetype)initWithPath:(NSString*)path
 {
+    return [self initWithPath:path andKey:path];
+}
+
+- (instancetype)initWithPath:(NSString*)path andKey:(NSString *)key
+{
     if (self = [super init])
     {
         _path = path;
+        _key = key;
     }
     return self;
 }
 
 - (NSString*)key
 {
-    return _path;
+    return _key;
 }
 
 - (void)fetchImageWithSuccess:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
