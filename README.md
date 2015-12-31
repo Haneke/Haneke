@@ -14,6 +14,8 @@ _Really._
 
 ##Features
 
+[![Join the chat at https://gitter.im/Haneke/Haneke](https://badges.gitter.im/Haneke/Haneke.svg)](https://gitter.im/Haneke/Haneke?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 * First-level memory cache using `NSCache`.
 * Second-level LRU disk cache using the file system.
 * Zero-config `UIImageView` category to use the cache, optimized for `UITableView` and `UICollectionView` cell reuse.
