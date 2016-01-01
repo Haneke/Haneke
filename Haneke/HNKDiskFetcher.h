@@ -34,8 +34,16 @@ enum
 /**
  Initializes a fetcher with the given path.
  @param path Image path.
+ @warning Key will be equal to path. Path to the application directory (Documents, Caches, etc) can be different after relaunch application.
  */
 - (instancetype)initWithPath:(NSString*)path;
+
+/**
+ Initializes a fetcher with the given path and key.
+ @param path Image path.
+ @param path Image key.
+ */
+- (instancetype)initWithPath:(NSString*)path andKey:(NSString *)key;
 
 /**
  Cancels the current fetch. When a fetch is cancelled it should not call any of the provided blocks.

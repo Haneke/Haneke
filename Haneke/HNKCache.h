@@ -46,6 +46,19 @@
 - (id)initWithName:(NSString*)name;
 
 /**
+ Initializes a cache with the given name.
+ @param name Name of the cache. Used as the name for the subdirectory of the disk cache.
+ @param directory Path of an existing directory. Used as directory of the disk cache.
+ */
+- (id)initWithName:(NSString*)name directory:(NSString *)directory;
+
+/**
+ Sets the shared cache with the given cache.
+ @param cache Instance of the cache. Used by the UIKit categories.
+ */
++ (void)setSharedCache:(HNKCache *)cache;
+
+/**
  Returns the shared cache used by the UIKit categories.
  @discussion It is recommended to use the shared cache unless you need separate caches.
  */
