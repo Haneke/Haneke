@@ -82,7 +82,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2FEB33A025DD4246905320CA /* Pods-HanekeTests.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HanekeTests.xcconfig"; path = "Pods/Pods-HanekeTests.xcconfig"; sourceTree = "<group>"; };
+		5DA418AAA89EEBDBE1276C1B /* Pods-HanekeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HanekeTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-HanekeTests/Pods-HanekeTests.release.xcconfig"; sourceTree = "<group>"; };
 		8711F1B518F6F35600F27EC1 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		87260AB718CCDB7000D3680F /* XCTestCase+HanekeTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XCTestCase+HanekeTestUtils.h"; sourceTree = "<group>"; };
 		87260AB818CCDB7000D3680F /* XCTestCase+HanekeTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XCTestCase+HanekeTestUtils.m"; sourceTree = "<group>"; };
@@ -143,6 +143,7 @@
 		A0ADE32E197FE0C400B75057 /* HNKNetworkFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = HNKNetworkFetcher.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		A0ADE333198029AB00B75057 /* HNKDiskFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKDiskFetcher.h; sourceTree = "<group>"; };
 		A0ADE334198029AB00B75057 /* HNKDiskFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKDiskFetcher.m; sourceTree = "<group>"; };
+		AB567729143E670013424AD0 /* Pods-HanekeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HanekeTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-HanekeTests/Pods-HanekeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		C900C201A56F408D8DD8854E /* libPods-HanekeTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-HanekeTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -189,7 +190,7 @@
 				873E22F718AA90F000E7919C /* HanekeDemo */,
 				873E229118AA8C7C00E7919C /* Frameworks */,
 				873E229018AA8C7C00E7919C /* Products */,
-				2FEB33A025DD4246905320CA /* Pods-HanekeTests.xcconfig */,
+				FD304AD259E4E63993F48F1C /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -361,6 +362,15 @@
 			name = "UIKit+Haneke";
 			sourceTree = "<group>";
 		};
+		FD304AD259E4E63993F48F1C /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				AB567729143E670013424AD0 /* Pods-HanekeTests.debug.xcconfig */,
+				5DA418AAA89EEBDBE1276C1B /* Pods-HanekeTests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -390,6 +400,7 @@
 				873E229C18AA8C7C00E7919C /* Frameworks */,
 				873E229D18AA8C7C00E7919C /* Resources */,
 				C8B5F7E5C93A4737A78D8F85 /* Copy Pods Resources */,
+				CF64227B7AD2F2870490DB87 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -500,7 +511,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Pods-HanekeTests-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-HanekeTests/Pods-HanekeTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		CF64227B7AD2F2870490DB87 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-HanekeTests/Pods-HanekeTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -695,7 +721,7 @@
 		};
 		873E22B618AA8C7C00E7919C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2FEB33A025DD4246905320CA /* Pods-HanekeTests.xcconfig */;
+			baseConfigurationReference = AB567729143E670013424AD0 /* Pods-HanekeTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -732,7 +758,7 @@
 		};
 		873E22B718AA8C7C00E7919C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2FEB33A025DD4246905320CA /* Pods-HanekeTests.xcconfig */;
+			baseConfigurationReference = 5DA418AAA89EEBDBE1276C1B /* Pods-HanekeTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "";
 				FRAMEWORK_SEARCH_PATHS = (
