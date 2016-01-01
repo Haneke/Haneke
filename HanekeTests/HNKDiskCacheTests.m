@@ -52,9 +52,9 @@
 - (void)testInit
 {
     unsigned long long capacity = 100;
-    
+
     _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:capacity];
-    
+
     XCTAssertNotNil(_sut.queue, @"");
     XCTAssertEqual(_sut.size, 0, @"");
     XCTAssertEqual(_sut.capacity, capacity, @"");
@@ -65,9 +65,9 @@
     const unsigned long long capacity = 100;
     const unsigned long long size = 10;
     [self _writeDataWithSize:size];
-    
+
     _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:capacity];
-    
+
     dispatch_sync(_sut.queue, ^{
         XCTAssertEqual(_sut.size, size, @"");
     });
@@ -77,9 +77,9 @@
 {
     const unsigned long long capacity = 0;
     [self _writeDataWithSize:10];
-    
+
     _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:capacity];
-    
+
     dispatch_sync(_sut.queue, ^{
         XCTAssertEqual(_sut.size, 0, @"");
     });
@@ -95,7 +95,7 @@
     });
 
     _sut.capacity = 0;
-    
+
     dispatch_sync(_sut.queue, ^{
         XCTAssertEqual(_sut.size, 0, @"");
     });
@@ -107,21 +107,22 @@
     _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
     NSData *data = [self _dataWithSize:size];
     NSString *key = self.name;
-    
+
     [_sut setData:data forKey:key];
-    
+
     dispatch_sync(_sut.queue, ^{
         XCTAssertEqual(_sut.size, size, @"");
     });
-    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchDataForKey:key success:^(NSData *resultData) {
-            XCTAssertEqualObjects(data, resultData, @"");
-            dispatch_semaphore_signal(semaphore);
-        } failure:^(NSError *error) {
-            XCTFail(@"Expected success");
-            dispatch_semaphore_signal(semaphore);
-        }];
+    XCTestExpectation *expectation = [self expectationWithDescription:self.name];
+
+    [_sut fetchDataForKey:key success:^(NSData *resultData) {
+        XCTAssertEqualObjects(data, resultData, @"");
+        [expectation fulfill];
+    } failure:^(NSError *error) {
+        XCTFail(@"Expected success");
     }];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 - (void)testSetData_LongKey
@@ -130,21 +131,23 @@
     _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
     NSData *data = [self _dataWithSize:size];
     NSString *key = @"12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
-    
+
     [_sut setData:data forKey:key];
-    
+
     dispatch_sync(_sut.queue, ^{
         XCTAssertEqual(_sut.size, size, @"");
     });
-    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchDataForKey:key success:^(NSData *resultData) {
-            XCTAssertEqualObjects(data, resultData, @"");
-            dispatch_semaphore_signal(semaphore);
-        } failure:^(NSError *error) {
-            XCTFail(@"Expected success");
-            dispatch_semaphore_signal(semaphore);
-        }];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:self.name];
+
+    [_sut fetchDataForKey:key success:^(NSData *resultData) {
+        XCTAssertEqualObjects(data, resultData, @"");
+        [expectation fulfill];
+    } failure:^(NSError *error) {
+        XCTFail(@"Expected success");
     }];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 - (void)testSetData_KeyWithInvalidCharacters
@@ -153,21 +156,23 @@
     _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
     NSData *data = [self _dataWithSize:size];
     NSString *key = @":/\\";
-    
+
     [_sut setData:data forKey:key];
-    
+
     dispatch_sync(_sut.queue, ^{
         XCTAssertEqual(_sut.size, size, @"");
     });
-    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchDataForKey:key success:^(NSData *resultData) {
-            XCTAssertEqualObjects(data, resultData, @"");
-            dispatch_semaphore_signal(semaphore);
-        } failure:^(NSError *error) {
-            XCTFail(@"Expected success");
-            dispatch_semaphore_signal(semaphore);
-        }];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:self.name];
+
+    [_sut fetchDataForKey:key success:^(NSData *resultData) {
+        XCTAssertEqualObjects(data, resultData, @"");
+        [expectation fulfill];
+    } failure:^(NSError *error) {
+        XCTFail(@"Expected success");
     }];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 - (void)testSetData_Ovewrite
@@ -184,19 +189,21 @@
     NSData *data2 = [self _dataWithSize:size2];
 
     [_sut setData:data2 forKey:key];
-    
+
     dispatch_sync(_sut.queue, ^{
         XCTAssertEqual(_sut.size, size2, @"");
     });
-    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchDataForKey:key success:^(NSData *resultData) {
-            XCTAssertEqualObjects(data2, resultData, @"");
-            dispatch_semaphore_signal(semaphore);
-        } failure:^(NSError *error) {
-            XCTFail(@"Expected success");
-            dispatch_semaphore_signal(semaphore);
-        }];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:self.name];
+
+    [_sut fetchDataForKey:key success:^(NSData *resultData) {
+        XCTAssertEqualObjects(data2, resultData, @"");
+        [expectation fulfill];
+    } failure:^(NSError *error) {
+        XCTFail(@"Expected success");
     }];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 - (void)testFetchDataForKey_Success
@@ -205,32 +212,32 @@
     NSData *data = [self _dataWithSize:14];
     NSString *key = self.name;
     [_sut setData:data forKey:key];
+    XCTestExpectation *expectation = [self expectationWithDescription:self.name];
 
-    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchDataForKey:key success:^(NSData *resultData) {
-            XCTAssertEqualObjects(data, resultData, @"");
-            dispatch_semaphore_signal(semaphore);
-        } failure:^(NSError *error) {
-            XCTFail(@"Expected success");
-            dispatch_semaphore_signal(semaphore);
-        }];
+    [_sut fetchDataForKey:key success:^(NSData *resultData) {
+        XCTAssertEqualObjects(data, resultData, @"");
+        [expectation fulfill];
+    } failure:^(NSError *error) {
+        XCTFail(@"Expected success");
     }];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 - (void)testFetchDataForKey_Failure
 {
     _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
     NSString *key = self.name;
-    
-    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchDataForKey:key success:^(NSData *resultData) {
-            XCTFail(@"Expected failure");
-            dispatch_semaphore_signal(semaphore);
-        } failure:^(NSError *error) {
-            XCTAssertEqual(error.code, NSFileReadNoSuchFileError, @"");
-            dispatch_semaphore_signal(semaphore);
-        }];
+    XCTestExpectation *expectation = [self expectationWithDescription:self.name];
+
+    [_sut fetchDataForKey:key success:^(NSData *resultData) {
+        XCTFail(@"Expected failure");
+    } failure:^(NSError *error) {
+        XCTAssertEqual(error.code, NSFileReadNoSuchFileError, @"");
+        [expectation fulfill];
     }];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 - (void)testRemoveDataForKey
@@ -242,7 +249,7 @@
     dispatch_sync(_sut.queue, ^{
         XCTAssertTrue(_sut.size > 0, @"");
     });
-    
+
     [_sut removeDataForKey:key];
     dispatch_sync(_sut.queue, ^{
         XCTAssertEqual(_sut.size, 0, @"");
@@ -257,9 +264,9 @@
     dispatch_sync(_sut.queue, ^{
         XCTAssertTrue(_sut.size > 0, @"");
     });
-    
+
     [_sut removeDataForKey:@"inexisting"];
-    
+
     dispatch_sync(_sut.queue, ^{
         XCTAssertTrue(_sut.size > 0, @"");
     });
@@ -273,7 +280,7 @@
     dispatch_sync(_sut.queue, ^{
         XCTAssertTrue(_sut.size > 0, @"");
     });
-    
+
     [_sut removeAllData];
     dispatch_sync(_sut.queue, ^{
         XCTAssertEqual(_sut.size, 0, @"");
@@ -298,15 +305,17 @@
     NSData *data = [self _dataWithSize:8];
     NSString *key = self.name;
     [_sut setData:data forKey:key];
-    
-    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut enumerateDataByAccessDateUsingBlock:^(NSString *resultKey, NSData *resultData, NSDate *accessDate, BOOL *stop) {
-            XCTAssertEqualObjects(resultKey, key, @"");
-            XCTAssertEqualObjects(resultData, data, @"");
-            XCTAssertNotNil(accessDate, @"");
-            dispatch_semaphore_signal(semaphore);
-        }];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:self.name];
+
+    [_sut enumerateDataByAccessDateUsingBlock:^(NSString *resultKey, NSData *resultData, NSDate *accessDate, BOOL *stop) {
+        XCTAssertEqualObjects(resultKey, key, @"");
+        XCTAssertEqualObjects(resultData, data, @"");
+        XCTAssertNotNil(accessDate, @"");
+        [expectation fulfill];
     }];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 - (void)testEnumerateDataByAccessDateUsingBlock_Two
@@ -318,21 +327,25 @@
     NSData *data2 = [self _dataWithSize:13];
     NSString *key2 = @"2";
     [_sut setData:data2 forKey:key2];
-    
+
     __block NSInteger i = 0;
-    
-    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut enumerateDataByAccessDateUsingBlock:^(NSString *resultKey, NSData *resultData, NSDate *accessDate, BOOL *stop) {
-            i++;
-            if (i == 2) dispatch_semaphore_signal(semaphore);
-        }];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:self.name];
+
+    [_sut enumerateDataByAccessDateUsingBlock:^(NSString *resultKey, NSData *resultData, NSDate *accessDate, BOOL *stop) {
+        i++;
+        if (i == 2) {
+            [expectation fulfill];
+        }
     }];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 - (void)testEnumerateDataByAccessDateUsingBlock_Empty
 {
     _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
-    
+
     [_sut enumerateDataByAccessDateUsingBlock:^(NSString *key, NSData *data, NSDate *accessDate, BOOL *stop) {
         XCTFail(@"");
     }];
@@ -342,7 +355,7 @@
 {
     _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
     NSString *key = self.name;
-    
+
     [_sut updateAccessDateForKey:key data:nil];
 }
 
@@ -351,18 +364,19 @@
     _sut = [[HNKDiskCache alloc] initWithDirectory:_directory capacity:LONG_LONG_MAX];
     NSData *data = [self _dataWithSize:3];
     NSString *key = self.name;
-    
+
     [_sut updateAccessDateForKey:key data:^NSData *{ return data; }];
-    
-    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchDataForKey:key success:^(NSData *resultData) {
-            XCTAssertEqualObjects(data, resultData, @"");
-            dispatch_semaphore_signal(semaphore);
-        } failure:^(NSError *error) {
-            XCTFail(@"Expected success");
-            dispatch_semaphore_signal(semaphore);
-        }];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:self.name];
+
+    [_sut fetchDataForKey:key success:^(NSData *resultData) {
+        XCTAssertEqualObjects(data, resultData, @"");
+        [expectation fulfill];
+    } failure:^(NSError *error) {
+        XCTFail(@"Expected success");
     }];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 - (void)testUpdateAccessDateForKey_Existing
@@ -371,7 +385,7 @@
     NSData *data = [self _dataWithSize:3];
     NSString *key = self.name;
     [_sut setData:data forKey:key];
-    
+
     [_sut updateAccessDateForKey:key data:^NSData *{ return data; }];
 }
 
