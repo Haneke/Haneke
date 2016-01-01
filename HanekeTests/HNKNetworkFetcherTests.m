@@ -58,29 +58,14 @@
     XCTAssertEqualObjects(_sut.key, _URL.absoluteString, @"");
 }
 
-- (void)testFetchImage_Success
+- (void)testFetchImage_Success_StatusCode200
 {
-    UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(5, 5)];
-    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-        return [request.URL.absoluteString isEqualToString:_URL.absoluteString];
-    } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
-        NSData *data = UIImagePNGRepresentation(image);
-        return [OHHTTPStubsResponse responseWithData:data statusCode:200 headers:nil];
-    }];
+    [self _testFetchImage_Success_StatusCode:200];
+}
 
-    _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
-
-    XCTestExpectation *expectation = [self expectationWithDescription:self.name];
-
-    [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
-        XCTAssertTrue([resultImage hnk_isEqualToImage:image], @"");
-        [expectation fulfill];
-    } failure:^(NSError *error) {
-        XCTFail(@"Expected to succeed");
-
-    }];
-
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+- (void)testFetchImage_Success_StatusCode201
+{
+    [self _testFetchImage_Success_StatusCode:201];
 }
 
 - (void)testFetchImage_Failure_InvalidStatusCode_401
@@ -215,6 +200,31 @@
 }
 
 #pragma mark Helpers
+
+- (void)_testFetchImage_Success_StatusCode:(int)statusCode
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(5, 5)];
+    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+        return [request.URL.absoluteString isEqualToString:_URL.absoluteString];
+    } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
+        NSData *data = UIImagePNGRepresentation(image);
+        return [OHHTTPStubsResponse responseWithData:data statusCode:statusCode headers:nil];
+    }];
+
+    _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:self.name];
+
+    [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
+        XCTAssertTrue([resultImage hnk_isEqualToImage:image], @"");
+        [expectation fulfill];
+    } failure:^(NSError *error) {
+        XCTFail(@"Expected to succeed");
+
+    }];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+}
 
 - (void)_testFetchImage_Failure_InvalidStatusCode:(int)statusCode
 {
