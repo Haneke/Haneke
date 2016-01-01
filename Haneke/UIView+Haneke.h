@@ -23,6 +23,7 @@
 
 extern const CGFloat HNKViewFormatCompressionQuality;
 extern const unsigned long long HNKViewFormatDiskCapacity;
+extern const NSTimeInterval HNKViewSetImageAnimationDuration;
 
 /**
  Convenience category used in the other UIKit categories to avoid repeating code. Intended for internal use.

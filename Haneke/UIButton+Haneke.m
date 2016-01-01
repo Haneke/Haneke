@@ -172,12 +172,15 @@
     {
         successBlock(image);
     }
-    else
+    else if (animated)
     {
-        const NSTimeInterval duration = animated ? 0.1 : 0;
-        [UIView transitionWithView:self duration:duration options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+        [UIView transitionWithView:self duration:HNKViewSetImageAnimationDuration options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
             [self setImage:image forState:state];
         } completion:nil];
+    }
+    else
+    {
+        [self setImage:image forState:state];
     }
 }
 
@@ -333,12 +336,15 @@
     {
         successBlock(image);
     }
-    else
+    else if (animated)
     {
-        const NSTimeInterval duration = animated ? 0.1 : 0;
-        [UIView transitionWithView:self duration:duration options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+        [UIView transitionWithView:self duration:HNKViewSetImageAnimationDuration options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
             [self setBackgroundImage:image forState:state];
         } completion:nil];
+    }
+    else
+    {
+        [self setBackgroundImage:image forState:state];
     }
 }
 
