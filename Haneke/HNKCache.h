@@ -91,6 +91,14 @@
  */
 - (BOOL)fetchImageForKey:(NSString*)key formatName:(NSString *)formatName success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
 
+/**
+Retrieves an image from the memory cache.
+@param key Image cache key.
+@param formatName Name of the format in which the image is desired. The format must have been previously registered with the cache.
+@return The image if image exists in the memory cache, nil otherwise.
+*/
+- (UIImage *)fetchImageFromMemoryForKey:(NSString *)key formatName:(NSString *)formatName;
+
 #pragma mark Setting images
 ///---------------------------------------------
 /// @name Setting images
