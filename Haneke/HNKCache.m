@@ -67,7 +67,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
 #pragma mark Initializing the cache
 
-- (id)initWithName:(NSString*)name
+- (instancetype)initWithName:(NSString*)name
 {
     self = [super init];
     if (self)
@@ -75,7 +75,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
         _memoryCaches = [NSMutableDictionary dictionary];
         _formats = [NSMutableDictionary dictionary];
         
-        NSString *cachesDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
+        NSString *cachesDirectory = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject;
         static NSString *cachePathComponent = @"com.hpique.haneke";
         NSString *path = [cachesDirectory stringByAppendingPathComponent:cachePathComponent];
         _rootDirectory = [path stringByAppendingPathComponent:name];
@@ -223,7 +223,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 {
     HNKCacheFormat *format = _formats[formatName];
     if (!format) return;
-    NSCache *cache = [_memoryCaches objectForKey:formatName];
+    NSCache *cache = _memoryCaches[formatName];
     [cache removeAllObjects];
     [format.diskCache removeAllData];
 }
@@ -387,7 +387,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
 @implementation HNKCacheFormat
 
-- (id)initWithName:(NSString *)name
+- (instancetype)initWithName:(NSString *)name
 {
     self = [super init];
     if (self)

@@ -32,6 +32,8 @@
  @param key Image key.
  @param image Image that will be returned by the fetcher.
  */
-- (instancetype)initWithKey:(NSString*)key image:(UIImage*)image;
+- (instancetype)initWithKey:(NSString*)key image:(UIImage*)image NS_DESIGNATED_INITIALIZER;
+
+- (instancetype)init NS_UNAVAILABLE;
 
 @end

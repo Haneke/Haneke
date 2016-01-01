@@ -277,7 +277,7 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
     {
         if ([fileManager fileExistsAtPath:path isDirectory:nil])
         {
-            NSLog(@"Set attributes failed with error %@", [error localizedDescription]);
+            NSLog(@"Set attributes failed with error %@", error.localizedDescription);
         }
         else if (lazyData)
         { // The data was removed from disk cache but is still in memory
@@ -330,9 +330,9 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
 
 - (BOOL)hnk_setValue:(NSString*)value forExtendedFileAttribute:(NSString*)attribute
 {
-    const char *attributeC = [attribute UTF8String];
-    const char *path = [self fileSystemRepresentation];
-    const char *valueC = [value UTF8String];
+    const char *attributeC = attribute.UTF8String;
+    const char *path = self.fileSystemRepresentation;
+    const char *valueC = value.UTF8String;
     const int result = setxattr(path, attributeC, valueC, strlen(valueC), 0, 0);
     return result == 0;
 }
@@ -346,8 +346,8 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
 
 - (NSString*)hnk_valueForExtendedFileAttribute:(NSString*)attribute
 {
-	const char *attributeC = [attribute UTF8String];
-    const char *path = [self fileSystemRepresentation];
+	const char *attributeC = attribute.UTF8String;
+    const char *path = self.fileSystemRepresentation;
     
 	const ssize_t length = getxattr(path, attributeC, NULL, 0, 0, 0);
     

@@ -36,7 +36,7 @@
  @param directory Path of an existing directory in which the cache will write data. Once initialized you should not read and write to this directory.
  @param capacity Capacity in bytes. If the cache size exceeds its capacity the least recently used data will be deleted until it doesn't.
  */
-- (instancetype)initWithDirectory:(NSString*)directory capacity:(unsigned long long)capacity;
+- (instancetype)initWithDirectory:(NSString*)directory capacity:(unsigned long long)capacity NS_DESIGNATED_INITIALIZER;
 
 /**
  Cache capacity in bytes. If the cache size exceeds its capacity the least recently used data will be deleted until it doesn't.
@@ -53,6 +53,8 @@
  @discussion Blocks dispatched in this queue will always run after the previous cache operation has completed.
  */
 @property (nonatomic, readonly) dispatch_queue_t queue;
+
+- (instancetype)init NS_UNAVAILABLE;
 
 #pragma mark Setting and fetching data
 ///---------------------------------------------
