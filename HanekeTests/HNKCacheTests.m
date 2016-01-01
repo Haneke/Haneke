@@ -316,28 +316,6 @@
     XCTAssertFalse(result, @"");
 }
 
-- (void)testFetchImageForKey_MemoryCacheMiss_DiskCacheHit
-{
-    HNKCacheFormat *format = [_sut registerFormatWithSize:CGSizeMake(1, 1)];
-    format.diskCapacity = NSUIntegerMax;
-    NSString *formatName = format.name;
-    NSString *key = self.name;
-    UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(1, 1)];
-    [_sut setImage:image forKey:key formatName:formatName];
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidReceiveMemoryWarningNotification object:nil];
-    
-    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        BOOL result = [_sut fetchImageForKey:key formatName:formatName success:^(UIImage *image) {
-            XCTAssertTrue(CGSizeEqualToSize(image.size, format.size), @"");
-            dispatch_semaphore_signal(semaphore);
-        } failure:^(NSError *error) {
-            XCTFail(@"Expected success");
-            dispatch_semaphore_signal(semaphore);
-        }];
-        XCTAssertFalse(result, @"");
-    }];
-}
-
 #pragma mark Removing images
 
 - (void)testRemoveImagesOfFormatNamed_Existing
