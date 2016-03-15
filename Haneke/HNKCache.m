@@ -131,11 +131,13 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             HNKCacheFormat *format = _formats[formatName];
             
-            [self fetchImageFromFetcher:fetcher completionBlock:^(UIImage *originalImage, NSError *error) {
+            [self fetchImageFromFetcher:fetcher completionBlock:^(UIImage *originalImage, NSError *fetchError) {
                 if (!originalImage)
                 {
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        if (failureBlock) failureBlock(error);
+                        if (failureBlock) {
+                            failureBlock(fetchError);
+                        }
                     });
                     return;
                 }
@@ -143,7 +145,9 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
                 UIImage *image = [self imageFromOriginal:originalImage key:key format:format];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self setMemoryImage:image forKey:key format:format];
-                    if (successBlock) successBlock(image);
+                    if (successBlock) {
+                        successBlock(image);
+                    }
                 });
                 [self setDiskImage:image forKey:key format:format];
             }];
@@ -169,26 +173,26 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     
     [format.diskCache fetchDataForKey:key success:^(NSData *data) {
         HanekeLog(@"Disk cache hit: %@/%@", formatName, key.lastPathComponent);
-        UIImage *image = [UIImage imageWithData:data];
-        if (image)
+        UIImage *imageFromDisk = [UIImage imageWithData:data];
+        if (imageFromDisk)
         {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                UIImage *decompressedImage = [image hnk_decompressedImage];
+                UIImage *decompressedImage = [imageFromDisk hnk_decompressedImage];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self setMemoryImage:decompressedImage forKey:key format:format];
                     if (successBlock) successBlock(decompressedImage);
                 });
             });
-            [self updateAccessDateOfImage:image key:key format:format];
+            [self updateAccessDateOfImage:imageFromDisk key:key format:format];
+            return;
         }
-        else
-        {
             NSString *errorDescription = [NSString stringWithFormat:NSLocalizedString(@"Disk cache: Cannot read image for key %@", @""), key.lastPathComponent];
             HanekeLog(@"%@", errorDescription);
             NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorDescription};
             NSError *error = [NSError errorWithDomain:HNKErrorDomain code:HNKErrorDiskCacheCannotReadImageFromData userInfo:userInfo];
-            if (failureBlock) failureBlock(error);
-        }
+            if (failureBlock) {
+                failureBlock(error);
+            }
     } failure:^(NSError *error) {
         if (error.code == NSFileReadNoSuchFileError)
         {
@@ -401,7 +405,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 - (UIImage*)resizedImageFromImage:(UIImage*)originalImage
 {
     const CGSize formatSize = self.size;
-    CGSize resizedSize;
+    CGSize resizedSize = CGSizeZero;
     switch (self.scaleMode) {
         case HNKScaleModeAspectFill:
             resizedSize = [originalImage hnk_aspectFillSizeForSize:formatSize];
@@ -468,7 +472,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     CGSize resultSize;
     resultSize.width = self.size.width * scale;
     resultSize.height = self.size.height * scale;
-    return CGSizeMake(ceil(resultSize.width), ceil(resultSize.height));
+    return CGSizeMake(ceilf(resultSize.width), ceilf(resultSize.height));
 }
 
 - (NSData*)hnk_dataWithCompressionQuality:(CGFloat)compressionQuality
@@ -491,7 +495,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     {
         resultSize.height = size.width / sourceAspect;
     }
-    return CGSizeMake(ceil(resultSize.width), ceil(resultSize.height));
+    return CGSizeMake(ceilf(resultSize.width), ceilf(resultSize.height));
 }
 
 - (UIImage *)hnk_decompressedImage;
@@ -520,10 +524,9 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
         case kCGImageAlphaOnly:
         case kCGImageAlphaLast:
         case kCGImageAlphaFirst:
-        { // Unsupported
+        default:
+            // Unsupported
             return self;
-        }
-            break;
     }
     
     const CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
@@ -545,7 +548,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     
     // Flip coordinate system. See: http://stackoverflow.com/questions/506622/cgcontextdrawimage-draws-image-upside-down-when-passed-uiimage-cgimage
     CGContextTranslateCTM(context, 0, pixelSize.height);
-    CGContextScaleCTM(context, 1.0, -1.0);
+    CGContextScaleCTM(context, 1.0, -1.0f);
     
     // UIImage and drawInRect takes into account image orientation, unlike CGContextDrawImage.
     [self drawInRect:imageRect];
