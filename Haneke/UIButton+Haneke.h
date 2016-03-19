@@ -111,7 +111,7 @@
  @discussion If needed, the least recently used images in the cache will be evicted in background.
  @warning If a success block is provided you will be responsible for setting the image.
  */
-- (void)hnk_setImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock;
+- (void)hnk_setImage:(UIImage *)image withKey:(NSString *)key forState:(UIControlState)state placeholder:(UIImage *)placeholder success:(void (^)(UIImage *fetchedImage))successBlock failure:(void (^)(NSError *error))failureBlock;
 
 /** Loads, resizes, displays and caches an appropiately sized foreground image from the given fetcher.
  @param fetcher Fetcher from which the original image will be retrieved if needed. The fetcher will have to provide the original image only if it can't be found in the cache.
