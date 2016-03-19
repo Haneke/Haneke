@@ -19,8 +19,6 @@
 //
 
 #import "UIView+Haneke.h"
-#import "HNKCache.h"
-#import <objc/runtime.h>
 
 const CGFloat HNKViewFormatCompressionQuality = 0.75;
 const unsigned long long HNKViewFormatDiskCapacity = 50 * 1024 * 1024;

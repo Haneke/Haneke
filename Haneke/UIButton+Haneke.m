@@ -71,7 +71,7 @@
     [self hnk_setImage:image withKey:key forState:state placeholder:placeholder success:nil failure:nil];
 }
 
-- (void)hnk_setImage:(UIImage*)image withKey:(NSString*)key forState:(UIControlState)state placeholder:(UIImage*)placeholder success:(void (^)(UIImage *image))successBlock failure:(void (^)(NSError *error))failureBlock
+- (void)hnk_setImage:(UIImage *)image withKey:(NSString *)key forState:(UIControlState)state placeholder:(UIImage *)placeholder success:(void (^)(UIImage *fetchedImage))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     id<HNKFetcher> fetcher = [[HNKSimpleFetcher alloc] initWithKey:key image:image];
     [self hnk_setImageFromFetcher:fetcher forState:state placeholder:placeholder success:successBlock failure:failureBlock];
