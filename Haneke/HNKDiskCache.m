@@ -94,14 +94,14 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
             }
             return;
         }
-        
+
         if (successBlock)
         {
             dispatch_async(dispatch_get_main_queue(), ^{
                 successBlock(data);
             });
         }
-        
+
         [self syncUpdateAccessDateForKey:key data:^NSData *{ return data; }];
     });
 }
@@ -146,21 +146,21 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
         [[NSFileManager defaultManager] hnk_enumerateContentsOfDirectoryAtPath:_directory orderedByProperty:NSURLContentModificationDateKey ascending:NO usingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
             NSDate *accessDate;
             [url getResourceValue:&accessDate forKey:NSURLContentModificationDateKey error:nil];
-            
+
             NSString *path = url.path;
             NSString *key = [path hnk_valueForExtendedFileAttribute:HNKExtendedFileAttributeKey];
             if (!key) return;
-            
+
             NSData *data = [NSData dataWithContentsOfFile:path];
             if (!data) return;
-            
+
             __block BOOL innerStop = NO;
-            
+
             if (block)
             {
                 block(key, data, accessDate, &innerStop);
             }
-            
+
             if (innerStop) *stop = YES;
         }];
     });
@@ -191,7 +191,7 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
         NSString *path = [_directory stringByAppendingPathComponent:pathComponent];
         NSDictionary *attributes = [fileManager attributesOfItemAtPath:path error:&error];
         if (!attributes) continue;
-        
+
         _size += attributes.fileSize;
     }
 }
@@ -199,7 +199,7 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
 - (void)controlCapacity
 {
     if (self.size <= self.capacity) return;
-    
+
     NSFileManager *fileManager = [NSFileManager defaultManager];
     [fileManager hnk_enumerateContentsOfDirectoryAtPath:_directory orderedByProperty:NSURLContentModificationDateKey ascending:YES usingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
         NSString *path = url.path;
@@ -340,7 +340,7 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
 - (NSString*)hnk_stringByEscapingFilename
 {
     // TODO: Add more characters to leave unescaped that are valid for paths but not for URLs
-    NSString *filename = CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,(CFStringRef)self, CFSTR(" \\"), CFSTR("/:"), kCFStringEncodingUTF8));
+    NSString *filename = [self stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
     return filename;
 }
 
@@ -348,18 +348,18 @@ NSString *const HNKExtendedFileAttributeKey = @"io.haneke.key";
 {
 	const char *attributeC = attribute.UTF8String;
     const char *path = self.fileSystemRepresentation;
-    
+
 	const ssize_t length = getxattr(path, attributeC, NULL, 0, 0, 0);
-    
+
 	if (length <= 0) return nil;
-    
+
 	char *buffer = malloc(length);
 	getxattr(path, attributeC, buffer, length, 0, 0);
-    
+
 	NSString *value = [[NSString alloc] initWithBytes:buffer length:length encoding:NSUTF8StringEncoding];
-    
+
 	free(buffer);
-    
+
 	return value;
 }
 
