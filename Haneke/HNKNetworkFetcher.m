@@ -106,6 +106,9 @@
         });
         
     }];
+    
+    [self prepareURLSessionDataTask:_dataTask];
+    
     [_dataTask resume];
 }
 
@@ -137,6 +140,11 @@
 @end
 
 @implementation HNKNetworkFetcher(Subclassing)
+
+- (void)prepareURLSessionDataTask:(NSURLSessionDataTask *)task
+{
+    // Do nothing
+}
 
 - (NSURLSession*)URLSession
 {
