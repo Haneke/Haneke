@@ -53,7 +53,7 @@
 
 /**
  Registers a format in the cache. If a format with the same name already exists in the cache, it will be cleared first.
- @param Format to be registered in the cache.
+ @param format Format to be registered in the cache.
  @discussion If the format preload policy allows it, Haneke will add some or all images cached on disk to the memory cache. If an image of the given format is requested, Haneke will cancel preloading to give priority to the request.
  @discussion A format can only be registered in one cache.
  */
