@@ -12,7 +12,7 @@ Haneke resizes images and caches the result on memory and disk. Everything is do
 
 _Really._
 
-##Features
+## Features
 
 * First-level memory cache using `NSCache`.
 * Second-level LRU disk cache using the file system.
@@ -25,7 +25,7 @@ _Really._
 * Automatic cache eviction on memory warnings or disk capacity reached.
 * Preloading images from the disk cache into memory on startup.
 
-##Installation
+## Installation
 
 Using [CocoaPods](http://cocoapods.org/):
 
@@ -35,7 +35,7 @@ pod 'Haneke', '~> 1.0'
 
 Alternatively, you can simply add the files from the [Haneke](https://github.com/hpique/Haneke/tree/master/Haneke) directory to your project.
 
-##UIImageView category
+## UIImageView category
 
 Haneke provides convenience methods for `UIImageView` with optimizations for `UITableView` and `UICollectionView` cell reuse. Images will be resized appropriately and cached in a shared cache.
 
@@ -60,7 +60,7 @@ The above lines take care of:
 6. If needed, evicting the least recently used images in the cache.
 
 
-##Cache formats
+## Cache formats
 
 The cache behavior can be customized by defining cache formats. Each image view has a default format and you can also define your own formats. A format is uniquely identified by its name.
 
@@ -122,20 +122,20 @@ format.postResizeBlock = ^UIImage* (NSString *key, UIImage *image) {
 
 These blocks will be called only if the requested image is not found in the cache. They will be executed in background when using the image view category or the asynchronous methods of the cache directly.
 
-##Logging
+## Logging
 
 Haneke provides useful logging that is **turned off** by default. You can see it in action in the demo.
 
 To turn logging on you must set the preprocessor macro `HANEKE_DEBUG` to 1. The recommended way to do this is by adding `HANEKE_DEBUG=1` to the *Preprocessor Macros* build setting. If you included Haneke directly, add it to your project target. If you are using CocoaPods, add it to the *Pods-Haneke* target of the *Pods* project.
 
 
-##Requirements
+## Requirements
 
 Haneke requires iOS 7.0 or above and ARC. 
 
 iOS 6 compatibility can be achieved with very few [changes](https://github.com/hpique/Haneke/pull/17). You can use [@shkutkov](https://github.com/shkutkov)'s [fork](https://github.com/shkutkov/Haneke) that adds it by replacing `NSURLSession` with [AFNetworking](https://github.com/AFNetworking/AFNetworking).
 
-##License
+## License
 
  Copyright 2014 Hermes Pique ([@hpique](https://twitter.com/hpique))
  
