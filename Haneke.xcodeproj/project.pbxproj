@@ -30,8 +30,6 @@
 		8762BB13192915BC007AE90D /* UIImage+HanekeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8762BB12192915BC007AE90D /* UIImage+HanekeTests.m */; };
 		876E5F2018AB762600B4EAF6 /* UIImageView+Haneke.m in Sources */ = {isa = PBXBuildFile; fileRef = 876E5F1F18AB762600B4EAF6 /* UIImageView+Haneke.m */; };
 		876E5F2118AB831500B4EAF6 /* UIImageView+Haneke.m in Sources */ = {isa = PBXBuildFile; fileRef = 876E5F1F18AB762600B4EAF6 /* UIImageView+Haneke.m */; };
-		87A6907E18B678C700F97E13 /* GTMCodeCoverageTestsXC.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A6907C18B678C700F97E13 /* GTMCodeCoverageTestsXC.m */; };
-		87A6907F18B67B4A00F97E13 /* GTMCodeCoverageApp.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A6907B18B678C700F97E13 /* GTMCodeCoverageApp.m */; };
 		87A6908318B6817C00F97E13 /* UIImage+HanekeTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A6908218B6817C00F97E13 /* UIImage+HanekeTestUtils.m */; };
 		87A6908618B68BF200F97E13 /* HNKCache+HanekeTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A6908518B68BF200F97E13 /* HNKCache+HanekeTestUtils.m */; };
 		87F47BAE18AC123C00F1FB48 /* UIImageView+HanekeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F47BAD18AC123C00F1FB48 /* UIImageView+HanekeTests.m */; };
@@ -82,7 +80,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2FEB33A025DD4246905320CA /* Pods-HanekeTests.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HanekeTests.xcconfig"; path = "Pods/Pods-HanekeTests.xcconfig"; sourceTree = "<group>"; };
+		5DA418AAA89EEBDBE1276C1B /* Pods-HanekeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HanekeTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-HanekeTests/Pods-HanekeTests.release.xcconfig"; sourceTree = "<group>"; };
 		8711F1B518F6F35600F27EC1 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		87260AB718CCDB7000D3680F /* XCTestCase+HanekeTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XCTestCase+HanekeTestUtils.h"; sourceTree = "<group>"; };
 		87260AB818CCDB7000D3680F /* XCTestCase+HanekeTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "XCTestCase+HanekeTestUtils.m"; sourceTree = "<group>"; };
@@ -112,9 +110,6 @@
 		8762BB12192915BC007AE90D /* UIImage+HanekeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+HanekeTests.m"; sourceTree = "<group>"; };
 		876E5F1E18AB762600B4EAF6 /* UIImageView+Haneke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+Haneke.h"; sourceTree = "<group>"; };
 		876E5F1F18AB762600B4EAF6 /* UIImageView+Haneke.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+Haneke.m"; sourceTree = "<group>"; };
-		87A6907A18B678C700F97E13 /* GTMCodeCoverageApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMCodeCoverageApp.h; sourceTree = "<group>"; };
-		87A6907B18B678C700F97E13 /* GTMCodeCoverageApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMCodeCoverageApp.m; sourceTree = "<group>"; };
-		87A6907C18B678C700F97E13 /* GTMCodeCoverageTestsXC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMCodeCoverageTestsXC.m; sourceTree = "<group>"; };
 		87A6908118B6817C00F97E13 /* UIImage+HanekeTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+HanekeTestUtils.h"; sourceTree = "<group>"; };
 		87A6908218B6817C00F97E13 /* UIImage+HanekeTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+HanekeTestUtils.m"; sourceTree = "<group>"; };
 		87A6908418B68BF200F97E13 /* HNKCache+HanekeTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "HNKCache+HanekeTestUtils.h"; sourceTree = "<group>"; };
@@ -143,6 +138,7 @@
 		A0ADE32E197FE0C400B75057 /* HNKNetworkFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = HNKNetworkFetcher.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		A0ADE333198029AB00B75057 /* HNKDiskFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNKDiskFetcher.h; sourceTree = "<group>"; };
 		A0ADE334198029AB00B75057 /* HNKDiskFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNKDiskFetcher.m; sourceTree = "<group>"; };
+		AB567729143E670013424AD0 /* Pods-HanekeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HanekeTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-HanekeTests/Pods-HanekeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		C900C201A56F408D8DD8854E /* libPods-HanekeTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-HanekeTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -189,7 +185,7 @@
 				873E22F718AA90F000E7919C /* HanekeDemo */,
 				873E229118AA8C7C00E7919C /* Frameworks */,
 				873E229018AA8C7C00E7919C /* Products */,
-				2FEB33A025DD4246905320CA /* Pods-HanekeTests.xcconfig */,
+				FD304AD259E4E63993F48F1C /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -234,7 +230,6 @@
 			isa = PBXGroup;
 			children = (
 				A0045DCB19B226C300B12CE4 /* Categories */,
-				87A6907918B678A000F97E13 /* Code Coverage iOS 7 Workaround */,
 				A0818B8019A4E8E100F89CCF /* Fetchers */,
 				873E22BE18AA8D9F00E7919C /* HNKCacheTests.m */,
 				A010753419A652FE002A1990 /* HNKDiskCacheTests.m */,
@@ -281,16 +276,6 @@
 				873E22FF18AA90F000E7919C /* HanekeDemo-Prefix.pch */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		87A6907918B678A000F97E13 /* Code Coverage iOS 7 Workaround */ = {
-			isa = PBXGroup;
-			children = (
-				87A6907A18B678C700F97E13 /* GTMCodeCoverageApp.h */,
-				87A6907B18B678C700F97E13 /* GTMCodeCoverageApp.m */,
-				87A6907C18B678C700F97E13 /* GTMCodeCoverageTestsXC.m */,
-			);
-			name = "Code Coverage iOS 7 Workaround";
 			sourceTree = "<group>";
 		};
 		87A6908018B6813E00F97E13 /* Test Utils */ = {
@@ -361,6 +346,15 @@
 			name = "UIKit+Haneke";
 			sourceTree = "<group>";
 		};
+		FD304AD259E4E63993F48F1C /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				AB567729143E670013424AD0 /* Pods-HanekeTests.debug.xcconfig */,
+				5DA418AAA89EEBDBE1276C1B /* Pods-HanekeTests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -390,6 +384,7 @@
 				873E229C18AA8C7C00E7919C /* Frameworks */,
 				873E229D18AA8C7C00E7919C /* Resources */,
 				C8B5F7E5C93A4737A78D8F85 /* Copy Pods Resources */,
+				CF64227B7AD2F2870490DB87 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -424,7 +419,7 @@
 		873E228718AA8C7C00E7919C /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = "Hermes Pique";
 				TargetAttributes = {
 					873E229E18AA8C7C00E7919C = {
@@ -500,7 +495,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Pods-HanekeTests-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-HanekeTests/Pods-HanekeTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		CF64227B7AD2F2870490DB87 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-HanekeTests/Pods-HanekeTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -518,7 +528,6 @@
 				A0818B7F19A4D11600F89CCF /* UIButton+Haneke.m in Sources */,
 				873E22BA18AA8CC900E7919C /* HNKCache.m in Sources */,
 				A010753119A6295F002A1990 /* HNKDiskCache.m in Sources */,
-				87A6907F18B67B4A00F97E13 /* GTMCodeCoverageApp.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -529,7 +538,6 @@
 				87260AB918CCDB7000D3680F /* XCTestCase+HanekeTestUtils.m in Sources */,
 				87A6908618B68BF200F97E13 /* HNKCache+HanekeTestUtils.m in Sources */,
 				8762BB13192915BC007AE90D /* UIImage+HanekeTests.m in Sources */,
-				87A6907E18B678C700F97E13 /* GTMCodeCoverageTestsXC.m in Sources */,
 				87F47BAE18AC123C00F1FB48 /* UIImageView+HanekeTests.m in Sources */,
 				A0818B8319A4E91D00F89CCF /* UIView+HanekeTests.m in Sources */,
 				A0818B7819A4B80D00F89CCF /* HNKNetworkFetcherTests.m in Sources */,
@@ -610,6 +618,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -666,14 +675,12 @@
 			buildSettings = {
 				DSTROOT = /tmp/Haneke.dst;
 				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
-				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
-					"GTM_USING_XCTEST=1",
-					"GTM_IS_COVERAGE_BUILD=1",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -685,6 +692,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/Haneke.dst;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
 				OTHER_LDFLAGS = "-ObjC";
@@ -695,22 +703,22 @@
 		};
 		873E22B618AA8C7C00E7919C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2FEB33A025DD4246905320CA /* Pods-HanekeTests.xcconfig */;
+			baseConfigurationReference = AB567729143E670013424AD0 /* Pods-HanekeTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "";
+				CLANG_ENABLE_CODE_COVERAGE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
-				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
-					"GTM_IS_COVERAGE_BUILD=1",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -724,6 +732,7 @@
 					XCTest,
 					"-ObjC",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.hique.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
@@ -732,9 +741,10 @@
 		};
 		873E22B718AA8C7C00E7919C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2FEB33A025DD4246905320CA /* Pods-HanekeTests.xcconfig */;
+			baseConfigurationReference = 5DA418AAA89EEBDBE1276C1B /* Pods-HanekeTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "";
+				CLANG_ENABLE_CODE_COVERAGE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -756,6 +766,7 @@
 					XCTest,
 					"-ObjC",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.hique.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
@@ -783,6 +794,7 @@
 				);
 				INFOPLIST_FILE = "HanekeDemo/HanekeDemo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.hique.haneke.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -805,6 +817,7 @@
 				GCC_PREFIX_HEADER = "HanekeDemo/HanekeDemo-Prefix.pch";
 				INFOPLIST_FILE = "HanekeDemo/HanekeDemo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.hique.haneke.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";

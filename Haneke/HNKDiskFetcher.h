@@ -35,12 +35,14 @@ enum
  Initializes a fetcher with the given path.
  @param path Image path.
  */
-- (instancetype)initWithPath:(NSString*)path;
+- (instancetype)initWithPath:(NSString*)path NS_DESIGNATED_INITIALIZER;
 
 /**
  Cancels the current fetch. When a fetch is cancelled it should not call any of the provided blocks.
  @discussion This will be typically used by UI logic to cancel fetches during view reuse.
  */
 - (void)cancelFetch;
+
+- (instancetype)init NS_UNAVAILABLE;
 
 @end

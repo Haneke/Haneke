@@ -53,7 +53,7 @@
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
     _sut = [[HNKDiskFetcher alloc] initWithPath:path];
-    
+
     XCTAssertEqualObjects(_sut.key, path, @"");
 }
 
@@ -64,32 +64,32 @@
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     NSData *data = UIImagePNGRepresentation(image);
     [data writeToFile:path atomically:YES];
-    
-    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
-            XCTAssertTrue([resultImage hnk_isEqualToImage:image], @"");
-            dispatch_semaphore_signal(semaphore);
-        } failure:^(NSError *error) {
-            XCTFail(@"Expected to succeed");
-            dispatch_semaphore_signal(semaphore);
-        }];
+    XCTestExpectation *expectation = [self expectationWithDescription:self.name];
+
+    [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
+        XCTAssertTrue([resultImage hnk_isEqualToImage:image], @"");
+        [expectation fulfill];
+    } failure:^(NSError *error) {
+        XCTFail(@"Expected to succeed");
     }];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 - (void)testFetchImage_Failure_NSFileReadNoSuchFileError
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
     _sut = [[HNKDiskFetcher alloc] initWithPath:path];
-    
-    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
-            XCTFail(@"Expected to fail");
-            dispatch_semaphore_signal(semaphore);
-        } failure:^(NSError *error) {
-            XCTAssertEqual(error.code, NSFileReadNoSuchFileError, @"");
-            dispatch_semaphore_signal(semaphore);
-        }];
+    XCTestExpectation *expectation = [self expectationWithDescription:self.name];
+
+    [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
+        XCTFail(@"Expected to fail");
+    } failure:^(NSError *error) {
+        XCTAssertEqual(error.code, NSFileReadNoSuchFileError, @"");
+        [expectation fulfill];
     }];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 - (void)testFetchImage_Failure_HNKDiskFetcherInvalidDataError
@@ -98,19 +98,19 @@
     _sut = [[HNKDiskFetcher alloc] initWithPath:path];
     NSData *data = [NSData data];
     [data writeToFile:path atomically:YES];
-    
-    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
-            XCTFail(@"Expected to fail");
-            dispatch_semaphore_signal(semaphore);
-        } failure:^(NSError *error) {
-            XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
-            XCTAssertEqual(error.code, HNKErrorDiskFetcherInvalidData, @"");
-            XCTAssertNotNil(error.localizedDescription, @"");
-            XCTAssertEqualObjects(error.userInfo[NSFilePathErrorKey], path, @"");
-            dispatch_semaphore_signal(semaphore);
-        }];
+    XCTestExpectation *expectation = [self expectationWithDescription:self.name];
+
+    [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
+        XCTFail(@"Expected to fail");
+    } failure:^(NSError *error) {
+        XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
+        XCTAssertEqual(error.code, HNKErrorDiskFetcherInvalidData, @"");
+        XCTAssertNotNil(error.localizedDescription, @"");
+        XCTAssertEqualObjects(error.userInfo[NSFilePathErrorKey], path, @"");
+        [expectation fulfill];
     }];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 - (void)testCancelFetch
@@ -120,14 +120,15 @@
     UIImage *image = [UIImage hnk_imageWithColor:[UIColor greenColor] size:CGSizeMake(10, 20)];
     NSData *data = UIImagePNGRepresentation(image);
     [data writeToFile:path atomically:YES];
+
     [_sut fetchImageWithSuccess:^(UIImage *image) {
         XCTFail(@"Unexpected success");
     } failure:^(NSError *error) {
         XCTFail(@"Unexpected failure");
     }];
-    
+
     [_sut cancelFetch];
-    
+
     [self hnk_waitFor:0.1];
 }
 
@@ -135,7 +136,7 @@
 {
     NSString *path = [_directory stringByAppendingPathComponent:self.name];
     _sut = [[HNKDiskFetcher alloc] initWithPath:path];
-    
+
     [_sut cancelFetch];
 }
 

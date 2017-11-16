@@ -73,7 +73,7 @@
         }
         
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
-        if (httpResponse.statusCode != 200)
+        if (httpResponse.statusCode != 200 && httpResponse.statusCode != 201)
         {
             NSString *errorDescription = [NSHTTPURLResponse localizedStringForStatusCode:httpResponse.statusCode];
             [strongSelf failWithLocalizedDescription:errorDescription code:HNKErrorNetworkFetcherInvalidStatusCode block:failureBlock];

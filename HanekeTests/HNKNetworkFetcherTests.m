@@ -54,31 +54,18 @@
 - (void)testKey
 {
     _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
-    
+
     XCTAssertEqualObjects(_sut.key, _URL.absoluteString, @"");
 }
 
-- (void)testFetchImage_Success
+- (void)testFetchImage_Success_StatusCode200
 {
-    UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(5, 5)];
-    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-        return [request.URL.absoluteString isEqualToString:_URL.absoluteString];
-    } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
-        NSData *data = UIImagePNGRepresentation(image);
-        return [OHHTTPStubsResponse responseWithData:data statusCode:200 headers:nil];
-    }];
-    
-    _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
-    
-    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
-            XCTAssertTrue([resultImage hnk_isEqualToImage:image], @"");
-            dispatch_semaphore_signal(semaphore);
-        } failure:^(NSError *error) {
-            XCTFail(@"Expected to succeed");
-            dispatch_semaphore_signal(semaphore);
-        }];
-    }];
+    [self _testFetchImage_Success_StatusCode:200];
+}
+
+- (void)testFetchImage_Success_StatusCode201
+{
+    [self _testFetchImage_Success_StatusCode:201];
 }
 
 - (void)testFetchImage_Failure_InvalidStatusCode_401
@@ -110,16 +97,16 @@
         return [OHHTTPStubsResponse responseWithError:error];
     }];
     _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
-    
-    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
-            XCTFail(@"Expected to fail");
-            dispatch_semaphore_signal(semaphore);
-        } failure:^(NSError *resultError) {
-            XCTAssertEqual(resultError.code, error.code, @"");
-            dispatch_semaphore_signal(semaphore);
-        }];
+    XCTestExpectation *expectation = [self expectationWithDescription:self.name];
+
+    [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
+        XCTFail(@"Expected to fail");
+    } failure:^(NSError *resultError) {
+        XCTAssertEqual(resultError.code, error.code, @"");
+        [expectation fulfill];
     }];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 - (void)testFetchImage_Failure_HNKNetworkFetcherInvalidDataError
@@ -130,20 +117,20 @@
         NSData *data = [NSData data];
         return [OHHTTPStubsResponse responseWithData:data statusCode:200 headers:nil];
     }];
-   _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
-    
-    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
-            XCTFail(@"Expected to fail");
-            dispatch_semaphore_signal(semaphore);
-        } failure:^(NSError *error) {
-            XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
-            XCTAssertEqual(error.code, HNKErrorNetworkFetcherInvalidData, @"");
-            XCTAssertNotNil(error.localizedDescription, @"");
-            XCTAssertEqualObjects(error.userInfo[NSURLErrorKey], _URL, @"");
-            dispatch_semaphore_signal(semaphore);
-        }];
+    _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
+    XCTestExpectation *expectation = [self expectationWithDescription:self.name];
+
+    [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
+        XCTFail(@"Expected to fail");
+    } failure:^(NSError *error) {
+        XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
+        XCTAssertEqual(error.code, HNKErrorNetworkFetcherInvalidData, @"");
+        XCTAssertNotNil(error.localizedDescription, @"");
+        XCTAssertEqualObjects(error.userInfo[NSURLErrorKey], _URL, @"");
+        [expectation fulfill];
     }];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 - (void)testFetchImage_Failure_HNKNetworkFetcherMissingDataError
@@ -151,7 +138,7 @@
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
         return [request.URL.absoluteString isEqualToString:_URL.absoluteString];
     } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
-        
+
         UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(5, 5)];
         NSData *data = UIImageJPEGRepresentation(image, 1);
         NSString *contentLengthString = [NSString stringWithFormat:@"%ld", (long)data.length * 10];
@@ -161,19 +148,20 @@
     }];
 
     _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
-    
-    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
-            XCTFail(@"Expected to fail");
-            dispatch_semaphore_signal(semaphore);
-        } failure:^(NSError *error) {
-            XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
-            XCTAssertEqual(error.code, HNKErrorNetworkFetcherMissingData, @"");
-            XCTAssertNotNil(error.localizedDescription, @"");
-            XCTAssertEqualObjects(error.userInfo[NSURLErrorKey], _URL, @"");
-            dispatch_semaphore_signal(semaphore);
-        }];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:self.name];
+
+    [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
+        XCTFail(@"Expected to fail");
+    } failure:^(NSError *error) {
+        XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
+        XCTAssertEqual(error.code, HNKErrorNetworkFetcherMissingData, @"");
+        XCTAssertNotNil(error.localizedDescription, @"");
+        XCTAssertEqualObjects(error.userInfo[NSURLErrorKey], _URL, @"");
+        [expectation fulfill];
     }];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 - (void)testCancelFetch
@@ -185,22 +173,22 @@
         NSData *data = UIImagePNGRepresentation(image);
         return [OHHTTPStubsResponse responseWithData:data statusCode:200 headers:nil];
     }];
-    
+
     _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
     [_sut fetchImageWithSuccess:^(UIImage *image) {
         XCTFail(@"Unexpected success");
     } failure:^(NSError *error) {
         XCTFail(@"Unexpected failure");
     }];
-    
+
     [_sut cancelFetch];
-    
+
     [self hnk_waitFor:0.1];
 }
 
 - (void)testCancelFetch_NoFetch
 {
-   _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
+    _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
 
     [_sut cancelFetch];
 }
@@ -213,6 +201,31 @@
 
 #pragma mark Helpers
 
+- (void)_testFetchImage_Success_StatusCode:(int)statusCode
+{
+    UIImage *image = [UIImage hnk_imageWithColor:[UIColor whiteColor] size:CGSizeMake(5, 5)];
+    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+        return [request.URL.absoluteString isEqualToString:_URL.absoluteString];
+    } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
+        NSData *data = UIImagePNGRepresentation(image);
+        return [OHHTTPStubsResponse responseWithData:data statusCode:statusCode headers:nil];
+    }];
+
+    _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:self.name];
+
+    [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
+        XCTAssertTrue([resultImage hnk_isEqualToImage:image], @"");
+        [expectation fulfill];
+    } failure:^(NSError *error) {
+        XCTFail(@"Expected to succeed");
+
+    }];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+}
+
 - (void)_testFetchImage_Failure_InvalidStatusCode:(int)statusCode
 {
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
@@ -222,19 +235,20 @@
         return [OHHTTPStubsResponse responseWithData:data statusCode:statusCode headers:nil];
     }];
     _sut = [[HNKNetworkFetcher alloc] initWithURL:_URL];
-    
-    [self hnk_testAsyncBlock:^(dispatch_semaphore_t semaphore) {
-        [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
-            XCTFail(@"Expected to fail");
-            dispatch_semaphore_signal(semaphore);
-        } failure:^(NSError *error) {
-            XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
-            XCTAssertEqual(error.code, HNKErrorNetworkFetcherInvalidStatusCode, @"");
-            XCTAssertNotNil(error.localizedDescription, @"");
-            XCTAssertEqualObjects(error.userInfo[NSURLErrorKey], _URL, @"");
-            dispatch_semaphore_signal(semaphore);
-        }];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:self.name];
+
+    [_sut fetchImageWithSuccess:^(UIImage *resultImage) {
+        XCTFail(@"Expected to fail");
+    } failure:^(NSError *error) {
+        XCTAssertEqualObjects(error.domain, HNKErrorDomain, @"");
+        XCTAssertEqual(error.code, HNKErrorNetworkFetcherInvalidStatusCode, @"");
+        XCTAssertNotNil(error.localizedDescription, @"");
+        XCTAssertEqualObjects(error.userInfo[NSURLErrorKey], _URL, @"");
+        [expectation fulfill];
     }];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 @end

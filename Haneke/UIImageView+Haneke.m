@@ -156,12 +156,15 @@
     {
         successBlock(image);
     }
-    else
+    else if (animated)
     {
-        const NSTimeInterval duration = animated ? 0.1 : 0;
-        [UIView transitionWithView:self duration:duration options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+        [UIView transitionWithView:self duration:HNKViewSetImageAnimationDuration options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
             self.image = image;
         } completion:nil];
+    }
+    else
+    {
+        self.image = image;
     }
 }
 

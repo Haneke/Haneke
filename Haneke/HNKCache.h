@@ -43,7 +43,7 @@
  Initializes a cache with the given name.
  @param name Name of the cache. Used as the name for the subdirectory of the disk cache.
 */
-- (id)initWithName:(NSString*)name;
+- (instancetype)initWithName:(NSString*)name NS_DESIGNATED_INITIALIZER;
 
 /**
  Returns the shared cache used by the UIKit categories.
@@ -63,6 +63,8 @@
  Dictionary of formats registered with the cache.
  */
 @property (nonatomic, readonly) NSDictionary *formats;
+
+- (instancetype)init NS_UNAVAILABLE;
 
 #pragma mark Getting images
 ///---------------------------------------------
@@ -248,7 +250,9 @@ typedef NS_ENUM(NSInteger, HNKPreloadPolicy)
 /** Initializes a format with the given name.
  @param name Name of the format.
  */
-- (id)initWithName:(NSString*)name;
+- (instancetype)initWithName:(NSString*)name NS_DESIGNATED_INITIALIZER;
+
+- (instancetype)init NS_UNAVAILABLE;
 
 /**
  Resized the given image based on the format. Used by the cache to create its images.

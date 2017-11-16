@@ -1,6 +1,6 @@
 ![Haneke](https://raw.githubusercontent.com/Haneke/Haneke/master/Assets/github-header.png)
 
-[![Version](https://cocoapod-badges.herokuapp.com/v/Haneke/badge.png)](http://cocoadocs.org/docsets/Haneke) [![Platform](https://cocoapod-badges.herokuapp.com/p/Haneke/badge.png)](http://cocoadocs.org/docsets/Haneke) [![Build Status](https://travis-ci.org/Haneke/Haneke.svg?branch=master)](https://travis-ci.org/Haneke/Haneke)
+[![Version](https://cocoapod-badges.herokuapp.com/v/Haneke/badge.png)](http://cocoadocs.org/docsets/Haneke) [![Platform](https://cocoapod-badges.herokuapp.com/p/Haneke/badge.png)](http://cocoadocs.org/docsets/Haneke) [![Build Status](https://travis-ci.org/Haneke/Haneke.svg?branch=master)](https://travis-ci.org/Haneke/Haneke) [![Join the chat at https://gitter.im/Haneke/Haneke](https://badges.gitter.im/Haneke/Haneke.svg)](https://gitter.im/Haneke/Haneke?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 A lightweight zero-config image cache for iOS written in Objective-C. A [Swift](https://github.com/Haneke/HanekeSwift) version is also available.
 
