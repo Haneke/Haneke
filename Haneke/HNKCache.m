@@ -169,7 +169,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     
     [format.diskCache fetchDataForKey:key success:^(NSData *data) {
         HanekeLog(@"Disk cache hit: %@/%@", formatName, key.lastPathComponent);
-        UIImage *image = [UIImage imageWithData:data];
+        UIImage *image = format.deserializeImageBlock ? format.deserializeImageBlock(key, data) : [UIImage imageWithData:data];
         if (image)
         {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -338,7 +338,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
         }
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            UIImage *image = [UIImage imageWithData:data];
+            UIImage *image = format.deserializeImageBlock ? format.deserializeImageBlock(key, data) : [UIImage imageWithData:data];
             if (!image) return;
             image = [image hnk_decompressedImage];
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -354,7 +354,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
     {
         if (format.diskCapacity == 0) return;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            NSData *data = [image hnk_dataWithCompressionQuality:format.compressionQuality];
+            NSData *data = format.serializeImageBlock ? format.serializeImageBlock(key, image) : [image hnk_dataWithCompressionQuality:format.compressionQuality];
             dispatch_async(dispatch_get_main_queue(), ^{
                 [format.diskCache setData:data forKey:key];
             });
@@ -369,7 +369,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 - (void)updateAccessDateOfImage:(UIImage*)image key:(NSString*)key format:(HNKCacheFormat*)format
 {
     [format.diskCache updateAccessDateForKey:key data:^NSData *{
-        NSData *data = [image hnk_dataWithCompressionQuality:format.compressionQuality];
+        NSData *data = format.serializeImageBlock ? format.serializeImageBlock(key, image) : [image hnk_dataWithCompressionQuality:format.compressionQuality];
         return data;
     }];
 }
@@ -460,6 +460,22 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
 @implementation UIImage (hnk_utils)
 
+- (UIImage *)hnk_alterSubimages:(UIImage *(^)(UIImage *original))modifierBlock
+{
+    if (self.images.count > 1)
+    {
+        NSMutableArray *frames = [NSMutableArray arrayWithCapacity:self.images.count];
+        for (UIImage *frame in self.images) {
+            [frames addObject:modifierBlock(frame)];
+        }
+        return [UIImage animatedImageWithImages:[frames copy] duration:self.duration];
+    }
+    else
+    {
+        return modifierBlock(self);
+    }
+}
+
 - (CGSize)hnk_aspectFillSizeForSize:(CGSize)size
 {
     const CGFloat scaleWidth = size.width / self.size.width;
@@ -496,68 +512,71 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
 - (UIImage *)hnk_decompressedImage;
 {
-    // Ideally we would simply use kCGImageSourceShouldCacheImmediately but as of iOS 7.1 it locks on copyImageBlockSetJPEG which makes it dangerous.
-    // const CGImageSourceRef sourceRef = CGImageSourceCreateWithData((__bridge CFDataRef)data, NULL);
-    // CGImageRef imageRef = CGImageSourceCreateImageAtIndex(sourceRef, 0, (__bridge CFDictionaryRef)@{(id)kCGImageSourceShouldCacheImmediately: @YES});
-    
-    CGImageRef originalImageRef = self.CGImage;
-    const CGBitmapInfo originalBitmapInfo = CGImageGetBitmapInfo(originalImageRef);
-    
-    // See: http://stackoverflow.com/questions/23723564/which-cgimagealphainfo-should-we-use
-    const uint32_t alphaInfo = (originalBitmapInfo & kCGBitmapAlphaInfoMask);
-    CGBitmapInfo bitmapInfo = originalBitmapInfo;
-    switch (alphaInfo)
-    {
-        case kCGImageAlphaNone:
-            bitmapInfo &= ~kCGBitmapAlphaInfoMask;
-            bitmapInfo |= kCGImageAlphaNoneSkipFirst;
-            break;
-        case kCGImageAlphaPremultipliedFirst:
-        case kCGImageAlphaPremultipliedLast:
-        case kCGImageAlphaNoneSkipFirst:
-        case kCGImageAlphaNoneSkipLast:
-            break;
-        case kCGImageAlphaOnly:
-        case kCGImageAlphaLast:
-        case kCGImageAlphaFirst:
-        { // Unsupported
-            return self;
+    return [self hnk_alterSubimages:^UIImage *(UIImage *original) {
+        
+        // Ideally we would simply use kCGImageSourceShouldCacheImmediately but as of iOS 7.1 it locks on copyImageBlockSetJPEG which makes it dangerous.
+        // const CGImageSourceRef sourceRef = CGImageSourceCreateWithData((__bridge CFDataRef)data, NULL);
+        // CGImageRef imageRef = CGImageSourceCreateImageAtIndex(sourceRef, 0, (__bridge CFDictionaryRef)@{(id)kCGImageSourceShouldCacheImmediately: @YES});
+        
+        CGImageRef originalImageRef = original.CGImage;
+        const CGBitmapInfo originalBitmapInfo = CGImageGetBitmapInfo(originalImageRef);
+        
+        // See: http://stackoverflow.com/questions/23723564/which-cgimagealphainfo-should-we-use
+        const uint32_t alphaInfo = (originalBitmapInfo & kCGBitmapAlphaInfoMask);
+        CGBitmapInfo bitmapInfo = originalBitmapInfo;
+        switch (alphaInfo)
+        {
+            case kCGImageAlphaNone:
+                bitmapInfo &= ~kCGBitmapAlphaInfoMask;
+                bitmapInfo |= kCGImageAlphaNoneSkipFirst;
+                break;
+            case kCGImageAlphaPremultipliedFirst:
+            case kCGImageAlphaPremultipliedLast:
+            case kCGImageAlphaNoneSkipFirst:
+            case kCGImageAlphaNoneSkipLast:
+                break;
+            case kCGImageAlphaOnly:
+            case kCGImageAlphaLast:
+            case kCGImageAlphaFirst:
+            { // Unsupported
+                return original;
+            }
+                break;
         }
-            break;
-    }
-    
-    const CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    const CGSize pixelSize = CGSizeMake(self.size.width * self.scale, self.size.height * self.scale);
-    const CGContextRef context = CGBitmapContextCreate(NULL,
-                                                       pixelSize.width,
-                                                       pixelSize.height,
-                                                       CGImageGetBitsPerComponent(originalImageRef),
-                                                       0,
-                                                       colorSpace,
-                                                       bitmapInfo);
-    CGColorSpaceRelease(colorSpace);
-    
-    UIImage *image;
-    if (!context) return self;
-    
-    const CGRect imageRect = CGRectMake(0, 0, pixelSize.width, pixelSize.height);
-    UIGraphicsPushContext(context);
-    
-    // Flip coordinate system. See: http://stackoverflow.com/questions/506622/cgcontextdrawimage-draws-image-upside-down-when-passed-uiimage-cgimage
-    CGContextTranslateCTM(context, 0, pixelSize.height);
-    CGContextScaleCTM(context, 1.0, -1.0);
-    
-    // UIImage and drawInRect takes into account image orientation, unlike CGContextDrawImage.
-    [self drawInRect:imageRect];
-    UIGraphicsPopContext();
-    const CGImageRef decompressedImageRef = CGBitmapContextCreateImage(context);
-    CGContextRelease(context);
-    
-    const CGFloat scale = [UIScreen mainScreen].scale;
-    image = [UIImage imageWithCGImage:decompressedImageRef scale:scale orientation:UIImageOrientationUp];
-    CGImageRelease(decompressedImageRef);
-    
-    return image;
+        
+        const CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        const CGSize pixelSize = CGSizeMake(original.size.width * original.scale, original.size.height * original.scale);
+        const CGContextRef context = CGBitmapContextCreate(NULL,
+                                                           pixelSize.width,
+                                                           pixelSize.height,
+                                                           CGImageGetBitsPerComponent(originalImageRef),
+                                                           0,
+                                                           colorSpace,
+                                                           bitmapInfo);
+        CGColorSpaceRelease(colorSpace);
+        
+        UIImage *image;
+        if (!context) return original;
+        
+        const CGRect imageRect = CGRectMake(0, 0, pixelSize.width, pixelSize.height);
+        UIGraphicsPushContext(context);
+        
+        // Flip coordinate system. See: http://stackoverflow.com/questions/506622/cgcontextdrawimage-draws-image-upside-down-when-passed-uiimage-cgimage
+        CGContextTranslateCTM(context, 0, pixelSize.height);
+        CGContextScaleCTM(context, 1.0, -1.0);
+        
+        // UIImage and drawInRect takes into account image orientation, unlike CGContextDrawImage.
+        [original drawInRect:imageRect];
+        UIGraphicsPopContext();
+        const CGImageRef decompressedImageRef = CGBitmapContextCreateImage(context);
+        CGContextRelease(context);
+        
+        const CGFloat scale = [UIScreen mainScreen].scale;
+        image = [UIImage imageWithCGImage:decompressedImageRef scale:scale orientation:UIImageOrientationUp];
+        CGImageRelease(decompressedImageRef);
+        
+        return image;
+    }];
 }
 
 - (BOOL)hnk_hasAlpha
@@ -571,12 +590,14 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
 
 - (UIImage *)hnk_imageByScalingToSize:(CGSize)newSize
 {
-    const BOOL hasAlpha = [self hnk_hasAlpha];
-    UIGraphicsBeginImageContextWithOptions(newSize, !hasAlpha, 0.0);
-    [self drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
-    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return newImage;
+    return [self hnk_alterSubimages:^UIImage *(UIImage *original) {
+        const BOOL hasAlpha = [original hnk_hasAlpha];
+        UIGraphicsBeginImageContextWithOptions(newSize, !hasAlpha, 0.0);
+        [original drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
+        UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        return newImage;
+    }];
 }
 
 @end

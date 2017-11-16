@@ -62,4 +62,11 @@ enum
  */
 @property (nonatomic, readonly) NSURLSession *URLSession;
 
+/**
+ Used to suport addional imagetypes.
+ @param data Image data
+ @return A IIImage or nil
+ */
+- (UIImage *)imageFromData:(NSData *)data;
+
 @end

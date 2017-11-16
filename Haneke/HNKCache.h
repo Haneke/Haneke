@@ -234,6 +234,19 @@ typedef NS_ENUM(NSInteger, HNKPreloadPolicy)
  */
 @property (nonatomic, copy) UIImage* (^postResizeBlock)(NSString *key, UIImage *image);
 
+/**
+ This block alows the custom serialization for images. This is useful if you want to use none native image formates.
+ @warning The block will impacat the performace of the cache.
+ @warning The block will be called when saving images to disk.
+ */
+@property (nonatomic, copy) NSData* (^serializeImageBlock)(NSString *key, UIImage *image);
+
+/**
+ This block allows the option of deserializing none standard image formatsm like GIFs.
+ @warning The block will only be run when deserializing data rom disk. To uport custion formats you will also need a fetcher that can handle the format.
+ */
+@property (nonatomic, copy) UIImage* (^deserializeImageBlock)(NSString *key, NSData *data);
+
 /** Initializes a format with the given name.
  @param name Name of the format.
  */
