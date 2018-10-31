@@ -110,6 +110,6 @@
  @param lazyData Block to be called if there is no data associated with the given key, in which case it must return it. Called from the cache queue.
  @discussion Calling this method is equivalent to calling setData:forKey: with the difference that the data is only requested if it isn't already cached.
  */
-- (void)updateAccessDateForKey:(NSString*)key data:(NSData* (^)())lazyData ;
+- (void)updateAccessDateForKey:(NSString*)key data:(NSData* (^)(void))lazyData ;
 
 @end

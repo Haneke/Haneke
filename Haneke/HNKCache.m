@@ -129,7 +129,7 @@ NSString *const HNKErrorDomain = @"com.hpique.haneke";
         if (successBlock) successBlock(image);
     } failure:^(NSError *error) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            HNKCacheFormat *format = _formats[formatName];
+            HNKCacheFormat *format = self->_formats[formatName];
             
             [self fetchImageFromFetcher:fetcher completionBlock:^(UIImage *originalImage, NSError *error) {
                 if (!originalImage)
